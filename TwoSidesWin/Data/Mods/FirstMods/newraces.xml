@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<races>
+  <race name="Red">
+    <ColorR>255</ColorR>
+    <ColorG>0</ColorG>
+    <ColorB>0</ColorB>
+  </race>
+  <race name="Green">
+    <ColorR>0</ColorR>
+    <ColorG>255</ColorG>
+    <ColorB>0</ColorB>
+  </race>
+  <race name="Blue">
+    <ColorR>0</ColorR>
+    <ColorG>0</ColorG>
+    <ColorB>255</ColorB>
+  </race>
+</races>

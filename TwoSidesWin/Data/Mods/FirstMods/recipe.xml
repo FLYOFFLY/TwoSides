@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<recipes>
+  <recipe  id ="10002" hp ="1" ammout="1">
+    <ingredient>
+      <id>1</id>
+      <count>2</count>
+    </ingredient>
+  </recipe>
+</recipes>

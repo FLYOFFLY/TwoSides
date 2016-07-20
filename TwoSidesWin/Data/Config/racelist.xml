@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<races>
+  <race name="Europian">
+    <ColorR>213</ColorR>
+    <ColorG>171</ColorG>
+    <ColorB>123</ColorB>
+  </race>
+  <race name="Afro">
+    <ColorR>81</ColorR>
+    <ColorG>21</ColorG>
+    <ColorB>21</ColorB>
+  </race>
+</races>

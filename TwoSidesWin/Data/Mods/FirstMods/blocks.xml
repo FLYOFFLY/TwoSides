@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<blocks>
+  <block id ="0" img ="myblock.png" hp ="1">
+    <drop>
+      <id>10000</id>
+      <count>2</count>
+    </drop>
+    <drop>
+      <id>10001</id>
+      <count>2</count>
+    </drop>
+    <drop>
+      <id>10002</id>
+      <count>2</count>
+    </drop>
+  </block>
+</blocks>

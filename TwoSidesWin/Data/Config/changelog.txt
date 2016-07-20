@@ -1,0 +1,51 @@
+Pre Alpha 2.4.0.0
+
+Added
+    Furnace
+    Iron bar
+    Gold Bar
+    Chain Armor
+    Iron Sword
+    Clay
+    Sand
+    Desert Biome
+    Brick 
+    Brick Wall
+    Cloud
+    SandStone
+    "Mass" armor
+    Grass
+    Iron PickAxe
+    Snow hammer
+    Stone hammer
+    Copper Sword
+    Stone sword
+    
+Modding
+    Custom Biome and ore
+    Fix more bugs.
+    Return old(Draw,PreDraw,PostDraw) and adding new function
+    Added more, more setting for custom Block
+    
+Change 
+    spawn ore
+    generation height
+    Lags if activated craft menu
+    Optimized code drawing slot and item text
+    HUD in game
+    Redraw all item & Block
+
+Fix
+    Delete toss player with the destruction of the life
+    Light
+    no work exit from setting menu
+
+Pre alpha 2.3.0.0
+Change
+    Change FrameWork from XNA to Mono Game
+    Algoritm generation Biomne and Ores
+    Naming version change to standart: "Name Version" "Pre Alpha" fullUpdate.prerelease.bugfix.speedfix
+Added
+    Save & Load Game!!!
+    Number Version in Main menu
+    Progress Bar in Generation World, Save World, Load World

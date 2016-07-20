@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<clothes>
+  <special  path ="newSuit.png">  </special>
+  <pants    path ="newPants.png">   </pants>
+  <shirt    path ="newShirt.png">   </shirt>
+</clothes>

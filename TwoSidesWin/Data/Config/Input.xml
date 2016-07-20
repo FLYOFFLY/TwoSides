@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Input>
+  <ActiveIventory>74</ActiveIventory>
+  <Drop>81</Drop>
+  <Jump>32</Jump>
+  <Left>65</Left>
+  <Right>68</Right>
+
+</Input>

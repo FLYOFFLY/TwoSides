@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mod>
+  <racelist fileName ="newraces.xml"></racelist>
+  <clotheslist fileName ="newClothes.xml"></clotheslist>
+  <lua fileName ="test.lua"></lua>
+  <ItemsList fileName ="items.xml"></ItemsList>
+  <BlocksList fileName ="blocks.xml"></BlocksList>
+  <RecipeList fileName ="recipe.xml"></RecipeList>
+</mod>
