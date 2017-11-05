@@ -5,9 +5,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-using TwoSIdes.Utils;
+using TwoSides.Utils;
 
-namespace TwoSIdes.World
+namespace TwoSides.World
 {
     [Serializable]
     public sealed class Item

@@ -3,10 +3,10 @@ using System.IO;
 
 using Microsoft.Xna.Framework;
 
-using TwoSIdes.GameContent.GenerationResources;
-using TwoSIdes.Utils;
+using TwoSides.GameContent.GenerationResources;
+using TwoSides.Utils;
 
-namespace TwoSIdes.World.Generation
+namespace TwoSides.World.Generation
 {
     [Serializable]
     public sealed class Biome

@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using TwoSIdes.Physics.Entity;
-using TwoSIdes.World;
-using TwoSIdes.World.Generation;
-using TwoSIdes.World.Tile;
+using TwoSides.Physics.Entity;
+using TwoSides.World;
+using TwoSides.World.Generation;
+using TwoSides.World.Tile;
 
-using Drop = TwoSIdes.World.Drop;
+using Drop = TwoSides.World.Drop;
 
-namespace TwoSIdes.GameContent.Tiles
+namespace TwoSides.GameContent.Tiles
 {
     public class BlockChest : BaseTile
     {

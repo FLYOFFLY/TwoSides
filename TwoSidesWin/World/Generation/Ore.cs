@@ -1,6 +1,6 @@
-﻿using TwoSIdes.GameContent.GenerationResources;
+﻿using TwoSides.GameContent.GenerationResources;
 
-namespace TwoSIdes.World.Generation
+namespace TwoSides.World.Generation
 {
     public class Ore
     {

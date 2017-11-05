@@ -20,7 +20,7 @@ namespace TwoSides.GameContent.Tiles
             // ReSharper disable once InvertIf
             if (entity is Player plr)
             {
-                if ( plr.Slot[plr.SelectedItem].id != 50 ) return false;
+                if ( plr.Slot[plr.SelectedItem].Id != 50 ) return false;
 
                 if ( dimension.MapTile[x , y - 1].Active ) return false;
 

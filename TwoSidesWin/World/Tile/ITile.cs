@@ -5,14 +5,14 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using TwoSIdes.GameContent.GenerationResources;
-using TwoSIdes.GameContent.Tiles;
-using TwoSIdes.Physics.Entity;
-using TwoSIdes.Utils;
-using TwoSIdes.World.Generation;
+using TwoSides.GameContent.GenerationResources;
+using TwoSides.GameContent.Tiles;
+using TwoSides.Physics.Entity;
+using TwoSides.Utils;
+using TwoSides.World.Generation;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
-namespace TwoSIdes.World.Tile
+namespace TwoSides.World.Tile
 {
     [Serializable]
     public sealed class Tile
@@ -61,7 +61,7 @@ namespace TwoSIdes.World.Tile
             IdSubTexture = 0;
         }
         public int GetSoildType() => IdTexture < _tileMax ? _tileListCurrent[IdTexture].GetSoildType() : 1;
-        public bool IsSolId() => Active && _tileListCurrent[IdTexture].IsSolId();
+        public bool IsSolid() => Active && _tileListCurrent[IdTexture].IsSolid();
 
         public void DamageSlot(float dmg,Vector2 position)
         {
@@ -85,7 +85,7 @@ namespace TwoSIdes.World.Tile
         public void Update(int x, int y, Camera camera)
         {
             UpdateTime();
-            if (IdTexture <TileTwoSIdes.TileMax)
+            if (IdTexture <TileTwoSides.TileMax)
                 _tileListCurrent[IdTexture].Update(x,y,_dimension,camera.InView(new Point(x * TileMaxSize, y * TileMaxSize)));
         }
         public float GetBlockHp() => _tileListCurrent[IdTexture].MaxHp;
@@ -94,7 +94,7 @@ namespace TwoSIdes.World.Tile
         {
             if ( x <= 0 || x >= SizeGeneratior.WorldWidth || y <= 0 || y >= SizeGeneratior.WorldHeight ) return 0;
 
-            if ( _dimension.MapTile[x , y].IsSolId() && _dimension.MapTile[x , y].HasShadow() )
+            if ( _dimension.MapTile[x , y].IsSolid() && _dimension.MapTile[x , y].HasShadow() )
                 return (short) (_dimension.MapTile[x , y].Light - 10);
 
             if (!wall) return (short)(_dimension.MapTile[x, y].Light - 1);
@@ -117,17 +117,17 @@ namespace TwoSIdes.World.Tile
             TileDate?.Init();
         }
         public Rectangle GetBoxRect(int x, int y) => IdTexture < _tileMax ? _tileListCurrent[IdTexture].GetBoxRect(x, y, this) : new Rectangle(0, 0, 16, 16);
-        bool IsSolId(int x, int y) => _dimension.MapTile[x, y].IsSolId();
+        bool IsSolid(int x, int y) => _dimension.MapTile[x, y].IsSolid();
 
         public  bool IsLightBlock() => _tileListCurrent[IdTexture].IsLightBlock();
 
         public void UpdateLight(int x, int y)
         {
             if (IsLightBlock()) Light = 30;
-            Light = Math.Max(Light, GetLightBlock(x + 1, y, IsSolId(x, y) && _dimension.MapTile[x,y].HasShadow()));
-            Light = Math.Max(Light, GetLightBlock(x - 1, y, IsSolId(x, y) && _dimension.MapTile[x, y].HasShadow()));
-            Light = Math.Max(Light, GetLightBlock(x, y + 1, IsSolId(x, y) && _dimension.MapTile[x, y].HasShadow()));
-            Light = Math.Max(Light, GetLightBlock(x, y - 1, IsSolId(x, y) && _dimension.MapTile[x, y].HasShadow()));
+            Light = Math.Max(Light, GetLightBlock(x + 1, y, IsSolid(x, y) && _dimension.MapTile[x,y].HasShadow()));
+            Light = Math.Max(Light, GetLightBlock(x - 1, y, IsSolid(x, y) && _dimension.MapTile[x, y].HasShadow()));
+            Light = Math.Max(Light, GetLightBlock(x, y + 1, IsSolid(x, y) && _dimension.MapTile[x, y].HasShadow()));
+            Light = Math.Max(Light, GetLightBlock(x, y - 1, IsSolid(x, y) && _dimension.MapTile[x, y].HasShadow()));
             //  light = Math.Min(52, GetLightBlock(x + 1, y)+ GetLightBlock(x - 1, y)+ GetLightBlock(x, y+1)+ GetLightBlock(x, y-1));
         }
 
@@ -168,14 +168,14 @@ namespace TwoSIdes.World.Tile
 
         public int GetAnimframe() => _tileListCurrent[IdTexture].GetAnimFrame();
 
-        public int GetIdSIdeTexture()
+        public int GetIdSideTexture()
         {
             if (IdTexture < _tileMax)
-            return _tileListCurrent[IdTexture].GetIdSIdeTexture();
+            return _tileListCurrent[IdTexture].GetIdSideTexture();
             return -1;
         }
 
-        public bool HasSpecialTexture() => GetIdSIdeTexture()>=0;
+        public bool HasSpecialTexture() => GetIdSideTexture()>=0;
 
         public bool HasShadow() => _tileListCurrent[IdTexture].HasShadow();
 
@@ -237,7 +237,7 @@ namespace TwoSIdes.World.Tile
         bool SwapWater(int i,int j,int i1,int j1){
             if (i1 < 0 || i1>=SizeGeneratior.WorldWidth) return false;
             if (j1 < 0 || j1 >= SizeGeneratior.WorldHeight) return false;
-            if (_dimension.MapTile[i1, j1].IsSolId()) return false;
+            if (_dimension.MapTile[i1, j1].IsSolid()) return false;
             if(_dimension.MapTile[i1, j1].WaterType > 0) return false;
             _dimension.MapTile[i1, j1].WaterType = 1;
             //dimension.map[i1, j1].patern = new Point(i,j);
@@ -248,7 +248,7 @@ namespace TwoSIdes.World.Tile
         public void  Render(int i,int j,Vector2 pos, SpriteBatch spriteBatch,Texture2D water)
         {
             if (WaterType <= 0) return;
-            if (IsSolId() )
+            if (IsSolid() )
             {
                 WaterType = 0;
                 return;
@@ -263,7 +263,7 @@ namespace TwoSIdes.World.Tile
 
         void AddWater(int i, int j)
         {
-            if ( !_dimension.MapTile[i , j + 1].IsSolId() ) return;
+            if ( !_dimension.MapTile[i , j + 1].IsSolid() ) return;
 
             if (SwapWater(i, j, i + 1, j))
             {
@@ -286,7 +286,7 @@ namespace TwoSIdes.World.Tile
             }
             else if (HasSpecialTexture())
             {
-                _tileListCurrent[IdTexture].Render(TileDate, spriteBatch, addtexture[GetIdSIdeTexture() + (int)GetSIde(i, j)], _dimension, pos, i, j, Frame, IdSubTexture, color);
+                _tileListCurrent[IdTexture].Render(TileDate, spriteBatch, addtexture[GetIdSideTexture() + (int)GetSIde(i, j)], _dimension, pos, i, j, Frame, IdSubTexture, color);
             }
         }
 

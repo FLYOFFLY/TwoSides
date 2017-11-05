@@ -2,9 +2,9 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-using TwoSIdes.World.Generation;
+using TwoSides.World.Generation;
 
-namespace TwoSIdes.GameContent.Tiles
+namespace TwoSides.GameContent.Tiles
 {
     public interface ITileList
     {

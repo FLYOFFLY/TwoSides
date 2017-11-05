@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using TwoSides.GUI;
+
 namespace TwoSides.GUI
 {
     public sealed class Image : GuiElement

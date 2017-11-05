@@ -8,13 +8,13 @@ using System.Xml;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using TwoSIdes.GUI;
+using TwoSides.GUI;
 
 using static System.Console;
 
-using static TwoSIdes.Utils.Tools;
+using static TwoSides.Utils.Tools;
 
-namespace TwoSIdes
+namespace TwoSides
 {
     public enum RaceType {
         EUROPIAN = 0,

@@ -3,10 +3,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using TwoSIdes.Physics.Entity;
-using TwoSIdes.World.Generation;
+using TwoSides.Physics.Entity;
+using TwoSides.World.Generation;
 
-namespace TwoSIdes.World.Tile
+namespace TwoSides.World.Tile
 {
     public class BaseTile
     {
@@ -19,11 +19,11 @@ namespace TwoSIdes.World.Tile
             Id = id;
         }
 
-        public virtual bool IsSolId() => true;
+        public virtual bool IsSolid() => true;
 
         public virtual bool IsLightBlock() => false;
 
-        public virtual int GetIdSIdeTexture() => -1;
+        public virtual int GetIdSideTexture() => -1;
 
         public virtual void Update(int x, int y,BaseDimension dimension,DynamicEntity entity)
         {

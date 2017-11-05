@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace TwoSIdes.GUI.Scene
+namespace TwoSides.GUI.Scene
 {
     public interface IScene
     {

@@ -5,11 +5,14 @@ using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using TwoSIdes.GameContent.Dimensions;
-using TwoSIdes.Utils;
-using TwoSIdes.World;
+using TwoSides;
+using TwoSides.GUI;
+using TwoSides.Utils;
 
-namespace TwoSIdes.GUI.HUD
+using TwoSides.GameContent.Dimensions;
+using TwoSides.World;
+
+namespace TwoSides.GUI.HUD
 {
     public sealed class Console
     {

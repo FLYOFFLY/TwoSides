@@ -1,6 +1,6 @@
-﻿using TwoSIdes.World.Tile;
+﻿using TwoSides.World.Tile;
 
-namespace TwoSIdes.GameContent.Tiles
+namespace TwoSides.GameContent.Tiles
 {
     public class BlockPlatform : BaseTile
     {

@@ -14,7 +14,7 @@ namespace TwoSides
             _size = new Vector2(graphics.PreferredBackBufferWidth / 2f,
                 graphics.PreferredBackBufferHeight / 2f);
             _translation = Matrix.CreateTranslation(new Vector3(-Pos.X, -Pos.Y, 0)) *
-                Matrix.CreateRotationZ(MathHelper.ToRadians(90)) *
+                Matrix.CreateRotationZ(MathHelper.ToRadians(0)) *
                 Matrix.CreateScale(scale, scale, 1) *
                 Matrix.CreateTranslation(new Vector3(_size, 0)); 
             _size.X = _size.X / Zoom;

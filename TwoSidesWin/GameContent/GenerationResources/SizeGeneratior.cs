@@ -1,4 +1,4 @@
-﻿namespace TwoSIdes.GameContent.GenerationResources
+﻿namespace TwoSides.GameContent.GenerationResources
 {
     public static class SizeGeneratior
     {

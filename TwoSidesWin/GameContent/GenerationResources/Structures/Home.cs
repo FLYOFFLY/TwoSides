@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
-using TwoSIdes.GameContent.Entity.NPC;
-using TwoSIdes.GUI;
-using TwoSIdes.World;
-using TwoSIdes.World.Generation;
-using TwoSIdes.World.Generation.Structures;
+using TwoSides.GameContent.Entity.NPC;
+using TwoSides.GUI;
+using TwoSides.World;
+using TwoSides.World.Generation;
+using TwoSides.World.Generation.Structures;
 
-namespace TwoSIdes.GameContent.GenerationResources.Structures
+namespace TwoSides.GameContent.GenerationResources.Structures
 {
     internal class Home : BaseStruct
     {
@@ -142,7 +142,7 @@ namespace TwoSIdes.GameContent.GenerationResources.Structures
         static void InitDialog()
         {
             List<Recipe> recip = new List<Recipe> {new Recipe(new Item(1 , 0) , 100)};
-            recip[0].AddIngrIdents(1 , 1);
+            recip[0].AddIngridents(1 , 1);
 
             // ReSharper disable once UnusedVariable
             List<Dialog> dialogs = new List<Dialog>

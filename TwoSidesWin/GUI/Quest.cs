@@ -5,9 +5,9 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using TwoSIdes.World;
+using TwoSides.World;
 
-namespace TwoSIdes.GUI
+namespace TwoSides.GUI
 {
     [Serializable]
     public sealed class Goal

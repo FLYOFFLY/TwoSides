@@ -44,8 +44,8 @@ namespace TwoSides.GameContent.Tiles
         {
             int yDoor = y;
             yDoor -= dimension.MapTile[x, y].IdSubTexture;
-            if (dimension.MapTile[x, y].IdTexture != dimension.MapTile[x - 1, y].IdTexture) DestorySide(dimension, x + 1, yDoor);
-            else DestorySide(dimension, x - 1, yDoor);
+            if (dimension.MapTile[x, y].IdTexture != dimension.MapTile[x - 1, y].IdTexture) DestorySIde(dimension, x + 1, yDoor);
+            else DestorySIde(dimension, x - 1, yDoor);
             return base.Destory(x, y, dimension, entity);
         }
     }

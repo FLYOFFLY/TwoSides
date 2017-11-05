@@ -1,9 +1,9 @@
 ﻿using System;
 
-using TwoSIdes.GameContent.GenerationResources;
-using TwoSIdes.GUI;
+using TwoSides.GameContent.GenerationResources;
+using TwoSides.GUI;
 
-namespace TwoSIdes.GameContent.Dimensions
+namespace TwoSides.GameContent.Dimensions
 {
     [Serializable]
     public class SnowWorld : NormalWorld

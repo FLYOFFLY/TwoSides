@@ -6,12 +6,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-using TwoSIdes.GameContent.GenerationResources;
-using TwoSIdes.Utils;
-using TwoSIdes.World;
-using TwoSIdes.World.Tile;
+using TwoSides.GameContent.GenerationResources;
+using TwoSides.Utils;
+using TwoSides.World;
+using TwoSides.World.Tile;
 
-namespace TwoSIdes.GUI
+namespace TwoSides.GUI
 {
 
     public sealed class Dialog
@@ -98,13 +98,13 @@ namespace TwoSIdes.GUI
             Font = font;
         }
 
-        public bool GetValIdRecipes(int id)
+        public bool GetValidRecipes(int id)
         {
             bool t = false;
             Recipe recipe = Recipes[id];
             for (int i = 0; i < recipe.GetSize(); i++)
             {
-                int slotIds = Program.Game.Player.GetSlotItem(recipe.GetIngrIdent(i), recipe.Hp, recipe.GetSize(i));
+                int slotIds = Program.Game.Player.GetSlotItem(recipe.GetIngrident(i), recipe.Hp, recipe.GetSize(i));
                 if (slotIds != -1)
                 {
                     t = true;
@@ -142,7 +142,7 @@ namespace TwoSIdes.GUI
             for (int i = 0; i < recipe.GetSize(); i++)
             {
 
-                int slotIds = Program.Game.Player.GetSlotItem(recipe.GetIngrIdent(i), recipe.Hp, recipe.GetSize(i));
+                int slotIds = Program.Game.Player.GetSlotItem(recipe.GetIngrident(i), recipe.Hp, recipe.GetSize(i));
                 if ( slotIds == -1 ) continue;
 
                 Program.Game.Player.Slot[slotIds].Ammount -= recipe.GetSize(i);
@@ -174,7 +174,7 @@ namespace TwoSIdes.GUI
                 {
                     for ( int i = 0 ; i < Recipes.Count ; i++ )
                     {
-                        if ( !GetValIdRecipes(i) ) continue;
+                        if ( !GetValidRecipes(i) ) continue;
 
                         Rectangle rectrecip = new Rectangle(Area.X + 32 + i * 32 ,
                                                             Area.Y + Area.Height / 2 + 32 , 32 , 32);
@@ -221,7 +221,7 @@ namespace TwoSIdes.GUI
                 spriteBatch.Begin();
                 for (int i = 0; i < Recipes.Count; i++)
                 {
-                    if ( !GetValIdRecipes(i) ) continue;
+                    if ( !GetValidRecipes(i) ) continue;
                     
                     Rectangle rectrecip = new Rectangle(Area.X + 32 + i * 32, Area.Y + Area.Height / 2 + 32, 32, 32);
                     Rectangle reitems = rectrecip;
@@ -241,7 +241,7 @@ namespace TwoSIdes.GUI
                         reitems2.Width = 16;
                         reitems2.Height = 16;
                         spriteBatch.Draw(Program.Game.Inv, rectrecip2, Color.Green);
-                        Item.Render(spriteBatch, Recipes[i].GetIngrIdent(j), reitems2);
+                        Item.Render(spriteBatch, Recipes[i].GetIngrident(j), reitems2);
                         reitems2.Y += 2;
                         reitems2.X = rectrecip2.X;
                         spriteBatch.DrawString(Font, Recipes[i].GetSize(j).ToString(CultureInfo.CurrentCulture), new Vector2(reitems2.X, reitems2.Y), Color.White);

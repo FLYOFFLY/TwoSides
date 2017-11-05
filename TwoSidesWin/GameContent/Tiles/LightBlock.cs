@@ -1,6 +1,6 @@
-﻿using TwoSIdes.World.Tile;
+﻿using TwoSides.World.Tile;
 
-namespace TwoSIdes.GameContent.Tiles
+namespace TwoSides.GameContent.Tiles
 {
     public class LightBlock : BaseTile
     {
@@ -8,7 +8,7 @@ namespace TwoSIdes.GameContent.Tiles
         public LightBlock(float maxHp,int id) : base(maxHp,id)
         {
         }
-        public override bool IsSolId() => false;
+        public override bool IsSolid() => false;
 
         public override bool IsLightBlock() => true;
 

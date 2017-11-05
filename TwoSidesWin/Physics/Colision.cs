@@ -19,10 +19,10 @@ namespace TwoSides.Physics
             int endX = (int)((position.X + widthEntity) / Tile.TileMaxSize) + 2;
             int startY = (int)(position.Y / Tile.TileMaxSize) - 1;
             int endY = (int)((position.Y + heightEntity) / Tile.TileMaxSize) + 2;
-            int num5 = -1;
-            int num6 = -1;
-            int num7 = -1;
-            int num8 = -1;
+            int leftTileX = -1;
+            int leftTileY = -1;
+            int rightTileX = -1;
+            int righTileY = -1;
             if (startX < 0)
             {
                 startX = 0;
@@ -60,10 +60,10 @@ namespace TwoSides.Physics
                         switch ( soildType ) {
                             case 1:
                                 ColSquare(aabb, widthEntity, heightEntity, ref result, ref vector, ref startPos,
-                                          ref num5, ref num6, ref num7, ref num8, tileX, tileY, tilePos);
+                                          ref leftTileX, ref leftTileY, ref rightTileX, ref righTileY, tileX, tileY, tilePos);
                                 break;
                             case 2:
-                                ColPlatform(heightEntity, ref result, ref startPos, num5, velocity, ref num7, ref num8, tileX, tileY, tilePos, isDown);
+                                ColPlatform(heightEntity, ref result, ref startPos, leftTileX, velocity, ref rightTileX, ref righTileY, tileX, tileY, tilePos, isDown);
                                 break;
                         }
                     }
@@ -77,65 +77,65 @@ namespace TwoSides.Physics
         }
 
         static void ColSquare(Rectangle boxColision,int widthEntity, int heightEntity, ref Vector2 result, ref Vector2 vector,
-            ref Vector2 startPos, ref int num5,ref  int num6, ref int num7, ref int num8, int tileX, int tileY, Vector2 tilePos)
+            ref Vector2 startPos, ref int leftTileX,ref  int leftTileY, ref int rightTileX, ref int righTileY, int tileX, int tileY, Vector2 tilePos)
         {
             if (startPos.X + widthEntity <= tilePos.X)
             {
-                num5 = tileX;
-                num6 = tileY;
-                if (num6 != num8)
+                leftTileX = tileX;
+                leftTileY = tileY;
+                if (leftTileY != righTileY)
                 {
                     result.X = tilePos.X - (startPos.X + widthEntity);
                 }
-                if (num7 == num5)
+                if (rightTileX == leftTileX)
                 {
                     result.Y = vector.Y;
                 }
             }
             else if (startPos.Y + heightEntity <= tilePos.Y)
             {
-                num7 = tileX;
-                num8 = tileY;
-                if (num7 != num5)
+                rightTileX = tileX;
+                righTileY = tileY;
+                if (rightTileX != leftTileX)
                 {
                     result.Y = tilePos.Y - (startPos.Y + heightEntity);
                 }
             }
             else if (startPos.X >= tilePos.X + boxColision.Width)
             {
-                num5 = tileX;
-                num6 = tileY;
-                if (num6 != num8)
+                leftTileX = tileX;
+                leftTileY = tileY;
+                if (leftTileY != righTileY)
                 {
                     result.X = tilePos.X + boxColision.Width - startPos.X;
                 }
-                if (num7 == num5)
+                if (rightTileX == leftTileX)
                 {
                     result.Y = vector.Y;
                 }
             }
             else if (startPos.Y >= tilePos.Y + boxColision.Height)
             {
-                num7 = tileX;
-                num8 = tileY;
+                rightTileX = tileX;
+                righTileY = tileY;
                 result.Y = tilePos.Y + boxColision.Height - startPos.Y;
-                if (num8 == num6)
+                if (righTileY == leftTileY)
                 {
                     result.X = vector.X + 0.01f;
                 }
             }
         }
 
-        static void ColPlatform(int heightEntity, ref Vector2 result, ref Vector2 startPos, int num5, Vector2 velocity,
-            ref int num7, ref int num8, int tileX, int tileY, Vector2 tilePos, bool isDown)
+        static void ColPlatform(int heightEntity, ref Vector2 result, ref Vector2 startPos, int leftTileX, Vector2 velocity,
+            ref int rightTileX, ref int rightTileY, int tileX, int tileY, Vector2 tilePos, bool isDown)
         {
             if ( !(startPos.Y + heightEntity <= tilePos.Y) ) return;
 
             if ( !(velocity.Y > 0f) || isDown ) return;
 
-            num7 = tileX;
-            num8 = tileY;
-            if (num7 != num5)
+            rightTileX = tileX;
+            rightTileY = tileY;
+            if (rightTileX != leftTileX)
             {
                 result.Y = tilePos.Y - (startPos.Y + heightEntity);
             }

@@ -1,7 +1,7 @@
-﻿namespace TwoSIdes.World.Tile
+﻿namespace TwoSides.World.Tile
 {
     public interface ITileDatecs
     {
-        voId Init();
+        void Init();
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace TwoSIdes.World
+﻿namespace TwoSides.World
 {
     public class BaseItem
     {

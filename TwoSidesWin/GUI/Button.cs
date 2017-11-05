@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework.Input;
 
 using TwoSides.Utils;
 
+using TwoSides.GUI;
+
 namespace TwoSides.GUI
 {
     public class Button : GuiElement

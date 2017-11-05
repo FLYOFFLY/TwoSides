@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using TwoSIdes.GameContent.Entity.NPC;
-using TwoSIdes.GameContent.GenerationResources;
-using TwoSIdes.GameContent.GenerationResources.Structures;
-using TwoSIdes.GameContent.Tiles;
-using TwoSIdes.GUI;
-using TwoSIdes.Physics.Entity.NPC;
-using TwoSIdes.World.Generation;
-using TwoSIdes.World.Generation.Structures;
+using TwoSides.GameContent.Entity.NPC;
+using TwoSides.GameContent.GenerationResources.Structures;
+using TwoSides.GameContent.Tiles;
+using TwoSides.GUI;
+using TwoSides.Physics.Entity.NPC;
+using TwoSides.World.Generation.Structures;
+using TwoSides.GameContent.GenerationResources;
+using TwoSides.World.Generation;
 
-namespace TwoSIdes.GameContent.Dimensions
+namespace TwoSides.GameContent.Dimensions
 {
     public class NormalWorld : BaseDimension
     {
@@ -45,82 +45,82 @@ namespace TwoSIdes.GameContent.Dimensions
         {
             while ( true )
             {
-                double num = Program.Game.Rand.Next(7 , 15);
-                int num2 = 1;
+                double scaleHoles = Program.Game.Rand.Next(7 , 15);
+                int offsetHolesX = 1;
                 if ( Program.Game.Rand.Next(2) == 0 )
                 {
-                    num2 = -1;
+                    offsetHolesX = -1;
                 }
-                Vector2 value;
-                value.X = i;
-                value.Y = j;
-                int k = Program.Game.Rand.Next(20 , 40);
-                Vector2 value2;
-                value2.Y = Program.Game.Rand.Next(10 , 20) * 0.01f;
-                value2.X = num2;
-                while ( k > 0 )
+                Vector2 posHoles;
+                posHoles.X = i;
+                posHoles.Y = j;
+                int lenghtHoles = Program.Game.Rand.Next(20 , 40);
+                Vector2 offsetHoles;
+                offsetHoles.Y = Program.Game.Rand.Next(10 , 20) * 0.01f;
+                offsetHoles.X = offsetHolesX;
+                while ( lenghtHoles > 0 )
                 {
-                    k--;
-                    int num3 = (int) (value.X - num * 0.5);
-                    int num4 = (int) (value.X + num * 0.5);
-                    int num5 = (int) (value.Y - num * 0.5);
-                    int num6 = (int) (value.Y + num * 0.5);
-                    if ( num3 < 0 )
+                    lenghtHoles--;
+                    int tileLeft = (int) (posHoles.X - scaleHoles * 0.5);
+                    int tileRight = (int) (posHoles.X + scaleHoles * 0.5);
+                    int tileTop = (int) (posHoles.Y - scaleHoles * 0.5);
+                    int tileBottom = (int) (posHoles.Y + scaleHoles * 0.5);
+                    if ( tileLeft < 0 )
                     {
-                        num3 = 0;
+                        tileLeft = 0;
                     }
-                    if ( num4 >= SizeGeneratior.WorldWidth - 1 )
+                    if ( tileRight >= SizeGeneratior.WorldWidth - 1 )
                     {
-                        num4 = SizeGeneratior.WorldWidth - 1;
+                        tileRight = SizeGeneratior.WorldWidth - 1;
                     }
-                    if ( num5 < 0 )
+                    if ( tileTop < 0 )
                     {
-                        num5 = 0;
+                        tileTop = 0;
                     }
-                    if ( num6 >= SizeGeneratior.WorldHeight - 1 )
+                    if ( tileBottom >= SizeGeneratior.WorldHeight - 1 )
                     {
-                        num6 = SizeGeneratior.WorldHeight - 1;
+                        tileBottom = SizeGeneratior.WorldHeight - 1;
                     }
-                    double num7 = num * Program.Game.Rand.Next(80 , 120) * 0.01;
-                    for ( int l = num3 ; l < num4 ; l++ )
+                    double radius = scaleHoles * Program.Game.Rand.Next(80 , 120) * 0.01;
+                    for ( int l = tileLeft ; l < tileRight ; l++ )
                     {
-                        for ( int m = num5 ; m < num6 ; m++ )
+                        for ( int m = tileTop ; m < tileBottom ; m++ )
                         {
-                            float num8 = Math.Abs(l - value.X);
-                            float num9 = Math.Abs(m - value.Y);
-                            double num10 = Math.Sqrt(num8 * num8 + num9 * num9);
-                            if ( num10 < num7 * 0.4 )
+                            float lenghtX = Math.Abs(l - posHoles.X);
+                            float lenghtY = Math.Abs(m - posHoles.Y);
+                            double lenghtSqrt = Math.Sqrt(lenghtX * lenghtX + lenghtY * lenghtY);
+                            if ( lenghtSqrt < radius * 0.4 )
                             {
                                 Reset(l , m);
                             }
                         }
                     }
 
-                    value += value2;
-                    value2.X += Program.Game.Rand.Next(-10 , 11) * 0.05f;
-                    value2.Y += Program.Game.Rand.Next(-10 , 11) * 0.05f;
-                    if ( value2.X > num2 + 0.5f )
+                    posHoles += offsetHoles;
+                    offsetHoles.X += Program.Game.Rand.Next(-10 , 11) * 0.05f;
+                    offsetHoles.Y += Program.Game.Rand.Next(-10 , 11) * 0.05f;
+                    if ( offsetHoles.X > offsetHolesX + 0.5f )
                     {
-                        value2.X = num2 + 0.5f;
+                        offsetHoles.X = offsetHolesX + 0.5f;
                     }
-                    if ( value2.X < num2 - 0.5f )
+                    if ( offsetHoles.X < offsetHolesX - 0.5f )
                     {
-                        value2.X = num2 - 0.5f;
+                        offsetHoles.X = offsetHolesX - 0.5f;
                     }
-                    if ( value2.Y > 2f )
+                    if ( offsetHoles.Y > 2f )
                     {
-                        value2.Y = 2f;
+                        offsetHoles.Y = 2f;
                     }
-                    if ( value2.Y < 0f )
+                    if ( offsetHoles.Y < 0f )
                     {
-                        value2.Y = 0f;
+                        offsetHoles.Y = 0f;
                     }
                 }
 
-                if ( steps > 0 && ((int) value.X < 0 || (int) value.X >= SizeGeneratior.WorldWidth || (double) (int) value.Y >= MapHeight[(int) value.X]) && (double) (int) value.Y > SizeGeneratior.RockLayer )
+                if ( steps > 0 && ((int) posHoles.X < 0 || (int) posHoles.X >= SizeGeneratior.WorldWidth || (double) (int) posHoles.Y >= MapHeight[(int) posHoles.X]) && (double) (int) posHoles.Y > SizeGeneratior.RockLayer )
                 {
-                    i = (int) value.X;
-                    j = (int) value.Y;
+                    i = (int) posHoles.X;
+                    j = (int) posHoles.Y;
                     steps = steps - 1;
                     continue;
                 }
@@ -180,78 +180,78 @@ namespace TwoSIdes.GameContent.Dimensions
         }
         public void CaveOpenater(int i, int j)
         {
-            double num = Program.Game.Rand.Next(7, 12);
+            double scaleHoles = Program.Game.Rand.Next(7, 12);
             int num2 = 1;
             if (Program.Game.Rand.Next(2) == 0)
             {
                 num2 = -1;
             }
-            Vector2 value;
-            value.X = i;
-            value.Y = j;
+            Vector2 posCaves;
+            posCaves.X = i;
+            posCaves.Y = j;
             int k = 100;
-            Vector2 value2;
-            value2.Y = 0f;
-            value2.X = num2;
+            Vector2 directionCaves;
+            directionCaves.Y = 0f;
+            directionCaves.X = num2;
             while (k > 0)
             {
-                if ((int)value2.Y < SizeGeneratior.RockLayer)
+                if ((int)directionCaves.Y < SizeGeneratior.RockLayer)
                 {
                     k = 0;
                 }
                 k--;
-                int num3 = (int)(value.X - num * 0.5);
-                int num4 = (int)(value.X + num * 0.5);
-                int num5 = (int)(value.Y - num * 0.5);
-                int num6 = (int)(value.Y + num * 0.5);
-                if (num3 < 0)
+                int tileLeft = (int)(posCaves.X - scaleHoles * 0.5);
+                int tileRight = (int)(posCaves.X + scaleHoles * 0.5);
+                int tileTop = (int)(posCaves.Y - scaleHoles * 0.5);
+                int tileBottom = (int)(posCaves.Y + scaleHoles * 0.5);
+                if (tileLeft < 0)
                 {
-                    num3 = 0;
+                    tileLeft = 0;
                 }
-                if (num4 >= SizeGeneratior.WorldWidth)
+                if (tileRight >= SizeGeneratior.WorldWidth)
                 {
-                    num4 = SizeGeneratior.WorldWidth - 1;
+                    tileRight = SizeGeneratior.WorldWidth - 1;
                 }
-                if (num5 < 0)
+                if (tileTop < 0)
                 {
-                    num5 = 0;
+                    tileTop = 0;
                 }
-                if (num6 >= SizeGeneratior.WorldHeight)
+                if (tileBottom >= SizeGeneratior.WorldHeight)
                 {
-                    num6 = SizeGeneratior.WorldHeight - 1;
+                    tileBottom = SizeGeneratior.WorldHeight - 1;
                 }
-                double num7 = num * Program.Game.Rand.Next(80, 120) * 0.01;
-                for (int l = num3; l < num4; l++)
+                double radius = scaleHoles * Program.Game.Rand.Next(80, 120) * 0.01;
+                for (int l = tileLeft; l < tileRight; l++)
                 {
-                    for (int m = num5; m < num6; m++)
+                    for (int m = tileTop; m < tileBottom; m++)
                     {
-                        float num8 = Math.Abs(l - value.X);
-                        float num9 = Math.Abs(m - value.Y);
-                        double num10 = Math.Sqrt(num8 * num8 + num9 * num9);
-                        if (num10 < num7 * 0.4)
+                        float lenX = Math.Abs(l - posCaves.X);
+                        float lenY = Math.Abs(m - posCaves.Y);
+                        double lenSqrt = Math.Sqrt(lenX * lenX + lenY * lenY);
+                        if (lenSqrt < radius * 0.4)
                         {
                             Reset(l, m);
                         }
                     }
                 }
-                value += value2;
-                value2.X += Rand.Next(-10, 11) * 0.05f;
-                value2.Y += Rand.Next(-10, 11) * 0.05f;
-                if (value2.X > num2 + 0.5f)
+                posCaves += directionCaves;
+                directionCaves.X += Rand.Next(-10, 11) * 0.05f;
+                directionCaves.Y += Rand.Next(-10, 11) * 0.05f;
+                if (directionCaves.X > num2 + 0.5f)
                 {
-                    value2.X = num2 + 0.5f;
+                    directionCaves.X = num2 + 0.5f;
                 }
-                if (value2.X < num2 - 0.5f)
+                if (directionCaves.X < num2 - 0.5f)
                 {
-                    value2.X = num2 - 0.5f;
+                    directionCaves.X = num2 - 0.5f;
                 }
-                if (value2.Y > 0f)
+                if (directionCaves.Y > 0f)
                 {
-                    value2.Y = 0f;
+                    directionCaves.Y = 0f;
                 }
-                if (value2.Y < -0.5)
+                if (directionCaves.Y < -0.5)
                 {
-                    value2.Y = -0.5f;
+                    directionCaves.Y = -0.5f;
                 }
             }
         }

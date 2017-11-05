@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using TwoSides.Utils;
+using TwoSides.GUI;
 
 namespace TwoSides.GUI
 {

@@ -1,4 +1,4 @@
-﻿namespace TwoSIdes.Physics
+﻿namespace TwoSides.Physics
 {
     public class Water
     {

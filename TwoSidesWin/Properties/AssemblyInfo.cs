@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Two SIdes")]
-[assembly: AssemblyProduct("TwoSIdes")]
+[assembly: AssemblyProduct("TwoSides")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("Conveyor Ideas")]
 [assembly: AssemblyCopyright("Copyright Conveyor Ideas©  2017")]

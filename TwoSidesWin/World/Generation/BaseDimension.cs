@@ -6,16 +6,16 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using TwoSIdes.GameContent.Entity.NPC;
-using TwoSIdes.GameContent.GenerationResources;
-using TwoSIdes.GameContent.Tiles;
-using TwoSIdes.GUI;
-using TwoSIdes.Physics;
-using TwoSIdes.World.Generation.Structures;
+using TwoSides.GameContent.Entity.NPC;
+using TwoSides.GameContent.GenerationResources;
+using TwoSides.GameContent.Tiles;
+using TwoSides.GUI;
+using TwoSides.Physics;
+using TwoSides.World.Generation.Structures;
 
 using Console = System.Console;
 
-namespace TwoSIdes.World.Generation
+namespace TwoSides.World.Generation
 {
     [Serializable]
     public class BaseDimension
@@ -283,7 +283,7 @@ namespace TwoSIdes.World.Generation
             MapHeight[x] = 0;
             for (int i = 0; i < SizeGeneratior.WorldHeight; i++)
             {
-                if ( !MapTile[x , i].IsSolId() ) continue;
+                if ( !MapTile[x , i].IsSolid() ) continue;
 
                 MapHeight[x] = i; break;
             }

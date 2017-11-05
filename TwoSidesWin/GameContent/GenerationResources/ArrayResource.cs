@@ -2,9 +2,9 @@
 
 using Microsoft.Xna.Framework;
 
-using TwoSIdes.World.Generation;
+using TwoSides.World.Generation;
 
-namespace TwoSIdes.GameContent.GenerationResources
+namespace TwoSides.GameContent.GenerationResources
 {
     public static class ArrayResource
     {

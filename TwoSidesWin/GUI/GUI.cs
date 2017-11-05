@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework.Graphics;
 
+using TwoSides.GUI;
+
 namespace TwoSides.GUI
 {
     public sealed class XnaLayout

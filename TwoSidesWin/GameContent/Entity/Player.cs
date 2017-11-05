@@ -8,18 +8,18 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-using TwoSIdes.GameContent.Dimensions;
-using TwoSIdes.GameContent.Entity.NPC;
-using TwoSIdes.GameContent.GenerationResources;
-using TwoSIdes.GUI;
-using TwoSIdes.Physics;
-using TwoSIdes.Physics.Entity;
-using TwoSIdes.Physics.Entity.NPC;
-using TwoSIdes.Utils;
-using TwoSIdes.World;
-using TwoSIdes.World.Tile;
+using TwoSides.GameContent.Dimensions;
+using TwoSides.GameContent.Entity.NPC;
+using TwoSides.GameContent.GenerationResources;
+using TwoSides.GUI;
+using TwoSides.Physics;
+using TwoSides.Physics.Entity;
+using TwoSides.Physics.Entity.NPC;
+using TwoSides.Utils;
+using TwoSides.World;
+using TwoSides.World.Tile;
 
-namespace TwoSIdes.GameContent.Entity
+namespace TwoSides.GameContent.Entity
 {
     [Serializable]
     public sealed class Achivement{
@@ -302,7 +302,7 @@ namespace TwoSIdes.GameContent.Entity
             for (int i = 0; i < Recipe.Recipes[id].GetSize(); i++)
             {
 
-                int slotIds = GetSlotItem(Recipe.Recipes[id].GetIngrIdent(i), Recipe.Recipes[id].Hp, Recipe.Recipes[id].GetSize(i));
+                int slotIds = GetSlotItem(Recipe.Recipes[id].GetIngrident(i), Recipe.Recipes[id].Hp, Recipe.Recipes[id].GetSize(i));
                 if (slotIds == -1) continue;
 
                 Slot[slotIds].Ammount -= Recipe.Recipes[id].GetSize(i);
@@ -314,12 +314,12 @@ namespace TwoSIdes.GameContent.Entity
             }
         }
 
-        public bool GetValIdRecipes(int id)
+        public bool GetValidRecipes(int id)
         {
             bool t = false;
             for (int i = 0; i < Recipe.Recipes[id].GetSize(); i++)
             {
-                int slotIds = GetSlotItem(Recipe.Recipes[id].GetIngrIdent(i),
+                int slotIds = GetSlotItem(Recipe.Recipes[id].GetIngrident(i),
                                           Recipe.Recipes[id].Hp,
                                           Recipe.Recipes[id].GetSize(i));
 
@@ -1648,7 +1648,7 @@ namespace TwoSIdes.GameContent.Entity
             int a = 0;
             for (int i = 0; i < Recipe.Recipes.Count && a<=9; i++)
             {
-                if ( !GetValIdRecipes(i) ) continue;
+                if ( !GetValidRecipes(i) ) continue;
 
                 if (Tools.MouseInCube(a * 32, 35 + 32 * -1, 32, 32))
                 {
