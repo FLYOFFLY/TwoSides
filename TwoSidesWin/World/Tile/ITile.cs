@@ -1,231 +1,188 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using TwoSides.GameContent.GenerationResources;
-using TwoSides.GameContent;
-using TwoSides.GameContent.Tiles;
-using Microsoft.Xna.Framework.Graphics;
-using TwoSides.World.Generation;
-using TwoSides.Physics.Entity;
 using System.IO;
-using TwoSides.ModLoader;
+
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
+using TwoSIdes.GameContent.GenerationResources;
+using TwoSIdes.GameContent.Tiles;
+using TwoSIdes.Physics.Entity;
+using TwoSIdes.Utils;
+using TwoSIdes.World.Generation;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
-namespace TwoSides.World.Tile
+namespace TwoSIdes.World.Tile
 {
     [Serializable]
-    sealed public class ITile
+    public sealed class Tile
     {
         public const int TileMaxSize = 16;
-        public byte waterType = 0;
-        public bool active = false;
-        public bool infected = false;
-        public int light = 0;
-        public int blockheight = 1;
-        public float HP { get; set; }
-        public short idtexture;
-        public short wallid;
-        public short posterid;
-        public byte subTexture;
-        static BaseTile[] tileListCurrent;
-        
-        BaseDimension dimension;
+        public byte WaterType;
+        public bool Active;
+        public short Light;
+        public short Blockheight;
+        public float Hp { get; set; }
+        public short IdTexture;
+        public short IdWall;
+        public short IdPoster;
+        public byte IdSubTexture;
+        static BaseTile[] _tileListCurrent;
+
+        readonly BaseDimension _dimension;
 
 
-        public enum Side
+        public enum SIde
         {
-            left = 0,
-            center = 1,
-            right = 2,
-            one = 3
+            LEFT = 0,
+            CENTER = 1,
+            RIGHT = 2,
+            ONE = 3
         }
 
-        public static Random rand = new Random();
-        public static void setTileList(BaseTile[] tileList, int TileLimit)
+        /// <exception cref="OverflowException">The array is multIdimensional and contains more than <see cref="F:System.Int32.MaxValue" /> elements.</exception>
+        public static void SetTileList(BaseTile[] tileList)
         {
-            tileListCurrent = tileList;
-            TileMax = TileLimit;
-        }
-        public static int TileMax;
-        public byte frame;
-        public ITile(BaseDimension dimension)
-        {
-            this.dimension = dimension;
-            wallid = -1;
-            posterid = -1;
-            blockheight = 1;
-            waterType = 0;
-            frame = 0;
-            subTexture = 0;
-        }
-        public int getSoildType()
-        {
-            if (idtexture < TileMax)
-                return tileListCurrent[idtexture].getSoildType();
-            return 1;
-        }
-        public bool issolid()
-        {
-            bool s = false;
-
-            if (idtexture >= TileMax) s = ((BlockMod)ModLoader.ModLoader.BlocksMods[ModLoader.ModLoader.getIndexBlocks(idtexture)]).issolid();
-            else s = tileListCurrent[idtexture].issolid();
-            return active && s;
+            _tileListCurrent = tileList;
+            _tileMax = tileList.Length;
         }
 
-        public void damageslot(float dmg)
+        static int _tileMax;
+        public byte Frame;
+        public ITileDatecs TileDate;
+        public Tile(BaseDimension dimension)
         {
-            HP -= dmg / blockheight;
+            _dimension = dimension;
+            IdWall = -1;
+            IdPoster = -1;
+            Blockheight = 1;
+            WaterType = 0;
+            Frame = 0;
+            IdSubTexture = 0;
+        }
+        public int GetSoildType() => IdTexture < _tileMax ? _tileListCurrent[IdTexture].GetSoildType() : 1;
+        public bool IsSolId() => Active && _tileListCurrent[IdTexture].IsSolId();
+
+        public void DamageSlot(float dmg,Vector2 position)
+        {
+            Hp -= dmg / Blockheight;
+            _dimension.Dusts.Add(new Dust(position,_dimension.Rand));
         }
 
-        public void updateHP()
+        public void UpdateHp() => Hp = GetBlockHp();
+
+        public void UpdateTime()
         {
-            HP = getBlockHP();
-        }
-        public void updateTime()
-        {
-            timeCount++;
-            if (getAnimframe() >= 2)
-            {
-                if (timeCount >= getTickFrame())
-                {
-                    if (getAnimframe() > frame + 1) frame++;
-                    else frame = 0;
-                    timeCount = 0;
-                }
-            }
+            TimeCount++;
+            if ( GetAnimframe() < 2 ) return;
+
+            if ( TimeCount < GetTickFrame() ) return;
+
+            if (GetAnimframe() > Frame + 1) Frame++;
+            else Frame = 0;
+            TimeCount = 0;
         }
         public void Update(int x, int y, Camera camera)
         {
-            updateTime();
-            if (idtexture <TileTwoSides.TileMax)
-                tileListCurrent[idtexture].Update(x,y,dimension,camera.inView(new Point(x * TileMaxSize, y * TileMaxSize)));
+            UpdateTime();
+            if (IdTexture <TileTwoSIdes.TileMax)
+                _tileListCurrent[IdTexture].Update(x,y,_dimension,camera.InView(new Point(x * TileMaxSize, y * TileMaxSize)));
         }
-        public float getBlockHP()
+        public float GetBlockHp() => _tileListCurrent[IdTexture].MaxHp;
+
+        short GetLightBlock(int x, int y, bool wall)
         {
-            if (idtexture >= TileTwoSides.TileMax)
-                return ((BlockMod)ModLoader.ModLoader.BlocksMods[ModLoader.ModLoader.getIndexBlocks(idtexture)]).HP;
-            return tileListCurrent[idtexture].maxHP;
+            if ( x <= 0 || x >= SizeGeneratior.WorldWidth || y <= 0 || y >= SizeGeneratior.WorldHeight ) return 0;
+
+            if ( _dimension.MapTile[x , y].IsSolId() && _dimension.MapTile[x , y].HasShadow() )
+                return (short) (_dimension.MapTile[x , y].Light - 10);
+
+            if (!wall) return (short)(_dimension.MapTile[x, y].Light - 1);
+
+            return (short)(_dimension.MapTile[x, y].Light - 3);
         }
 
-        int getlb(int x, int y, bool wall)
+        public void SetLight(int x, int y, short britghtess,int maxbritghtess)
         {
-            if (x > 0 && x < SizeGeneratior.WorldWidth && y > 0 && y < SizeGeneratior.WorldHeight)
+            if (y < _dimension.MapHeight[x] && y < maxbritghtess)
             {
-                if (!dimension.map[x, y].issolid() || !dimension.map[x, y].hasShadow())
-                {
-                    if (!wall) return dimension.map[x, y].light - 1;
-                    else return dimension.map[x, y].light - 3;
-                }
-                else return dimension.map[x, y].light - 10;
-            }
-
-            return 0;
-        }
-
-        public void lightu(int x, int y, int britghtess,int maxbritghtess)
-        {
-            if (y < dimension.mapHeight[x] && y < maxbritghtess)
-            {
-                light = britghtess;
+                Light = britghtess;
             }
         }
-        public Rectangle getBoxRect(int x, int y)
+        public void UpdateTileDate()
         {
+            if ( IdTexture >= _tileMax ) return;
 
-            if (idtexture < TileMax)
-                return tileListCurrent[idtexture].getBoxRect(x, y, this);
-            else return new Rectangle(0, 0, 16, 16);
+            TileDate = _tileListCurrent[IdTexture].ChangeTile();
+            TileDate?.Init();
         }
-        bool issolid(int x, int y)
+        public Rectangle GetBoxRect(int x, int y) => IdTexture < _tileMax ? _tileListCurrent[IdTexture].GetBoxRect(x, y, this) : new Rectangle(0, 0, 16, 16);
+        bool IsSolId(int x, int y) => _dimension.MapTile[x, y].IsSolId();
+
+        public  bool IsLightBlock() => _tileListCurrent[IdTexture].IsLightBlock();
+
+        public void UpdateLight(int x, int y)
         {
-            return dimension.map[x, y].issolid();
-        }
-        public  bool isLightBlock()
-        {
-            if (idtexture >= TileMax) return ((BlockMod)ModLoader.ModLoader.BlocksMods[ModLoader.ModLoader.getIndexBlocks(idtexture)]).isLightBlock();
-            else return tileListCurrent[idtexture].isLightBlock();
-        }
-        public void lightupdate(int x, int y)
-        {
-            if (isLightBlock()) light = 30;
-            light = Math.Max(light, getlb(x + 1, y, issolid(x, y) && dimension.map[x,y].hasShadow()));
-            light = Math.Max(light, getlb(x - 1, y, issolid(x, y) && dimension.map[x, y].hasShadow()));
-            light = Math.Max(light, getlb(x, y + 1, issolid(x, y) && dimension.map[x, y].hasShadow()));
-            light = Math.Max(light, getlb(x, y - 1, issolid(x, y) && dimension.map[x, y].hasShadow()));
-            //  light = Math.Min(52, getlb(x + 1, y)+ getlb(x - 1, y)+ getlb(x, y+1)+ getlb(x, y-1));
+            if (IsLightBlock()) Light = 30;
+            Light = Math.Max(Light, GetLightBlock(x + 1, y, IsSolId(x, y) && _dimension.MapTile[x,y].HasShadow()));
+            Light = Math.Max(Light, GetLightBlock(x - 1, y, IsSolId(x, y) && _dimension.MapTile[x, y].HasShadow()));
+            Light = Math.Max(Light, GetLightBlock(x, y + 1, IsSolId(x, y) && _dimension.MapTile[x, y].HasShadow()));
+            Light = Math.Max(Light, GetLightBlock(x, y - 1, IsSolId(x, y) && _dimension.MapTile[x, y].HasShadow()));
+            //  light = Math.Min(52, GetLightBlock(x + 1, y)+ GetLightBlock(x - 1, y)+ GetLightBlock(x, y+1)+ GetLightBlock(x, y-1));
         }
 
 
-        public ITile[] getSideBlock(int x, int y)
+        public Tile[] GetSIdeBlock(int x, int y)
         {
-            ITile[] tileSide = new ITile[8];
+            Tile[] tileSIde = new Tile[8];
             
-            if(x> 0 && y> 0)tileSide[0] = dimension.map[x-1,y-1];
-            if (y > 0) tileSide[1] = dimension.map[x, y - 1];
-            if (x < SizeGeneratior.WorldWidth - 1 && y > 0) tileSide[2] = dimension.map[x + 1, y - 1];
-            if (x > 0) tileSide[3] = dimension.map[x - 1, y];
-            if (x < SizeGeneratior.WorldWidth - 1 && y > 0) tileSide[4] = dimension.map[x + 1, y];
-            if (x > 0 && y < SizeGeneratior.WorldHeight - 1) tileSide[5] = dimension.map[x - 1, y + 1];
-            if (y > 0) tileSide[6] = dimension.map[x, y + 1];
-            if (x < SizeGeneratior.WorldWidth - 1 && y < SizeGeneratior.WorldHeight - 1) tileSide[7] = dimension.map[x + 1, y + 1];
-            return tileSide;
+            if(x> 0 && y> 0)tileSIde[0] = _dimension.MapTile[x-1,y-1];
+            if (y > 0) tileSIde[1] = _dimension.MapTile[x, y - 1];
+            if (x < SizeGeneratior.WorldWidth - 1 && y > 0) tileSIde[2] = _dimension.MapTile[x + 1, y - 1];
+            if (x > 0) tileSIde[3] = _dimension.MapTile[x - 1, y];
+            if (x < SizeGeneratior.WorldWidth - 1 && y > 0) tileSIde[4] = _dimension.MapTile[x + 1, y];
+            if (x > 0 && y < SizeGeneratior.WorldHeight - 1) tileSIde[5] = _dimension.MapTile[x - 1, y + 1];
+            if (y > 0) tileSIde[6] = _dimension.MapTile[x, y + 1];
+            if (x < SizeGeneratior.WorldWidth - 1 && y < SizeGeneratior.WorldHeight - 1) tileSIde[7] = _dimension.MapTile[x + 1, y + 1];
+            return tileSIde;
         }
-        public Side getside(int i, int j)
+        public bool GetActive(int x,int y)
         {
-            if (idtexture >= TileMax) return Side.center;
-            ITile[] tileSide = getSideBlock(i,j);
-            if (i - 1 > 0 && i + 1 > SizeGeneratior.WorldWidth - 1)
-            {
-                if (tileSide[3].idtexture == idtexture && tileSide[3].active && dimension.mapHeight[i - 1] == j) return Side.right;
-                else return Side.one;
-            }
-            else if (i - 1 < 0 && i + 1 < SizeGeneratior.WorldWidth - 1)
-            {
-                if (tileSide[4].idtexture == idtexture && tileSide[4].active && dimension.mapHeight[i + 1] == j) return Side.left;
-                else return Side.one;
-            }
-            else
-            {
-                if (dimension.map[i + 1, j].idtexture == idtexture && dimension.map[i + 1, j].active && dimension.mapHeight[i + 1] == j &&
-                    dimension.map[i - 1, j].idtexture == idtexture && dimension.map[i - 1, j].active && dimension.mapHeight[i - 1] == j) return Side.center;
-                else if (dimension.map[i + 1, j].idtexture == idtexture && dimension.map[i + 1, j].active && dimension.mapHeight[i + 1] == j || (
-                    dimension.map[i - 1, j].idtexture == idtexture && dimension.map[i - 1, j].active && dimension.mapHeight[i - 1] == j))
-                {
-                    if (dimension.map[i + 1, j].idtexture == idtexture && dimension.map[i + 1, j].active && dimension.mapHeight[i + 1] == j) return Side.left;
-                    else return Side.right;
-                }
-                else return Side.one;
-            }
+            if (x < 0 || x >= SizeGeneratior.WorldWidth) return false;
+            if (y < 0 || y >= SizeGeneratior.WorldHeight) return false;
+            return _dimension.MapTile[x,y].Active;
+        }
+        public SIde GetSIde(int i, int j)
+        {
+            if (IdTexture >= _tileMax) return SIde.CENTER;
+            Tile[] tileSIde = GetSIdeBlock(i,j);
+            if (GetActive(i+1,j) && _dimension.MapTile[i + 1, j].IdTexture == IdTexture && _dimension.MapHeight[i + 1] == j &&
+                GetActive(i-1,j) && _dimension.MapTile[i - 1, j].IdTexture == IdTexture && _dimension.MapHeight[i - 1] == j) return SIde.CENTER;
+
+            if (i-1>0 &&  tileSIde[3].IdTexture == IdTexture && tileSIde[3].Active && _dimension.MapHeight[i - 1] == j) return SIde.RIGHT;
+
+            if (i+1<SizeGeneratior.WorldWidth && tileSIde[4].IdTexture == IdTexture && tileSIde[4].Active && _dimension.MapHeight[i + 1] == j) return SIde.LEFT;
+
+            return SIde.ONE;
         }
 
-        public int getAnimframe()
-        {
-            if (idtexture < TileMax)
-                return tileListCurrent[idtexture].getAnimFrame();
-            else return 1;
-        }
+        public int GetAnimframe() => _tileListCurrent[IdTexture].GetAnimFrame();
 
-        public int getIDSideTexture()
+        public int GetIdSIdeTexture()
         {
-            if (idtexture < TileMax)
-            return tileListCurrent[idtexture].getIDSideTexture();
+            if (IdTexture < _tileMax)
+            return _tileListCurrent[IdTexture].GetIdSIdeTexture();
             return -1;
         }
 
-        public bool hasSpecialTexture()
-        {
-            return getIDSideTexture()>=0;
-        }
-        public bool hasShadow()
-        {
-            if (idtexture < TileMax)
-                return tileListCurrent[idtexture].hasShadow();
-            else
-                return true;
-        }
-        public void read(BinaryReader reader)
+        public bool HasSpecialTexture() => GetIdSIdeTexture()>=0;
+
+        public bool HasShadow() => _tileListCurrent[IdTexture].HasShadow();
+
+        /// <exception cref="EndOfStreamException">The end of the stream is reached. </exception>
+        /// <exception cref="IOException">An I/O error occurs. </exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed. </exception>
+        public void Read(BinaryReader reader,int version)
         {
             /*
                 public bool active = false;
@@ -233,161 +190,138 @@ namespace TwoSides.World.Tile
                 public int light = 0;
                 public int blockheight = 1;
                 public float HP { get; set; }
-                public short idtexture;
-                public short wallid;
-                public short posterid; 
+                public short Idtexture;
+                public short IdWall;
+                public short IdPoster; 
              */
-            active = reader.ReadBoolean();
-            infected = reader.ReadBoolean();
-            light = reader.ReadInt32();
-            blockheight = reader.ReadInt32();
-            HP = (float)reader.ReadDouble();
-            idtexture = reader.ReadInt16();
-            wallid = reader.ReadInt16();
-            posterid = reader.ReadInt16();
+            Active = reader.ReadBoolean();
+            if (version <= new NamingVersion(0, 0, 0, 0, 2, 0).GetCode())
+            {
+                reader.ReadBoolean();
+                Light = (short)reader.ReadInt32();
+                Blockheight = (short)reader.ReadInt32();
+            }
+            else
+            {
+                Light = reader.ReadInt16();
+                Blockheight = reader.ReadInt16();
+            }
+            Hp = (float)reader.ReadDouble();
+            IdTexture = reader.ReadInt16();
+            IdSubTexture = reader.ReadByte();
+            //TODO
+            if (Active && IdTexture >= 0 && IdTexture < _tileMax)
+            {
+                TileDate = _tileListCurrent[IdTexture].ChangeTile();
+            }
+            IdWall = reader.ReadInt16();
+            IdPoster = reader.ReadInt16();
         }
 
-        public void save(BinaryWriter writer)
+        /// <exception cref="IOException">An I/O error occurs. </exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed. </exception>
+        public void Save(BinaryWriter writer)
         {
-            writer.Write(active);
-            writer.Write(infected);
-            writer.Write(light);
-            writer.Write(blockheight);
-            writer.Write((Double)HP);
-            writer.Write(idtexture);
-            writer.Write(wallid);
-            writer.Write(posterid);
+            writer.Write(Active);
+            writer.Write(Light);
+            writer.Write(Blockheight);
+            writer.Write((double)Hp);
+            writer.Write(IdTexture);
+            writer.Write(IdSubTexture);
+            //TODO
+            writer.Write(IdWall);
+            writer.Write(IdPoster);
         }
-        public byte timeCount = 0;
-        private bool swapWater(int i,int j,int i1,int j1){
+        public byte TimeCount;
+
+        bool SwapWater(int i,int j,int i1,int j1){
             if (i1 < 0 || i1>=SizeGeneratior.WorldWidth) return false;
             if (j1 < 0 || j1 >= SizeGeneratior.WorldHeight) return false;
-            if (dimension.map[i1, j1].issolid()) return false;
-            if(dimension.map[i1, j1].waterType > 0) return false;
-            dimension.map[i1, j1].waterType = 1;
+            if (_dimension.MapTile[i1, j1].IsSolId()) return false;
+            if(_dimension.MapTile[i1, j1].WaterType > 0) return false;
+            _dimension.MapTile[i1, j1].WaterType = 1;
             //dimension.map[i1, j1].patern = new Point(i,j);
-            System.Console.WriteLine("OLD x:" + i + " OLD Y:" + j);
-            System.Console.WriteLine("new x:" + i1 + " new Y:" + j1);
+            Console.WriteLine($"OLD x:{i} OLD Y:{j}");
+            Console.WriteLine($"new x:{i1} new Y:{j1}");
             return true;
         }
         public void  Render(int i,int j,Vector2 pos, SpriteBatch spriteBatch,Texture2D water)
         {
-            if (this.waterType <= 0) return;
-            if (issolid() )
+            if (WaterType <= 0) return;
+            if (IsSolId() )
             {
-                waterType = 0;
+                WaterType = 0;
                 return;
             }
-            if (swapWater(i, j, i, j + 1))
+            if (SwapWater(i, j, i, j + 1))
             {
-                dimension.map[i, j + 1].blockheight = 1;
+                _dimension.MapTile[i, j + 1].Blockheight = 1;
             }
-            if(this.blockheight<=7) addWater(i, j);
+            if(Blockheight<=7) AddWater(i, j);
             spriteBatch.Draw(water, new Rectangle((int)pos.X, (int)pos.Y, 16,16), new Rectangle(0, 0, 16, 16), Color.Blue);
         }
 
-        private void addWater(int i, int j)
+        void AddWater(int i, int j)
         {
-            if (dimension.map[i, j+1].issolid())
+            if ( !_dimension.MapTile[i , j + 1].IsSolId() ) return;
+
+            if (SwapWater(i, j, i + 1, j))
             {
-                if (swapWater(i, j, i + 1, j))
-                {
-                    dimension.map[i + 1, j].blockheight = blockheight+1;
-                }
-                else if (swapWater(i, j, i - 1, j))
-                {
-                    dimension.map[i - 1, j].blockheight = blockheight+1;
-                }
+                _dimension.MapTile[i + 1, j].Blockheight = (short)(Blockheight+1);
+            }
+            else if (SwapWater(i, j, i - 1, j))
+            {
+                _dimension.MapTile[i - 1, j].Blockheight = (short)(Blockheight+1);
             }
         }
-        int getTickFrame()
-        {
-            if (idtexture < TileMax)
-                return tileListCurrent[idtexture].getTickFrame();
-            else return 9999;
-        }
+        int GetTickFrame() => IdTexture < _tileMax ? _tileListCurrent[IdTexture].GetTickFrame() : 9999;
+
         public void Render(int i,int j, SpriteBatch spriteBatch, bool isGround, Texture2D[] textures, Texture2D[] addtexture, Vector2 pos, Color color)
         {
-            updateTime();
-            if (!hasSpecialTexture() || !isGround)
+            UpdateTime();
+            if (!HasSpecialTexture() || !isGround)
             {
-                if (idtexture < TileMax)
-                    spriteBatch.Draw(textures[idtexture], new Rectangle((int)pos.X, (int)pos.Y, 16, 16), new Rectangle(16 * (frame + tileListCurrent[idtexture].getFrame(i,j,dimension,frame)), 16 * subTexture, 16, 16), color);
-                else
-                {
-                    int idBlocks = ModLoader.ModLoader.getIndexBlocks(idtexture);
-                    spriteBatch.Draw(((BlockMod)ModLoader.ModLoader.BlocksMods[idBlocks]).texture, pos, color);
-                }
+                _tileListCurrent[IdTexture].Render(TileDate, spriteBatch, textures[IdTexture], _dimension, pos, i, j, Frame, IdSubTexture, color);
+
             }
-            else if (hasSpecialTexture())
+            else if (HasSpecialTexture())
             {
-                spriteBatch.Draw(addtexture[getIDSideTexture() + (int)getside(i, j)], new Rectangle((int)pos.X, (int)pos.Y, 16, 16), new Rectangle(16*frame, 0, 16, 16), color);
+                _tileListCurrent[IdTexture].Render(TileDate, spriteBatch, addtexture[GetIdSIdeTexture() + (int)GetSIde(i, j)], _dimension, pos, i, j, Frame, IdSubTexture, color);
             }
         }
 
-        public void update(int x, int y,CEntity entity)
+        public void Update(int x, int y,DynamicEntity entity)
         {
-            if (!active) return;
-            if (idtexture < TileMax)
-                tileListCurrent[idtexture].update(x, y,dimension,entity);
+            if (!Active) return;
+            if (IdTexture < _tileMax)
+                _tileListCurrent[IdTexture].Update(x, y,_dimension,entity);
         }
-        public bool isNeadTool(Item item)
-        {
-            if (idtexture < TileMax)
-                return tileListCurrent[idtexture].isNeadTool(item);
-            else return true;
-        }
+        public bool IsNeadTool(Item item) => _tileListCurrent[IdTexture].IsNeadTool(item);
 
-        public bool blockuse(int x,int y,CEntity entity)
-        {
-            if (idtexture < TileMax)
-                return tileListCurrent[idtexture].blockuse(x,y,dimension,entity);
-            else return false;
-        }
+        public bool Blockuse(int x,int y,DynamicEntity entity) => _tileListCurrent[IdTexture].UseBlock(x,y,_dimension,entity);
 
-        public List<Item> destory(int x,int y,CEntity entity)
+        public List<Item> Destory(int x,int y,DynamicEntity entity)
         {
-            List<Item> dropList;
-            if (idtexture < TileMax)
-            dropList =  tileListCurrent[idtexture].destory(x,y,dimension,entity);
-            else {
-                int id = ModLoader.ModLoader.getIndexBlocks(idtexture);
-                dropList = ((BlockMod)ModLoader.ModLoader.BlocksMods[id]).destory(id, entity);
-            }
-            dimension.Reset(x, y);
+            List<Item> dropList = new List<Item>();
+            if (IdTexture < _tileMax)
+            dropList =  _tileListCurrent[IdTexture].Destory(x,y,_dimension,entity);
+            _dimension.Reset(x, y);
 
-            if(dimension.map[x+1,y+1].active)dimension.map[x + 1, y + 1].update(x + 1, y + 1, entity);
-            if(dimension.map[x+1,y].active)dimension.map[x + 1, y].update(x + 1, y, entity);
-            if(dimension.map[x+1,y-1].active)dimension.map[x + 1, y - 1].update(x + 1, y - 1, entity);
-            if(dimension.map[x-1,y+1].active)dimension.map[x - 1, y + 1].update(x - 1, y + 1, entity);
-            if(dimension.map[x-1,y].active)dimension.map[x - 1, y].update(x - 1, y, entity);
-            if(dimension.map[x-1,y-1].active)dimension.map[x - 1, y - 1].update(x - 1, y - 1, entity);
-            if(dimension.map[x,y+1].active)dimension.map[x, y + 1].update(x, y + 1, entity);
-            if(dimension.map[x,y-1].active)dimension.map[x, y - 1].update(x, y - 1, entity);
+            if(_dimension.MapTile[x+1,y+1].Active)_dimension.MapTile[x + 1, y + 1].Update(x + 1, y + 1, entity);
+            if(_dimension.MapTile[x+1,y].Active)_dimension.MapTile[x + 1, y].Update(x + 1, y, entity);
+            if(_dimension.MapTile[x+1,y-1].Active)_dimension.MapTile[x + 1, y - 1].Update(x + 1, y - 1, entity);
+            if(_dimension.MapTile[x-1,y+1].Active)_dimension.MapTile[x - 1, y + 1].Update(x - 1, y + 1, entity);
+            if(_dimension.MapTile[x-1,y].Active)_dimension.MapTile[x - 1, y].Update(x - 1, y, entity);
+            if(_dimension.MapTile[x-1,y-1].Active)_dimension.MapTile[x - 1, y - 1].Update(x - 1, y - 1, entity);
+            if(_dimension.MapTile[x,y+1].Active)_dimension.MapTile[x, y + 1].Update(x, y + 1, entity);
+            if(_dimension.MapTile[x,y-1].Active)_dimension.MapTile[x, y - 1].Update(x, y - 1, entity);
 
             return dropList;
         }
 
-        public void send(Lidgren.Network.NetOutgoingMessage sendMsg)
-        {
-            sendMsg.Write(active);
-            sendMsg.Write(infected);
-            sendMsg.Write(light);
-            sendMsg.Write(blockheight);
-            sendMsg.Write((Double)HP);
-            sendMsg.Write(idtexture);
-            sendMsg.Write(wallid);
-            sendMsg.Write(posterid);
-        }
 
-        internal void read(Lidgren.Network.NetIncomingMessage msg)
-        {
-            throw new NotImplementedException();
-        }
+        public void InTile(DynamicEntity entity) => _tileListCurrent[IdTexture].InTile(entity);
 
-        public void InTile(CEntity entity)
-        {
-            tileListCurrent[idtexture].InTile(entity);
-        }
+        public bool AddedBlock(int id,int x,int y) => _tileListCurrent[id].BlockAdded(_dimension, x, y);
     }
 }   

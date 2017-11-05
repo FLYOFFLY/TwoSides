@@ -1,58 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
 
 namespace TwoSides
 {
     public class Camera
     {
-        Matrix translation;
-        Vector2 size;
-        public Matrix getViewTran(GraphicsDeviceManager graphics) {
-            return getViewTran(graphics,Zoom);
-        }
-        public Matrix getViewTran(GraphicsDeviceManager graphics,float scale)
+        Matrix _translation;
+        Vector2 _size;
+
+        public Matrix GetViewTran(GraphicsDeviceManager graphics) => GetViewTran(graphics,Zoom);
+
+        public Matrix GetViewTran(GraphicsDeviceManager graphics,float scale)
         {
-            size = new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
-            translation = Matrix.CreateTranslation(new Vector3(-pos.X, -pos.Y, 0)) * Matrix.CreateRotationZ(MathHelper.ToRadians(0)) * Matrix.CreateScale(scale, scale, 1) * Matrix.CreateTranslation(new Vector3(size, 0)); ;
-            size.X = size.X / Zoom;
-            size.Y = size.Y / Zoom;
-            return translation;
+            _size = new Vector2(graphics.PreferredBackBufferWidth / 2f,
+                graphics.PreferredBackBufferHeight / 2f);
+            _translation = Matrix.CreateTranslation(new Vector3(-Pos.X, -Pos.Y, 0)) *
+                Matrix.CreateRotationZ(MathHelper.ToRadians(90)) *
+                Matrix.CreateScale(scale, scale, 1) *
+                Matrix.CreateTranslation(new Vector3(_size, 0)); 
+            _size.X = _size.X / Zoom;
+            _size.Y = _size.Y / Zoom;
+            return _translation;
         }
-        public bool inView(Point target)
+        public bool InView(Point target) => new Rectangle(GetLeftUpper.ToPoint(),_size.ToPoint()).Contains(target);
+        public Matrix GetInverse() => Matrix.Invert(_translation);
+        public Vector2 GetLeftUpper
         {
-            Vector2 start = new Vector2(getLeftUpper.X,getLeftUpper.Y);
-            int width = (int)(getRightDown.X-getLeftUpper.X);
-            int height = (int)(getRightDown.Y-getLeftUpper.Y);
-            Rectangle screen = new Rectangle((int)start.X, (int)start.Y, width, height);
-            return screen.Contains(target);
-        }
-        public Matrix getInverse()
-        {
-            
-            return Matrix.Invert(translation);
-        }
-        public Vector2 getLeftUpper
-        {
-            get{return new Vector2(pos.X - size.X, pos.Y - size.Y);}
-            set { pos.X = value.X + size.X;  pos.Y = value.Y + size.Y; }
+            get => new Vector2(Pos.X - _size.X, Pos.Y - _size.Y);
+            set { Pos.X = value.X + _size.X;  Pos.Y = value.Y + _size.Y; }
            
         }
-        public Vector2 getRightDown
+        public Vector2 GetRightDown
         {
-            get{return new Vector2(pos.X + size.X, pos.Y + size.Y);}
-            set { pos.X = value.X - size.X; pos.Y = value.Y - size.Y; }
+            get => new Vector2(Pos.X + _size.X, Pos.Y + _size.Y);
+            set { Pos.X = value.X - _size.X; Pos.Y = value.Y - _size.Y; }
         }
-        public void lerpZoom(float newZoom, float t)
-        {
-            //System.out.println(a * (1 - t) + b * t);
-            Zoom = MathHelper.Lerp(Zoom, newZoom, t);
-        }
+        public void LerpZoom(float newZoom, float t) => Zoom = MathHelper.Lerp(Zoom, newZoom, t);
+
         public float Zoom = 1f;
 
-        public Vector2 pos = new Vector2(0,0);
+        public Vector2 Pos = new Vector2(0,0);
     }
 }

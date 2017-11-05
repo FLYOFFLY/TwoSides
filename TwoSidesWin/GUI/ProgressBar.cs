@@ -1,62 +1,59 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework.Graphics;
+
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace TwoSides.GUI
 {
     public class ProgressBar
-    {  
-        int heightPresss    ;
-        int rightBorder     ;
-        int LeftBorder      ;
-        float value         ;
-        float MaxValue      ;
-        int y;
-        string text;
+    {
+        readonly int _heightPresss    ;
+        readonly int _rightBorder     ;
+        readonly int _leftBorder      ;
+        float _value         ;
+        float _maxValue      ;
+        readonly int _y;
+        string _text;
         public void Reset()
         {
-            value = 0;
+            _value = 0;
         }
-        public Color color;
-        public ProgressBar(int Height, int y,int LeftBorder,int rightBorder, float MaxValue,string text,Color color){
-            this.heightPresss = Height;
-            this.y = y;
-            this.LeftBorder = LeftBorder;
-            this.rightBorder = rightBorder;
-            this.MaxValue = MaxValue;
-            this.value = 0;
-            this.text = text;
-            this.color = color;
+
+        readonly Color _color;
+        public ProgressBar(int height, int y,int leftBorder,int rightBorder, float maxValue,string text,Color color){
+            _heightPresss = height;
+            _y = y;
+            _leftBorder = leftBorder;
+            _rightBorder = rightBorder;
+            _maxValue = maxValue;
+            _value = 0;
+            _text = text;
+            _color = color;
         }
         public void Add(float value)
         {
-            this.value += value;
+            _value += value;
         }
-        public bool final()
+        public bool Final() => Math.Abs(_maxValue - _value) < float.Epsilon;
+
+        public void SetText(string text)
         {
-            return MaxValue == value;
+            _text = text;
         }
-        public void setText(string text)
+        public void SetMaxValue(int maxValue)
         {
-            this.text = text;
+            _maxValue = maxValue;
         }
-        public void setMaxValue(int maxValue)
-        {
-            this.MaxValue = maxValue;
-        }
-        public void Render(Texture2D texture, SpriteBatch spriteBatch){;
+        public void Render(Texture2D texture, SpriteBatch spriteBatch){
             spriteBatch.Begin();
-            if (this.text != null)
+            if (_text != null)
             {
-                Vector2 textSize = Program.game.Font1.MeasureString(text);
-                int widthProgress = rightBorder - LeftBorder;
-                Program.game.DrawText(this.text, rightBorder-widthProgress/2 - (int)(textSize.X / 2), (int)(y-textSize.Y*2),color);
+                Vector2 textSize = Program.Game.Font1.MeasureString(_text);
+                int widthProgress = _rightBorder - _leftBorder;
+                Program.Game.DrawText(_text, _rightBorder-widthProgress/2 - (int)(textSize.X / 2), (int)(_y-textSize.Y*2),_color);
             } 
-            spriteBatch.Draw(texture, new Rectangle(LeftBorder, y, rightBorder - LeftBorder, heightPresss), Color.White);
-            spriteBatch.Draw(texture, new Rectangle(LeftBorder, y, (int)(rightBorder * (value / MaxValue)) - LeftBorder, heightPresss), Color.BlueViolet);
+            spriteBatch.Draw(texture, new Rectangle(_leftBorder, _y, _rightBorder - _leftBorder, _heightPresss), Color.White);
+            spriteBatch.Draw(texture, new Rectangle(_leftBorder, _y, (int)(_rightBorder * (_value / _maxValue)) - _leftBorder, _heightPresss), Color.BlueViolet);
             spriteBatch.End();
     
         }

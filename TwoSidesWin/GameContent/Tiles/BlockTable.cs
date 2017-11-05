@@ -1,34 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.World.Tile;
-using TwoSides.World;
+﻿using System.Collections.Generic;
+
 using TwoSides.Physics.Entity;
+using TwoSides.World;
 using TwoSides.World.Generation;
+using TwoSides.World.Tile;
 
 namespace TwoSides.GameContent.Tiles
 {
     public class BlockTable : BaseTile
     {
-        public BlockTable(float MaxHP,int id)
-            : base(MaxHP,id)
+        public BlockTable(float maxHp,int id)
+            : base(maxHp,id)
         {
         }
-        public override bool issolid()
+        public override bool IsSolid() => false;
+
+        public override bool HasShadow() => false;
+
+        public override List<Item> Destory(int x, int y, BaseDimension dimension, DynamicEntity entity)
         {
-            return false;
-        }
-        public override bool hasShadow()
-        {
-            return false;
-        }
-        public override List<Item> destory(int x, int y, BaseDimension dimension, CEntity entity)
-        {
-            if (id == 19) dimension.Reset(x-1, y);
+            if (Id == 19) dimension.Reset(x-1, y);
             else dimension.Reset(x+1, y);
-            List<Item> drop = new List<Item>();
-            drop.Add(new Item(1, 26));
+            List<Item> drop = new List<Item> {new Item(1 , 26)};
             return drop;
         }
     }

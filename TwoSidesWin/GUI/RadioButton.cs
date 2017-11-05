@@ -1,64 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 
 namespace TwoSides.GUI
 {
     public class RadioButton : Button 
     {
-        Texture2D offTexture;
-        bool on;
-        public RadioButton(bool on,Texture2D onTexture, Texture2D offTexture, SpriteFont L_font, Rectangle L_rect): base(onTexture,L_font,L_rect,"")
+        readonly Texture2D _offTexture;
+
+        public RadioButton(bool on,Texture2D onTexture, Texture2D offTexture, SpriteFont font, Rectangle area): base(onTexture,font,area,"")
         {
-            this.offTexture = offTexture;
-            e_onClicked += new onClicked(RadioButton_e_onClicked);
-            this.on = on;
+            _offTexture = offTexture;
+            OnClicked += (o , args) => Status = !Status;
+            Status = on;
         }
 
-        void RadioButton_e_onClicked(Object sender,EventArgs e)
+        void RenderButton(SpriteBatch spriteBatch,Color color)
         {
-            on = !on;
+            spriteBatch.Draw(Status ? Image : _offTexture ,
+                               Area ,
+                               color);
         }
 
-        void RenderButton(SpriteBatch L_spriteBatch,Color color)
+        public override void Draw(SpriteBatch spriteBatch)
         {
-            if (on)
-            {
-                L_spriteBatch.Draw(this.tex2D_Image,
-                    this.rect_Location,
-                    color);
-            }
-            else
-            {
-                L_spriteBatch.Draw(this.offTexture,
-                    this.rect_Location,
-                    color);
-            }
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+
+            RenderButton(spriteBatch ,
+                         Area.Contains(new Point(MouseStateNew.X , MouseStateNew.Y)) ? Color.Silver : Color.White);
+
+            spriteBatch.End();
         }
-
-        public override void Draw(SpriteBatch L_spriteBatch)
-        {
-            L_spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-
-            if (this.rect_Location.Contains(new Point(this.ms_NewMouse.X, this.ms_NewMouse.Y)))
-            {
-                RenderButton(L_spriteBatch, Color.Silver);
-            }
-            else
-            {
-                RenderButton(L_spriteBatch, Color.White);
-            }
-
-
-            L_spriteBatch.End();
-        }
-        public bool Status
-        {
-            get { return this.on; }
-        }
-
+        public bool Status { get; set; }
     }
 }

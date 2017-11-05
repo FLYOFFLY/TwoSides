@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 
 namespace TwoSides.Physics
 {
@@ -11,62 +7,64 @@ namespace TwoSides.Physics
     {
         public int FrameWidth { get; set; }
         public int FrameHeight { get; set; }
-        public Texture2D sprite;
-        float scale;
-        int elapsedTime;
-        int frameTime;
-        int frameCount;
-        int currentFrame;
 
-        Color color;
-        Rectangle srcRect;
-        Rectangle destRect;
-        bool active;
-        bool Looping;
-        Vector2 pos;
+        public Texture2D Sprite { get; }
+
+        readonly float _scale;
+        int _elapsedTime;
+        readonly int _frameTime;
+        readonly int _frameCount;
+        int _currentFrame;
+
+        readonly Color _color;
+        Rectangle _srcRect;
+        Rectangle _destRect;
+        bool _active;
+        readonly bool _looping;
+        Vector2 _pos;
         public Animation(Texture2D texture,Vector2 pos,int frameWidth,int frameHeight,int frameCount,int frameTime,Color color,float scale,bool looping)
         {
-            this.sprite = texture;
-            this.FrameWidth = FrameWidth;
-            this.FrameHeight = FrameHeight;
-            this.frameCount = frameCount;
-            this.frameTime = frameTime;
-            this.scale = scale;
-            this.Looping = looping;
-            this.pos = pos;
-            this.color = color;
+            Sprite = texture;
+            FrameWidth = frameWidth;
+            FrameHeight = frameHeight;
+            _frameCount = frameCount;
+            _frameTime = frameTime;
+            _scale = scale;
+            _looping = looping;
+            _pos = pos;
+            _color = color;
 
-            elapsedTime = 0;
-            currentFrame = 0;
-            active = true;
-            srcRect = new Rectangle();
-            destRect = new Rectangle();
+            _elapsedTime = 0;
+            _currentFrame = 0;
+            _active = true;
+            _srcRect = new Rectangle();
+            _destRect = new Rectangle();
         }
         public void Update(GameTime gameTime)
         {
-            if (!active) return;
-
-            elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (elapsedTime >= frameTime)
+            if (!_active) return;
+          
+            _elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (_elapsedTime >= _frameTime)
             {
-                currentFrame++;
-                if (currentFrame >= frameCount)
+                _currentFrame++;
+                if (_currentFrame >= _frameCount)
                 {
-                    currentFrame = 0;
-                    if (!Looping) active = false;
+                    _currentFrame = 0;
+                    if (!_looping) _active = false;
                 }
-                elapsedTime = 0;
+                _elapsedTime = 0;
             }
-            srcRect = new Rectangle(currentFrame * FrameWidth, 0, FrameWidth, FrameHeight);
-            destRect = new Rectangle((int)pos.X-(int)(FrameWidth*scale)/2,
-                (int)pos.Y-(int)(FrameHeight*scale)/2,
-                (int)(FrameWidth*scale),
-                (int)(FrameHeight*scale));
+            _srcRect = new Rectangle(_currentFrame * FrameWidth, 0, FrameWidth, FrameHeight);
+            _destRect = new Rectangle((int)_pos.X-(int)(FrameWidth*_scale)/2,
+                (int)_pos.Y-(int)(FrameHeight*_scale)/2,
+                (int)(FrameWidth*_scale),
+                (int)(FrameHeight*_scale));
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (active) spriteBatch.Draw(sprite, destRect, srcRect, color);
+            if (_active) spriteBatch.Draw(Sprite, _destRect, _srcRect, _color);
         }
     }
 }

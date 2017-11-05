@@ -1,92 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.World;
-using Microsoft.Xna.Framework;
-using TwoSides.Physics.Entity;
-using TwoSides.World.Generation;
+﻿using System.Collections.Generic;
 
-namespace TwoSides.World.Tile
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
+using TwoSIdes.Physics.Entity;
+using TwoSIdes.World.Generation;
+
+namespace TwoSIdes.World.Tile
 {
     public class BaseTile
     {
-        public int id;
-        public float maxHP;
+        public int Id;
+        public float MaxHp;
 
-        public BaseTile(float MaxHP,int id)
+        public BaseTile(float maxHp,int id)
         {
-            this.maxHP = MaxHP;
-            this.id = id;
+            MaxHp = maxHp;
+            Id = id;
         }
 
-        public virtual bool issolid()
-        {
-            return true;
-        }
+        public virtual bool IsSolId() => true;
 
-        public virtual bool isLightBlock()
-        {
-            return false;
-        }
+        public virtual bool IsLightBlock() => false;
 
+        public virtual int GetIdSIdeTexture() => -1;
 
-        public virtual int getIDSideTexture()
-        {
-            return -1;
-        }
-
-        public virtual void update(int x, int y,BaseDimension dimension,CEntity entity)
+        public virtual void Update(int x, int y,BaseDimension dimension,DynamicEntity entity)
         {
         }
 
-        public virtual bool isNeadTool(Item item)
-        {
-            return true;
-        }
+        public virtual bool IsNeadTool(Item item) => true;
         public virtual void Update(int x,int y, BaseDimension dimension,bool isView) { }
-        public virtual Rectangle getBoxRect(int x, int y, ITile title)
-        {
-            return new Rectangle(0, 0, 16, 16);
-        }
+        public virtual Rectangle GetBoxRect(int x, int y, Tile title) => new Rectangle(0, 0, 16, 16);
 
-        public virtual bool blockuse(int x, int y, BaseDimension dimension, CEntity entity)
-        {
-            return false;
-        }
+        public virtual bool UseBlock(int x, int y, BaseDimension dimension, DynamicEntity entity) => false;
 
-        public virtual List<Item> destory(int x,int y,BaseDimension dimension,CEntity entity)
-        {
-            List<Item> drop = new List<Item>();
-            drop.Add(new Item(1, id));
-            return drop;
-        }
+        public virtual List<Item> Destory(int x,int y,BaseDimension dimension,DynamicEntity entity) => new List<Item> { new Item(1, Id) };
 
-        public virtual bool hasShadow()
-        {
-            return true;
-        }
+        public virtual bool HasShadow() => true;
 
-        public virtual int getAnimFrame()
-        {
-            return 1;
-        }
+        public virtual int GetAnimFrame() => 1;
 
-        public virtual int getTickFrame()
+        public virtual int GetTickFrame() => 9999;
+
+        public virtual void Render(ITileDatecs tileDate, SpriteBatch spriteBatch, Texture2D texture, BaseDimension dimension, Vector2 pos, int x, int y, int frame, int subTexture, Color color)
         {
-            return 9999;
+            spriteBatch.Draw(texture, new Rectangle((int)pos.X, (int)pos.Y, 16, 16), new Rectangle(16 * frame, 16 * subTexture, 16, 16), color,0.0f,Vector2.Zero,SpriteEffects.None,0);
         }
-        public virtual int getFrame(int x, int y, BaseDimension dimension, int frame)
-        {
-            return 0;
-        }
-        public virtual void InTile(CEntity entity)
+        public virtual void InTile(DynamicEntity entity)
         {
         }
 
-        public virtual int getSoildType()
-        {
-            return 1;
-        }
+        public virtual int GetSoildType() => 1;
+        public virtual ITileDatecs ChangeTile() => null;
+        public virtual bool BlockAdded(BaseDimension dimension,int x,int y) => true;
     }
 }

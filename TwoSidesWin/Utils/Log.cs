@@ -1,30 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Globalization;
 using System.IO;
 
 namespace TwoSides.Utils
 {
     public class Log
     {
-        public bool hasData;
-        string path;
+        public bool HasData;
+        readonly string _path;
         
         public Log(string path) {
-            this.path = path;
-            hasData = true;
+            _path = path;
+            HasData = true;
         }
         
-        public void deleteLog()
+        public void DeleteLog()
         {
-            File.Delete(path + ".log");
+            File.Delete(_path + ".log");
         }
         
         public void WriteLog(string info)
         {
-            StreamWriter file = File.AppendText(path + ".log");
-            if (hasData) info = DateTime.Now.ToString("[yyyy:dd:hh:mm:ss]")+" "+info;
+            StreamWriter file = File.AppendText($"{_path}.log");
+            if (HasData) info = $"{DateTime.Now.ToString("[yyyy:dd:hh:mm:ss]" , CultureInfo.CurrentCulture)} {info}";
             file.WriteLine(info);
             file.Close();
         }

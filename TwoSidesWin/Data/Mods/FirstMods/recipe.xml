@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <recipes>
-  <recipe  id ="10002" hp ="1" ammout="1">
+  <recipe  Id ="10002" hp ="1" ammout="1">
     <ingredient>
-      <id>1</id>
+      <Id>1</Id>
       <count>2</count>
     </ingredient>
   </recipe>

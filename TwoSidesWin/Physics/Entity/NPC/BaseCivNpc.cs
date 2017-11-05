@@ -1,178 +1,192 @@
 ﻿
-        using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-
-using System;
-using System.Collections;
-using Microsoft.Xna.Framework.Graphics;
-using TwoSides.World;
-using TwoSides.GameContent.GenerationResources;
-using TwoSides.World.Tile;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
+using TwoSides.GameContent.GenerationResources;
 using TwoSides.Utils;
+using TwoSides.World;
+using TwoSides.World.Tile;
+
 namespace TwoSides.Physics.Entity.NPC
 {
     public class BaseCivNpc : BaseNpc
     {
 
-        public int itemAnimation;
+        public int ItemAnimation;
        
-        public Color[] colors = new Color[5];
-        public Clothes[] cl = new Clothes[6];
+        public Color[] Colors = new Color[5];
+        public Clothes[] ClothesSkin = new Clothes[6];
 
-        protected Race race;
+        protected Race Race;
 
         public BaseCivNpc() 
         {
             for (int i = 0; i < 6; i++)
             {
-                this.cl[i] = new Clothes();
+                ClothesSkin[i] = new Clothes();
             }
+            Race = Race.Racelist[0];
         }
-        public override void load(BinaryReader reader)
+       
+        public override void Load(BinaryReader reader)
         {
-            base.load(reader);
+            base.Load(reader);
             for (int i = 0; i < 6; i++)
             {
-                cl[i].load(reader);
+                ClothesSkin[i].Load(reader);
             }
             for (int i = 0; i < 5; i++)
             {
-                colors[i] = Util.readColor(reader);
+                Colors[i] = Tools.ReadColor(reader);
             }
-            race = new Race(new Color(0, 0, 0, 0), null);
+            Race = new Race(new Color(0, 0, 0, 0), null);
             if (reader.ReadBoolean())
             {
-                race.Load(reader);
+                Race.Load(reader);
             }
         }
-        public override void save(BinaryWriter writer)
+        public override void Save(BinaryWriter writer)
         {
-            base.save(writer);
+            base.Save(writer);
             for (int i = 0; i < 6; i++)
             {
-                cl[i].save(writer);
+                ClothesSkin[i].Save(writer);
             }
             for (int i = 0; i < 5; i++)
             {
-                Util.SaveColor(colors[i],writer);
+                Tools.SaveColor(Colors[i],writer);
             }
-            writer.Write(this.race != null);
-            if (this.race != null)
-            {
-                race.Save(writer);
-            }
+            writer.Write(Race != null);
+            Race?.Save(writer);
         }
         public BaseCivNpc(int blockx)
         {
-            position.X = blockx * ITile.TileMaxSize;
-            position.Y = Program.game.dimension[Program.game.currentD].mapHeight[blockx] * ITile.TileMaxSize - ITile.TileMaxSize * 3;
-            type = Program.game.rand.Next(2);
-            rect.Width = width;
+            if (blockx <= 0) blockx = 0;
+            else if (blockx > SizeGeneratior.WorldWidth) blockx = SizeGeneratior.WorldWidth - 1;
+            Position.X = blockx * Tile.TileMaxSize;
+            Position.Y = Program.Game.Dimension[Program.Game.CurrentDimension].MapHeight[blockx] * Tile.TileMaxSize - Tile.TileMaxSize * 3;
+            Type = Program.Game.Rand.Next(2);
+            Rect.Width = Width;
 
-            to = position.X;
-            to += Program.game.rand.Next(-1, 1) * ITile.TileMaxSize;
-            rect.Height = height;
-            drop.Clear();
-            drop.Add(new Item(1, 7));
+            WayPoint = Position.X;
+            WayPoint += Program.Game.Rand.Next(-1, 1) * Tile.TileMaxSize;
+            Rect.Height = Height;
+            Drop.Clear();
+            Drop.Add(new Item(1, 7));
             for (int i = 0; i < 6; i++)
             {
-                cl[i] = new Clothes();
+                ClothesSkin[i] = new Clothes();
             }
+            Race = Race.Racelist[0];
         }
 
         public BaseCivNpc(Vector2 positions)
         {
-            position = positions;
-            to = position.X;
-            to += Program.game.rand.Next(-ITile.TileMaxSize, ITile.TileMaxSize);
-            rect.Width = width;
-            rect.Height = height;
-            drop.Clear();
-            drop.Add(new Item(1, 7));
+            Position = positions;
+            WayPoint = Position.X;
+            WayPoint += Program.Game.Rand.Next(-Tile.TileMaxSize, Tile.TileMaxSize);
+            Rect.Width = Width;
+            Rect.Height = Height;
+            Drop.Clear();
+            Drop.Add(new Item(1, 7));
             for (int i = 0; i < 6; i++)
             {
-                cl[i] = new Clothes();
+                ClothesSkin[i] = new Clothes();
             }
+            Race = Race.Racelist[0];
         }
 
-        public BaseCivNpc(int blockx, Race race, Clothes[] clslot, Color[] color)
+        public BaseCivNpc(int blockx, Race race, IReadOnlyList<Clothes> clslot, Color[] color)
         {
-            position.X = blockx * ITile.TileMaxSize;
+            Position.X = blockx * Tile.TileMaxSize;
             if (blockx <= 0) blockx = 0;
             else if (blockx >= SizeGeneratior.WorldWidth) blockx = SizeGeneratior.WorldWidth - 2;
-            position.Y = Program.game.dimension[Program.game.currentD].mapHeight[blockx] * ITile.TileMaxSize - ITile.TileMaxSize * 3;
-            type = Program.game.rand.Next(2);
-            rect.Width = width;
+            Position.Y = Program.Game.Dimension[Program.Game.CurrentDimension].MapHeight[blockx] * Tile.TileMaxSize - Tile.TileMaxSize * 3;
+            Type = Program.Game.Rand.Next(2);
+            Rect.Width = Width;
 
-            to = position.X;
+            WayPoint = Position.X;
             for (int i = 0; i < 6; i++)
             {
-                this.cl[i] = clslot[i];
+                ClothesSkin[i] = clslot[i];
             }
-            this.colors = color;
-            to += Program.game.rand.Next(-1, 1) * ITile.TileMaxSize;
-            rect.Height = height;
-            drop.Clear();
-            drop.Add(new Item(1, 7));
-            this.race = race;
+            Colors = color;
+            WayPoint += Program.Game.Rand.Next(-1, 1) * Tile.TileMaxSize;
+            Rect.Height = Height;
+            Drop.Clear();
+            Drop.Add(new Item(1, 7));
+            Race = race;
         }
 
-        public BaseCivNpc(Vector2 positions, Race race, Clothes[] clslot, Color[] color)
+        public BaseCivNpc(Vector2 positions, Race race, IReadOnlyList<Clothes> clslot, Color[] color)
         {
-            position = positions;
-            to = position.X;
-            this.colors = color;
-            this.race = race;
-            to += Program.game.rand.Next(-ITile.TileMaxSize, ITile.TileMaxSize);
-            rect.Width = width;
-            rect.Height = height;
-            drop.Clear();
-            drop.Add(new Item(1, 7));
+            Position = positions;
+            WayPoint = Position.X;
+            Colors = color;
+            Race = race;
+            WayPoint += Program.Game.Rand.Next(-Tile.TileMaxSize, Tile.TileMaxSize);
+            Rect.Width = Width;
+            Rect.Height = Height;
+            Drop.Clear();
+            Drop.Add(new Item(1, 7));
             for (int i = 0; i < 6; i++)
             {
-                this.cl[i] = clslot[i];
+                ClothesSkin[i] = clslot[i];
             }
         }
-        public virtual void DrawNPC(SpriteEffects effect, SpriteBatch spriteBatch, SpriteFont Font1, Texture2D head, Texture2D head2,
-            Texture2D body, Texture2D legs, Texture2D eye, Texture2D shadow)
+        public virtual void RenderNpc(SpriteBatch spriteBatch, SpriteFont font1, Texture2D head, Texture2D head2,
+            Texture2D body, Texture2D legs, Texture2D eye,Texture2D hand, Texture2D shadow)
         {
-            effect = SpriteEffects.None;
-            if (direction < 0)
+
+            SpriteEffects effect = SpriteEffects.None;
+            if (Direction < 0)
                 effect = SpriteEffects.FlipHorizontally;
-            spriteBatch.DrawString(Font1, ((int)(hp)).ToString(), new Vector2((int)(position.X + (width - head.Width)), (int)(position.Y) - 30), Color.Black);
-            int hairid = cl[0].getid();
-            int shirtid = cl[1].getid();
-            int pantsid = cl[2].getid();
-            int shoesid = cl[3].getid();
-            int beltid = cl[4].getid();
-            int glovesid = cl[5].getid();
-            Rectangle rect = new Rectangle((int)(position.X + (width - head.Width)),
-                    (int)(position.Y), head.Width, head.Height);
+            spriteBatch.DrawString(font1, ((int)Hp).ToString(CultureInfo.CurrentCulture), new Vector2((int)(Position.X + (Width - head.Width)), (int)Position.Y - 30), Color.Black);
+            Rect = new Rectangle((int)(Position.X + (Width - head.Width)),
+                    (int)Position.Y, head.Width, head.Height);
             Rectangle src = new Rectangle(0, 0, head.Width, head.Height);
-            spriteBatch.Draw(head, rect, src, race.getZombieColor(),
+            RenderLeft(hand, spriteBatch);
+            spriteBatch.Draw(head, Rect, src, Race.GetZombieColor(),
                     0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(eye, rect, src, Color.White,
+            spriteBatch.Draw(eye, Rect, src, Color.White,
                     0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(body, rect, src,
-               race.getColor(), 0, Vector2.Zero, effect, 0);
+            spriteBatch.Draw(body, Rect, src,
+               Race.GetColor(), 0, Vector2.Zero, effect, 0);
             spriteBatch.Draw(legs,
-               rect, src,
-                    race.getColor(), 0, Vector2.Zero, effect, 0);
-            if (hairid != -1) spriteBatch.Draw(Clothes.hair[hairid], rect, src, Color.Black, 0, Vector2.Zero, effect, 0);
-            if (shirtid != -1) spriteBatch.Draw(Clothes.shirt[shirtid], rect, src, colors[0], 0, Vector2.Zero, effect, 0);
-            if (pantsid != -1) spriteBatch.Draw(Clothes.pants[pantsid], rect, src, colors[1], 0, Vector2.Zero, effect, 0);
-            if (shoesid != -1) spriteBatch.Draw(Clothes.shoes[shoesid], rect, src, colors[2], 0, Vector2.Zero, effect, 0);
-            if (beltid != -1) spriteBatch.Draw(Clothes.belt[beltid], rect, src, colors[3], 0, Vector2.Zero, effect, 0);
-            if (glovesid != -1) spriteBatch.Draw(Clothes.gloves[glovesid], rect, src, colors[4], 0, Vector2.Zero, effect, 0);
+               Rect, src,
+                    Race.GetColor(), 0, Vector2.Zero, effect, 0);
+            ClothesRender(effect, spriteBatch, Rect, src);
             DrawShadow(shadow, spriteBatch);
         }
-
-       
-
-        public override void update()
+        public void RenderLeft(Texture2D hand, SpriteBatch sb, float scale = 1.0f)
         {
-            base.update();
+            SpriteEffects effect = SpriteEffects.None;
+            Rectangle dest = new Rectangle(
+                (int)(Position.X + (Width - hand.Width)),
+                (int)Position.Y, (int)(hand.Width * scale), (int)(hand.Height * scale));
+            Rectangle src = new Rectangle(0, 0,
+                24, 42);
+            if (Direction < 0)
+                effect = SpriteEffects.FlipHorizontally;
+            sb.Draw(hand, dest, src, Race.GetColor(), 0, Vector2.Zero, effect, 0);
+            ClothesSkin[1].RenderLeft(sb, dest, src, Colors[0], 1, effect);
+            ClothesSkin[5].RenderLeft(sb, dest, src, Colors[4], 5, effect);
         }
+
+        protected void ClothesRender(SpriteEffects effect, SpriteBatch spriteBatch, Rectangle rect, Rectangle src)
+        {
+            ClothesSkin[0].Render(spriteBatch, rect, src, Color.Black, 0, effect);
+            ClothesSkin[1].Render(spriteBatch, rect, src, Colors[0], 1, effect);
+            ClothesSkin[2].Render(spriteBatch, rect, src, Colors[1], 2, effect);
+            ClothesSkin[3].Render(spriteBatch, rect, src, Colors[2], 3, effect);
+            ClothesSkin[4].Render(spriteBatch, rect, src, Colors[3], 4, effect);
+            ClothesSkin[5].Render(spriteBatch, rect, src, Colors[4], 5, effect);
+        }
+
+
     }
 }

@@ -1,50 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework.Graphics;
+﻿using System.Collections.Generic;
+
 using Microsoft.Xna.Framework;
-namespace TwoSides.GUI.Scene
+using Microsoft.Xna.Framework.Graphics;
+
+namespace TwoSIdes.GUI.Scene
 {
     public class ControlScene
     {
-        IScene sceneCurrent;
-        IScene sceneNew;
-        List<IScene> sceneBack = new List<IScene>();
+        IScene _sceneCurrent;
+        IScene _sceneNew;
+        readonly Stack<IScene> _sceneBack = new Stack< IScene >();
+
         public void Render(SpriteBatch spriteBatch)
         {
-            if (sceneCurrent.lastSceneRender && sceneBack.Count>=1)
-                sceneBack[sceneBack.Count - 1].Render(spriteBatch);
-            sceneCurrent.Render(spriteBatch);
+            if (_sceneCurrent.LastSceneRender && _sceneBack.Count>=1)
+                _sceneBack.Peek().Render(spriteBatch);
+            _sceneCurrent.Render(spriteBatch);
         }
         public void Update(GameTime gameTime)
         {
-            if (sceneCurrent != sceneNew)
+            if (_sceneCurrent != _sceneNew)
             {
-                sceneCurrent = sceneNew;
-                sceneCurrent.Load(this);
+                _sceneCurrent = _sceneNew;
+                _sceneCurrent.Load(this);
             }
-            if (sceneCurrent.lastSceneUpdate && sceneBack.Count >= 1) sceneBack[sceneBack.Count - 1].Update(gameTime);
-            sceneCurrent.Update(gameTime);
+            if (_sceneCurrent.LastSceneUpdate && _sceneBack.Count >= 1) _sceneBack.Peek().Update(gameTime);
+            _sceneCurrent.Update(gameTime);
         }
-        public void changeScene(IScene newScene)
+        public void ChangeScene(IScene newScene)
         {
-            this.sceneNew = newScene;
-            if(sceneCurrent != null) sceneBack.Add(sceneCurrent);             
-            if (sceneCurrent == null)
-            {
-                sceneCurrent = sceneNew;
-                sceneCurrent.Load(this);
-            }
+            _sceneNew = newScene;
+            if(_sceneCurrent != null) _sceneBack.Push(_sceneCurrent);
+            if ( _sceneCurrent != null ) return;
+
+            _sceneCurrent = _sceneNew;
+            _sceneCurrent.Load(this);
         }
-        public void tryExit()
-        {
-            sceneCurrent.tryExit();
-        }
-        public void returnScene()
-        {
-            this.sceneNew = sceneBack[sceneBack.Count-1];
-            sceneBack.RemoveAt(sceneBack.Count - 1);
-        }
+        public void TryExit() => _sceneCurrent.TryExit();
+
+        public void ReturnScene() => _sceneNew = _sceneBack.Pop();
     }
 }

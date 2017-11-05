@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <blocks>
-  <block id ="0" img ="myblock.png" hp ="1">
+  <block Id ="0" img ="myblock.png" hp ="1">
     <drop>
-      <id>10000</id>
+      <Id>10000</Id>
       <count>2</count>
     </drop>
     <drop>
-      <id>10001</id>
+      <Id>10001</Id>
       <count>2</count>
     </drop>
     <drop>
-      <id>10002</id>
+      <Id>10002</Id>
       <count>2</count>
     </drop>
   </block>

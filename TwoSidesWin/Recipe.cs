@@ -1,56 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections;
+﻿using System.Collections.Generic;
+
 using TwoSides.World;
+
 namespace TwoSides
 {
-    sealed public class Recipe
+    public sealed class Recipe
     {
-        public bool isblock { get; private set; }
-        public int idblock { get; private set; }
-        public float hp { get; private set; }       
+        public static List<Recipe> Recipes = new List<Recipe>();
+        public bool Isblock { get; }
+        public int Idblock { get; }
+        public float Hp { get; }
 
-        ArrayList igr = new ArrayList();
-        ArrayList count = new ArrayList();
+        readonly List<int> _ingridents = new List<int>();
+        readonly List<int> _count = new List<int>();
 
-        public Item slot;                    
-                                            
+        public Item Slot { get; }
+        public static void AddRecipe(Recipe recipe,Item[] igr)
+        {
+            foreach ( Item item in igr )
+            {
+                recipe.AddIngridents(item.Id, item.Ammount);
+            }
+
+            Recipes.Add(recipe);
+        }
         public Recipe(Item slot,int id, float hp )
         {
-            this.slot = slot;
-            idblock = id;
-            isblock = true;
-            this.hp = hp;
+            Slot = slot;
+            Idblock = id;
+            Isblock = true;
+            Hp = hp;
         }
         
         public Recipe(Item slot, float hp)
         {
-            this.slot = slot;
-            isblock = false;
-            this.hp = hp;
+            Slot = slot;
+            Isblock = false;
+            Hp = hp;
         }
         
-        public int getsize()
+        public int GetSize() => _count.Count;
+
+        public int GetIngrident(int id) => _ingridents[id];
+
+        public int GetSize(int id) => _count[id];
+
+        public void AddIngridents(int ingridents, int count)
         {
-            return this.count.Count;
-        }
-        
-        public int getigr(int id)
-        {
-            return (int)igr[id];
-        }
-        
-        public int getconut(int id)
-        {
-            return (int)count[id];
-        }
-       
-        public void addigr(int igr, int count)
-        {
-            this.igr.Add(igr);
-            this.count.Add(count);
+            _ingridents.Add(ingridents);
+            _count.Add(count);
         }
     }
 }

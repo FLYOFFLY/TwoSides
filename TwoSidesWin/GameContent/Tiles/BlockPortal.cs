@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.World.Tile;
+﻿using TwoSides.GameContent.Entity;
 using TwoSides.Physics.Entity;
+using TwoSides.World;
 using TwoSides.World.Generation;
+using TwoSides.World.Tile;
 
 namespace TwoSides.GameContent.Tiles
 {
@@ -14,26 +12,17 @@ namespace TwoSides.GameContent.Tiles
             : base(hpMax,id)
         {
         }
-        public override bool issolid()
-        {
-            return false;
-        }
-        public override bool isNeadTool(World.Item item)
-        {
-            return false;
-        }
-        public override bool blockuse(int x, int y, BaseDimension dimension, CEntity entity)
+        public override bool IsSolid() => false;
+
+        public override bool IsNeadTool(Item item) => false;
+
+        public override bool UseBlock(int x, int y, BaseDimension dimension, DynamicEntity entity)
         {
             ((Player)entity).TeleportToShowMap();
             return true;
         }
-        public override int getTickFrame()
-        {
-            return 24;
-        }
-        public override int getAnimFrame()
-        {
-            return 2;
-        }
+        public override int GetTickFrame() => 24;
+
+        public override int GetAnimFrame() => 2;
     }
 }

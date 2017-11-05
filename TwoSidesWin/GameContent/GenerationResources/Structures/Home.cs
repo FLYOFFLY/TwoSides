@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using Microsoft.Xna.Framework;
-using System.Collections;
-using TwoSides.Physics.Entity.NPC;
-using TwoSides.GameContent.GenerationResources;
-using TwoSides.GameContent.Entity.NPC;
-using TwoSides.World.Tile;
-using TwoSides.World.Generation;
-namespace TwoSides.World.Structures
+
+using TwoSIdes.GameContent.Entity.NPC;
+using TwoSIdes.GUI;
+using TwoSIdes.World;
+using TwoSIdes.World.Generation;
+using TwoSIdes.World.Generation.Structures;
+
+namespace TwoSIdes.GameContent.GenerationResources.Structures
 {
-    class Home : BaseStruct
+    internal class Home : BaseStruct
     {
 
         public Home(int x, int y)
@@ -20,305 +19,346 @@ namespace TwoSides.World.Structures
         {
         }
         public Home(int x, int y, bool isplayer)
-            : base(x, y)
+            : base(x, y) => Isplaying = isplayer;
+
+        void SpawnInForest(BaseDimension dimension)
         {
-            isplaying = isplayer;
+            Clear(dimension);
+            short tile = PlaceBackground(dimension);
+            PlaceWall(dimension , tile);
+            GeneratorPersonOrZombie(dimension);
+            PlaceFurniture(dimension);
+            dimension.MapTile[X + 3, Y - 3].IdWall = 21;
+            dimension.MapTile[X + 4, Y - 3].IdWall = 21;
+            dimension.MapTile[X + 3, Y - 4].IdWall = 21;
+            dimension.MapTile[X + 4, Y - 4].IdWall = 21;
+            dimension.AddDoor(30, X + 9, Y - 1, !Isplaying);
         }
-        private void spawnInForest(BaseDimension dimension)
+
+        void PlaceFurniture(BaseDimension dimension)
         {
-            for (int i = 0; i < 10; i++)
+            dimension.SetTexture(X + 6 , Y - 1 , 8);
+            dimension.SetTexture(X + 8 , Y - 4 , 6);
+            dimension.SetTexture(X + 1 , Y - 4 , 6);
+            dimension.SetTexture(X + 1 , Y - 1 , 17);
+            dimension.SetTexture(X + 1 , Y - 2 , 17 , 1);
+            dimension.SetTexture(X + 3 , Y - 1 , 20);
+        }
+
+        void GeneratorPersonOrZombie(BaseDimension dimension)
+        {
+            if ( !Isplaying )
             {
-                for (int j = 0; j < 10; j++)
+                int a = dimension.Rand.Next(1 , 4);
+                for ( int i = 0 ; i < a ; i++ )
                 {
-                    if (x + i + 1 < SizeGeneratior.WorldWidth)
+                    Clothes[] cl = new Clothes[6];
+                    Color[] color = new Color[6];
+                    for ( int c = 0 ; c < 6 ; c++ )
                     {
-                        if (j != 0 || (Math.Abs((y - j) - dimension.mapHeight[x + i + 1]) < 1))
-                            dimension.Reset(x + i, y - j);
+                        int[] maxInt =
+                        {
+                            Clothes.MaxHair , Clothes.MaxShirt , Clothes.MaxPants , Clothes.MaxShoes , Clothes.MaxBelt ,
+                            Clothes.MaxGlove 
+                        };
+                        int b = Program.Game.Rand.Next(-1 , maxInt[c]);
+                        if ( b == -1 ) cl[c] = new Clothes();
+                        else
+                        {
+                            cl[c] = new Clothes(b);
+                            color[c] = new Color(Program.Game.Rand.Next(0 , 256) , Program.Game.Rand.Next(0 , 256) ,
+                                                 Program.Game.Rand.Next(0 , 256));
+                        }
                     }
+
+                    dimension.Zombies.Add(
+                                          new Zombie(X + 4 + i * 5 ,
+                                                     Race.Racelist[Program.Game.Rand.Next(Race.Racelist.Count)] , cl , color));
                 }
             }
-            short tile = 26;
-            for (int j = 1; j < 5; j++)
+            else if ( Program.Game.CurrentDimension == 0 )
             {
-                if (isplaying)
+                InitDialog();
+            }
+        }
+
+        void PlaceWall(BaseDimension dimension , short tile)
+        {
+            for ( int i = 0 ; i < 10 ; i++ )
+            {
+                dimension.SetTexture(X + i , Y , tile);
+                dimension.SetTexture(X + i , Y - 5 , tile);
+            }
+            for ( int i = 4 ; i < 6 ; i++ )
+            {
+                if ( !Isplaying ) dimension.SetTexture(X , Y - i , tile);
+                else dimension.SetTexture(X + 9 , Y - i , tile);
+            }
+            for ( int i = 0 ; i < 6 ; i++ )
+            {
+                if ( !Isplaying ) dimension.SetTexture(X + 9 , Y - i , tile);
+                else dimension.SetTexture(X , Y - i , tile);
+            }
+        }
+
+        short PlaceBackground(BaseDimension dimension)
+        {
+            const short TILE = 26;
+            for ( int j = 1 ; j < 5 ; j++ )
+            {
+                if ( Isplaying )
                 {
-                    for (int i = 1; i < 10; i++)
+                    for ( int i = 1 ; i < 10 ; i++ )
                     {
-                        if (x + i + 1 < SizeGeneratior.WorldWidth)
-                        {
-                            dimension.map[x + i, y - j].wallid = tile;
-                        }
+                        dimension.SetWallId(X + i , Y - j , TILE);
                     }
                 }
                 else
                 {
-                    for (int i = 0; i < 9; i++)
+                    for ( int i = 0 ; i < 9 ; i++ )
                     {
-                        if (x + i + 1 < SizeGeneratior.WorldWidth)
-                        {
-                            dimension.map[x + i, y - j].wallid = tile;
-                        }
+                        dimension.SetWallId(X + i , Y - j , TILE);
                     }
                 }
             }
-            for (int i = 0; i < 10; i++)
-            {
-                dimension.settexture(x + i, y, tile);
-            }
-            for (int i = 0; i < 10; i++)
-            {
-                dimension.settexture(x + i, y - 5, tile);
-            }
-            for (int i = 4; i < 6; i++)
-            {
-                if (!isplaying) dimension.settexture(x, y - i, tile);
-                else dimension.settexture(x + 9, y - i, tile);
-            }
-            for (int i = 0; i < 6; i++)
-            {
-                if (!isplaying) dimension.settexture(x + 9, y - i, tile);
-                else dimension.settexture(x, y - i, tile);
-            } 
-            if (!isplaying)
-            {
-                int a = dimension.rand.Next(1, 4);
-                for (int i = 0; i < a; i++)
-                {
-                    Clothes[] cl = new Clothes[6];
-                    for (int c = 0; c < 6; c++)
-                    {
-                        cl[c] = new Clothes();
-                    }
-                    for (int c = 0; c < 6; c++)
-                    {
-                        int b = 0;
-                        if (c == 0) b = Program.game.rand.Next(-1, Clothes.maxHair);
-                        if (c == 1) b = Program.game.rand.Next(-1, Clothes.maxShirt);
-                        if (c == 2) b = Program.game.rand.Next(-1, Clothes.maxPants);
-                        if (c == 3) b = Program.game.rand.Next(-1, Clothes.maxShoes);
-                        if (c == 4) b = Program.game.rand.Next(-1, Clothes.maxBelt);
-                        if (c == 5) b = Program.game.rand.Next(-1, Clothes.maxGlove);
-                        if (b == -1) cl[c] = new Clothes();
-                        else cl[c] = new Clothes(b);
-                    }
-                    Color[] color = new Color[5];
-                    for (int c = 0; c < 5; c++)
-                    {
-                        color[c] = new Color(Program.game.rand.Next(0, 256), Program.game.rand.Next(0, 256), Program.game.rand.Next(0, 256));
-                    }
-                    dimension.Zombies.Add(
-                        new Zombie(x + 4 + i * 5, (Race)Race.racelist[Program.game.rand.Next(Race.racelist.Count)], cl, color));
-                }
-            }
-            else if (Program.game.currentD == 0)
-            {
-                ArrayList dialogs = new ArrayList();
-                ArrayList recip = new ArrayList();
-                recip.Add(new Recipe(new Item(1, 0), 100));
-                ((Recipe)(recip[0])).addigr(1, 1);
-                dialogs.Add(new GUI.Dialog(new Rectangle(2, 200, 800, 200), "Get out, i can handle that!",
-                      "Okay, stupid bot.",
-                         "Do not want to distract you!",
-                      "Of course",
-                        "I'm your tour guide, you are ready to explore the science of survival, here!",
-                        "monster,I'm your tour guide, you are ready to explore the science of survival, here!",
-                        "Hero,I'm your tour guide, you are ready to explore the science of survival, here!", Program.game.button, Program.game.Font1, Program.game.dialogtex));
-                dialogs.Add(new GUI.Dialog(new Rectangle(2, 200, 800, 200), //первое задание
-                        "Why the hell?",
-                        "Ready, bitch, i am killed them",
-                        "How?",
-                        "killed them, they accidents!",
-                        "The first task, kill 1 zombie! To do this you need to take any weapon and aim at his head and hit the(LKM)",
-                        "monster,I'm your tour guide, you are ready to explore the science of survival, here!",
-                        "Hero,I'm your tour guide, you are ready to explore the science of survival, here!", Program.game.button, Program.game.Font1, Program.game.dialogtex));
-                dialogs.Add(new GUI.Dialog(new Rectangle(2, 200, 800, 200), "Get out, i am not a slave!",
-                   "Okay, stupid bot.",
-                      "I'm busy Sori.!",
-                   "Of course",
-                     "Good job, are you ready to take the next job. you need to extract resources!",
-                        "monster,are you ready to take the next job. you need to extract resources!",
-                        "Hero,are you ready to take the next job. you need to extract resources!", Program.game.button, Program.game.Font1, Program.game.dialogtex));
-                dialogs.Add(new GUI.Dialog(new Rectangle(2, 200, 800, 200),// второе задание
-                        "I did not try!",
-                        "Ready, bitch, I got resources",
-                        "Not yet!",
-                        "I got resources!",
-                        "I got the right resources?Burger and Water Bottle in chest, Destory Him",
-                        "monster,I got the right resources? Burger and Water Bottle in chest, Destory Him",
-                        "Hero,I got the right resources?Burger and Water Bottle in chest, Destory Him", Program.game.button, Program.game.Font1, Program.game.dialogtex));
-                dialogs.Add(new GUI.Dialog(new Rectangle(2, 200, 800, 200),
-                      "Get out, I'm not your slave",
-                      "Okay, bitch",
-                      "I cannot begin to do it",
-                      "Okay",
-                      "you items, sooner or later break down, so learn crafting new(to crafting items, click J)",
-                        "monster,you items, sooner or later break down, so learn crafting new(to crafting items, click J)",
-                        "Hero,you items, sooner or later break down, so learn crafting new(to crafting items, click J)!", Program.game.button, Program.game.Font1, Program.game.dialogtex));
-                dialogs.Add(new GUI.Dialog(new Rectangle(2, 200, 800, 200), // 3 задание
-                      "Get out, I'm not your slave",
-                      "Ready, bitch, i am crafting pickaxe, which I will kill you",
-                      "Not yet",
-                      "easy it was",
-                      "You Crafting PickAxe(to crafting items, click J)?",
-                        "monster,You Crafting PickAxe(to crafting items, click J)?",
-                        "Hero,You Crafting PickAxe(to crafting items, click J)?", Program.game.button, Program.game.Font1, Program.game.dialogtex));
-                dialogs.Add(new GUI.Dialog(new Rectangle(2, 200, 800, 200),
-                      "Get out, I'm not your slave",
-                      "Okay, bitch",
-                      "I cannot begin to do it",
-                      "Okay",
-                      "To defeat the boss, you need to crafting armor",
-                        "monster,To defeat the boss, you need to crafting armor",
-                        "Hero,To defeat the boss, you need to crafting armor", Program.game.button, Program.game.Font1, Program.game.dialogtex));
-                dialogs.Add(new GUI.Dialog(new Rectangle(2, 200, 800, 200), // 4 задание
-                      "Get out, I'm not your slave",
-                      "Ready, bitch,",
-                      "Not yet",
-                      "easy it was",
-                      "Crafting Armor?",
-                        "monster,Crafting Armor?",
-                        "Hero,Crafting Armor?", Program.game.button, Program.game.Font1, Program.game.dialogtex));
-                dialogs.Add(new GUI.Dialog(new Rectangle(2, 200, 800, 200), // 5 заданий
-                     "Get out, I'm not your slave",
-                     "Okay, bitch",
-                     "I cannot begin to do it",
-                     "Okay",
-                     "Search iron factory and Kill Ultra Zombie and send the show world",
-                        "monster,Search iron factory and Kill Ultra Zombie and send the show world!",
-                        "Hero,Search iron factory and Kill Ultra Zombie and send the show world!", Program.game.button, Program.game.Font1, Program.game.dialogtex));
-                dialogs.Add(new GUI.Dialog(new Rectangle(2, 200, 800, 200),
-                      "",
-                      "clear, he и lazy ass",
-                      "",
-                      "",
-                      "Create our world, no create task, он he is lazy",
-                     "monster,Create our world, no create task, он he is lazy",
-                     "Hero,Create our world, no create task, он he is lazy!", Program.game.button, Program.game.Font1, Program.game.dialogtex));
-                //dimension.civil.Add(new Civilian(
-                 // new Vector2((x + 4) * ITile.TileMaxSize, (y - 3) * ITile.TileMaxSize),
-                  //  dialogs));
-            }
-            dimension.settexture(x + 6, y - 1, 8);
-            dimension.settexture(x + 8, y - 4, 6);
-            dimension.settexture(x + 1, y - 4, 6);
-            dimension.settexture(x + 1, y - 1, 17);
-            dimension.settexture(x + 1, y - 2, 18);
-            dimension.settexture(x + 4, y - 1, 19);
-            dimension.settexture(x + 3, y - 1, 20);
-            dimension.map[x + 3, y - 3].wallid = 21;
-            dimension.map[x + 4, y - 3].wallid = 21;
-            dimension.map[x + 3, y - 4].wallid = 21;
-            dimension.map[x + 4, y - 4].wallid = 21;
-            dimension.addDoor(30, x + 9, y - 1, !isplaying);
+
+            return TILE;
         }
-        private void spawnPyr(BaseDimension dimension)
+
+        void Clear(BaseDimension dimension)
         {
-            int wallStone = dimension.rand.Next(10,15);
-            int size = wallStone*2+dimension.rand.Next(wallStone / 3, wallStone / 2);
+            for ( int i = 0 ; i < 10 ; i++ )
+            {
+                for ( int j = 0 ; j < 10 ; j++ )
+                {
+                    if ( X + i + 1 >= SizeGeneratior.WorldWidth ) continue;
+
+                    if ( j != 0 || Math.Abs(Y - j - dimension.MapHeight[X + i + 1]) < 1 )
+                        dimension.Reset(X + i , Y - j);
+                }
+            }
+        }
+
+        static void InitDialog()
+        {
+            List<Recipe> recip = new List<Recipe> {new Recipe(new Item(1 , 0) , 100)};
+            recip[0].AddIngrIdents(1 , 1);
+
+            // ReSharper disable once UnusedVariable
+            List<Dialog> dialogs = new List<Dialog>
+                                   {
+                                       new Dialog(new Rectangle(2 , 200 , 800 , 200) ,
+                                                  "Get out, i can handle that!" ,
+                                                  "Okay, stupId bot." ,
+                                                  "Do not want to distract you!" ,
+                                                  "Of course" ,
+                                                  "I'm your tour guIde, you are ready to explore the science of survival, here!" ,
+                                                  "monster,I'm your tour guIde, you are ready to explore the science of survival, here!" ,
+                                                  "Hero,I'm your tour guIde, you are ready to explore the science of survival, here!" ,
+                                                  Program.Game.Button , Program.Game.Font1 ,
+                                                  Program.Game.Dialogtex) ,
+                                       new Dialog(new Rectangle(2 , 200 , 800 , 200) , //первое задание
+                                                  "Why the hell?" ,
+                                                  "Ready, bitch, i am killed them" ,
+                                                  "How?" ,
+                                                  "killed them, they accIdents!" ,
+                                                  "The first task, kill 1 zombie! To do this you need to take any weapon and aim at his head and hit the(LKM)" ,
+                                                  "monster,I'm your tour guIde, you are ready to explore the science of survival, here!" ,
+                                                  "Hero,I'm your tour guIde, you are ready to explore the science of survival, here!" ,
+                                                  Program.Game.Button , Program.Game.Font1 ,
+                                                  Program.Game.Dialogtex) ,
+                                       new Dialog(new Rectangle(2 , 200 , 800 , 200) ,
+                                                  "Get out, i am not a slave!" ,
+                                                  "Okay, stupId bot." ,
+                                                  "I'm busy Sori.!" ,
+                                                  "Of course" ,
+                                                  "Good job, are you ready to take the next job. you need to extract resources!" ,
+                                                  "monster,are you ready to take the next job. you need to extract resources!" ,
+                                                  "Hero,are you ready to take the next job. you need to extract resources!" ,
+                                                  Program.Game.Button , Program.Game.Font1 ,
+                                                  Program.Game.Dialogtex) ,
+                                       new Dialog(new Rectangle(2 , 200 , 800 , 200) , // второе задание
+                                                  "I dId not try!" ,
+                                                  "Ready, bitch, I got resources" ,
+                                                  "Not yet!" ,
+                                                  "I got resources!" ,
+                                                  "I got the right resources?Burger and Water Bottle in chest, Destory Him" ,
+                                                  "monster,I got the right resources? Burger and Water Bottle in chest, Destory Him" ,
+                                                  "Hero,I got the right resources?Burger and Water Bottle in chest, Destory Him" ,
+                                                  Program.Game.Button , Program.Game.Font1 ,
+                                                  Program.Game.Dialogtex) ,
+                                       new Dialog(new Rectangle(2 , 200 , 800 , 200) ,
+                                                  "Get out, I'm not your slave" ,
+                                                  "Okay, bitch" ,
+                                                  "I cannot begin to do it" ,
+                                                  "Okay" ,
+                                                  "you items, sooner or later break down, so learn crafting new(to crafting items, click J)" ,
+                                                  "monster,you items, sooner or later break down, so learn crafting new(to crafting items, click J)" ,
+                                                  "Hero,you items, sooner or later break down, so learn crafting new(to crafting items, click J)!" ,
+                                                  Program.Game.Button , Program.Game.Font1 ,
+                                                  Program.Game.Dialogtex) ,
+                                       new Dialog(new Rectangle(2 , 200 , 800 , 200) , // 3 задание
+                                                  "Get out, I'm not your slave" ,
+                                                  "Ready, bitch, i am crafting pickaxe, which I will kill you" ,
+                                                  "Not yet" ,
+                                                  "easy it was" ,
+                                                  "You Crafting PickAxe(to crafting items, click J)?" ,
+                                                  "monster,You Crafting PickAxe(to crafting items, click J)?" ,
+                                                  "Hero,You Crafting PickAxe(to crafting items, click J)?" ,
+                                                  Program.Game.Button , Program.Game.Font1 ,
+                                                  Program.Game.Dialogtex) ,
+                                       new Dialog(new Rectangle(2 , 200 , 800 , 200) ,
+                                                  "Get out, I'm not your slave" ,
+                                                  "Okay, bitch" ,
+                                                  "I cannot begin to do it" ,
+                                                  "Okay" ,
+                                                  "To defeat the boss, you need to crafting armor" ,
+                                                  "monster,To defeat the boss, you need to crafting armor" ,
+                                                  "Hero,To defeat the boss, you need to crafting armor" ,
+                                                  Program.Game.Button , Program.Game.Font1 ,
+                                                  Program.Game.Dialogtex) ,
+                                       new Dialog(new Rectangle(2 , 200 , 800 , 200) , // 4 задание
+                                                  "Get out, I'm not your slave" ,
+                                                  "Ready, bitch," ,
+                                                  "Not yet" ,
+                                                  "easy it was" ,
+                                                  "Crafting Armor?" ,
+                                                  "monster,Crafting Armor?" ,
+                                                  "Hero,Crafting Armor?" , Program.Game.Button ,
+                                                  Program.Game.Font1 , Program.Game.Dialogtex) ,
+                                       new Dialog(new Rectangle(2 , 200 , 800 , 200) , // 5 заданий
+                                                  "Get out, I'm not your slave" ,
+                                                  "Okay, bitch" ,
+                                                  "I cannot begin to do it" ,
+                                                  "Okay" ,
+                                                  "Search iron factory and Kill Ultra Zombie and send the show world" ,
+                                                  "monster,Search iron factory and Kill Ultra Zombie and send the show world!" ,
+                                                  "Hero,Search iron factory and Kill Ultra Zombie and send the show world!" ,
+                                                  Program.Game.Button , Program.Game.Font1 ,
+                                                  Program.Game.Dialogtex) ,
+                                       new Dialog(new Rectangle(2 , 200 , 800 , 200) ,
+                                                  "" ,
+                                                  "clear, he и lazy ass" ,
+                                                  "" ,
+                                                  "" ,
+                                                  "Create our world, no create task, он he is lazy" ,
+                                                  "monster,Create our world, no create task, он he is lazy" ,
+                                                  "Hero,Create our world, no create task, он he is lazy!" ,
+                                                  Program.Game.Button , Program.Game.Font1 , Program.Game.Dialogtex)
+                                   };
+        }
+
+        void SpawnPyr(BaseDimension dimension)
+        {
+            int wallStone = dimension.Rand.Next(10,15);
+            int size = wallStone*2+dimension.Rand.Next(wallStone / 3, wallStone / 2);
             
-            y += wallStone;
-            if (x + size >= SizeGeneratior.WorldWidth) return;
-            if (y - wallStone >= SizeGeneratior.WorldHeight) return;
+            Y += wallStone;
+            if (X + size >= SizeGeneratior.WorldWidth) return;
+            if (Y - wallStone >= SizeGeneratior.WorldHeight) return;
             for (int i = 0; i < wallStone; i++)
-                dimension.settexture(x + i, y - i, 25);
+                dimension.SetTexture(X + i, Y - i, 25);
             for (int i = 0; i < wallStone; i++)
-                dimension.settexture(x + (size - wallStone) + i, y - (wallStone - 1) + i, 25);
-            for (int i = 0; i < (size - wallStone * 2); i++)
-                dimension.settexture(x + i + wallStone, y - (wallStone - 1), 25);
+                dimension.SetTexture(X + (size - wallStone) + i, Y - (wallStone - 1) + i, 25);
+            for (int i = 0; i < size - wallStone * 2; i++)
+                dimension.SetTexture(X + i + wallStone, Y - (wallStone - 1), 25);
             for (int i = 0; i < size; i++)
-                dimension.settexture(x + i, y, 25);
-            for (int i = 1; i < (wallStone - 1); i++)
+                dimension.SetTexture(X + i, Y, 25);
+            for (int i = 1; i < wallStone - 1; i++)
             {
                 for (int j = i+1; j < size - i-1; j++)
                 {
-                    dimension.SetWallID(x + j, y - i, 25);
+                    dimension.SetWallId(X + j, Y - i, 25);
                 }
             }
             int direction = 0;
-            int stepsToDirection = dimension.rand.Next(5, 10);
-            int stepX = x + (size-4);
-            int stepY = y-1;
-            int countPath = dimension.rand.Next(5, 7);
+            int stepsToDirection = dimension.Rand.Next(5, 10);
+            int stepX = X + (size-4);
+            int stepY = Y-1;
+            int countPath = dimension.Rand.Next(5, 7);
             for (int i = 0; i < countPath; i++)
             {
-                countAddPath = 1;
-                createPath(dimension, direction, stepsToDirection, ref stepX, ref stepY);
-                if (direction == 0)
-                    direction = dimension.rand.Next(0, 2);
-                else if (direction == 1)
-                    direction = dimension.rand.Next(0, 3);
-                else if (direction == 2)
-                    direction = dimension.rand.Next(1, 3);
-
-                if (stepX - 5 <= 0 || stepX + 5 >= SizeGeneratior.WorldWidth) break; ;
+                _countAddPath = 1;
+                CreatePath(dimension, direction, stepsToDirection, ref stepX, ref stepY);
+                direction = direction == 0 ? dimension.Rand.Next(0, 2) : dimension.Rand.Next((direction+1)%2, 3);
+                if (stepX - 5 <= 0 || stepX + 5 >= SizeGeneratior.WorldWidth) break;
                 if (stepY - 5 <= 0 || stepY + 5 >= SizeGeneratior.WorldHeight) break;
-                stepsToDirection = dimension.rand.Next(5, 10); 
+                stepsToDirection = dimension.Rand.Next(5, 10); 
             }
         }
 
-        private void createPath(BaseDimension dimension, int direction, int stepsToDirection, ref int stepX, ref int stepY)
+        void CreatePath(BaseDimension dimension, int direction, int stepsToDirection, ref int stepX, ref int stepY)
         {
-            for (int j = 0; j < stepsToDirection; j++)
+            if ( GeneratorHoles(dimension , direction , stepsToDirection , ref stepX , ref stepY) ) return;
+
+            if ( dimension.Rand.Next(100) > 30 - 10 * _countAddPath ) return;
+
+            int countPath = dimension.Rand.Next(5, 7);
+            int stepXNew = stepX;
+            int stepYNew = stepY;
+            _countAddPath = 2;
+            for (int i = 0; i < countPath; i++)
             {
-                if (stepX - 5 <= 0 || stepX + 5 >= SizeGeneratior.WorldWidth) return;
-                if (stepY - 5 <= 0 || stepY + 5 >= SizeGeneratior.WorldHeight) return;
-                if (direction == 0)
-                {
-                    if (dimension.map[stepX, stepY - 3].wallid != 25) dimension.settexture(stepX, stepY - 3, 25);
-                    if (dimension.map[stepX, stepY + 1].wallid != 25) dimension.settexture(stepX, stepY + 1, 25);
-                    dimension.SetWallID(stepX, stepY - 2, 25);
-                    dimension.SetWallID(stepX, stepY - 1, 25);
-                    dimension.SetWallID(stepX, stepY, 25);
-                    stepX = stepX + 1;
-                }
-                else if (direction == 1)
+                switch ( direction )
                 {
 
-                    dimension.SetWallID(stepX - 2, stepY, 25);
-                    dimension.SetWallID(stepX - 1, stepY, 25);
-                    dimension.SetWallID(stepX, stepY, 25);
-                    if (dimension.map[stepX - 3, stepY].wallid != 25) dimension.settexture(stepX - 3, stepY, 25);
-                    if (dimension.map[stepX + 1, stepY].wallid != 25) dimension.settexture(stepX + 1, stepY, 25);
-                    stepY = stepY + 1;
+                    case 0:
+                        direction = dimension.Rand.Next(0, 2);
+                        break;
+                    case 1:
+                        direction = dimension.Rand.Next(0, 3);
+                        break;
+                    case 2:
+                        direction = dimension.Rand.Next(1, 3);
+                        break;
                 }
-                else if (direction == 2)
-                {
-                    if (dimension.map[stepX, stepY - 3].wallid != 25) dimension.settexture(stepX, stepY - 3, 25);
-                    if (dimension.map[stepX, stepY - 1].wallid != 25) dimension.settexture(stepX, stepY + 1, 25);
-                    dimension.SetWallID(stepX, stepY - 2, 25);
-                    dimension.SetWallID(stepX, stepY - 1, 25);
-                    dimension.SetWallID(stepX, stepY, 25);
-                    stepX = stepX - 1;
-                }
+                stepsToDirection = dimension.Rand.Next(5, 10);
+                CreatePath(dimension, direction, stepsToDirection, ref stepXNew, ref stepYNew);
+                if (stepXNew - 5 <= 0 || stepXNew + 5 >= SizeGeneratior.WorldWidth) break; 
+                if (stepYNew - 5 <= 0 || stepYNew + 5 >= SizeGeneratior.WorldHeight) break;
             }
-            if (dimension.rand.Next(100) <= 30 - 10 * countAddPath)
-            {
-                int countPath = dimension.rand.Next(5, 7);
-                int stepXNew = stepX;
-                int stepYNew = stepY;
-                countAddPath = 2;
-                for (int i = 0; i < countPath; i++)
-                {
-                    if (direction == 0)
-                        direction = dimension.rand.Next(0, 2);
-                    else if (direction == 1)
-                        direction = dimension.rand.Next(0, 3);
-                    else if (direction == 2)
-                        direction = dimension.rand.Next(1, 3);
-
-                    stepsToDirection = dimension.rand.Next(5, 10);
-                    createPath(dimension, direction, stepsToDirection, ref stepXNew, ref stepYNew);
-                    if (stepXNew - 5 <= 0 || stepXNew + 5 >= SizeGeneratior.WorldWidth) break; ;
-                    if (stepYNew - 5 <= 0 || stepYNew + 5 >= SizeGeneratior.WorldHeight) break;
-                }
-            } 
         }
-        int countAddPath = 0;
-        public override void spawn(BaseDimension dimension)
+
+        static bool GeneratorHoles(BaseDimension dimension , int direction , int stepsToDirection , ref int stepX ,
+                                   ref int stepY)
         {
-            if (dimension.mapB[x] != ArrayResource.grass && dimension.mapB[x] != ArrayResource.Desrt) return;
-            if (dimension.mapB[x] == ArrayResource.grass) spawnInForest(dimension);
-            else if (dimension.mapB[x] == ArrayResource.Desrt) spawnPyr(dimension);
+            for ( int j = 0 ; j < stepsToDirection ; j++ )
+            {
+                if ( stepX - 5 <= 0 || stepX + 5 >= SizeGeneratior.WorldWidth ) return true;
+                if ( stepY - 5 <= 0 || stepY + 5 >= SizeGeneratior.WorldHeight ) return true;
+
+                switch ( direction )
+                {
+                    case 0:
+                        if ( dimension.MapTile[stepX , stepY - 3].IdWall != 25 ) dimension.SetTexture(stepX , stepY - 3 , 25);
+                        if ( dimension.MapTile[stepX , stepY + 1].IdWall != 25 ) dimension.SetTexture(stepX , stepY + 1 , 25);
+                        stepX = stepX + 1;
+                        break;
+                    case 1:
+                        if ( dimension.MapTile[stepX - 3 , stepY].IdWall != 25 ) dimension.SetTexture(stepX - 3 , stepY , 25);
+                        if ( dimension.MapTile[stepX + 1 , stepY].IdWall != 25 ) dimension.SetTexture(stepX + 1 , stepY , 25);
+                        stepY = stepY + 1;
+                        break;
+                    case 2:
+                        if ( dimension.MapTile[stepX , stepY - 3].IdWall != 25 ) dimension.SetTexture(stepX , stepY - 3 , 25);
+                        if ( dimension.MapTile[stepX , stepY - 1].IdWall != 25 ) dimension.SetTexture(stepX , stepY + 1 , 25);
+                        stepX = stepX - 1;
+                        break;
+                }
+
+                dimension.SetWallId(stepX - 2 , stepY , 25);
+                dimension.SetWallId(stepX - 1 , stepY , 25);
+                dimension.SetWallId(stepX , stepY , 25);
+            }
+
+            return false;
+        }
+
+        int _countAddPath;
+        public override void Spawn(BaseDimension dimension)
+        {
+            if (ReferenceEquals(dimension.MapBiomes[X] , ArrayResource.Grass)) SpawnInForest(dimension);
+            else if (ReferenceEquals(dimension.MapBiomes[X] , ArrayResource.Desrt)) SpawnPyr(dimension);
         }
     }
 }

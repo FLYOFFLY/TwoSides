@@ -1,41 +1,40 @@
-﻿using System;
-using System.IO;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Globalization;
 
 namespace TwoSides
 {
 #if WINDOWS || XBOX
-    static class Program
+    internal static class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        static bool isStart = false;
-        static Stopwatch sw = new Stopwatch();
+        static bool _isStart;
+        static readonly Stopwatch Sw = new Stopwatch();
 
         public static void StartSw()
         {
-            if (!isStart)
+            if (!_isStart)
             {
-                isStart = true;
+                _isStart = true;
             }
-            sw.Reset();
-            sw.Start();
+            if(Sw.ElapsedTicks >0)Sw.Reset();
+            Sw.Start();
         }
 
         public static string StopSw(string funcName)
         {
-            sw.Stop();
-            string log = funcName + ":" + sw.ElapsedTicks.ToString() + "ticks " + sw.ElapsedMilliseconds + "ms";
-            sw.Reset();
-            return log;
+            Sw.Stop();
+            //string log = funcName + ":" + sw.ElapsedTicks.ToString() + "ticks " + sw.ElapsedMilliseconds + "ms";
+
+            return Sw.ElapsedTicks.ToString(CultureInfo.InvariantCulture);
         }
-        public static Game1 game;
-        static void Main(string[] args)
+        public static Game1 Game;
+        static void Main()
         {
-            using (game = new Game1())
+            using (Game = new Game1())
             {
-                game.Run();
+                Game.Run();
             }
         }
     }

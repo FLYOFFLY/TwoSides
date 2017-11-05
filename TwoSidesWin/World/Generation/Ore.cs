@@ -1,28 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.GameContent.GenerationResources;
+﻿using TwoSIdes.GameContent.GenerationResources;
 
-namespace TwoSides.World.Generation
+namespace TwoSIdes.World.Generation
 {
     public class Ore
     {
-        public int change {get; private set; }
-        public int range { get; private set; }
-        public int idblock { get; private set; }
-        public int maxY { get; private set; }
-        public int minY { get; private set; }
+        public int Change {get; }
+        public int Range { get; }
+        public int Idblock { get;  }
+        public int MaxY { get; }
+        public int MinY { get; }
 
-        public Ore(int change, int range,int idblock,int maxY,int MinY)
+        public Ore(int change, int range,int idblock,int maxY,int minY)
         {
-            this.change = change;
-            this.range = range;
-            this.idblock = idblock;
-            this.maxY = maxY;
-            if (this.maxY >= SizeGeneratior.WorldHeight)
-                maxY = SizeGeneratior.WorldHeight - 1;
-            this.minY = minY;
+            Change = change;
+            Range = range;
+            Idblock = idblock;
+            MaxY = maxY;
+            if (MaxY >= SizeGeneratior.WorldHeight)
+                MaxY = SizeGeneratior.WorldHeight - 1;
+            MinY = minY;
         }
     }
 }

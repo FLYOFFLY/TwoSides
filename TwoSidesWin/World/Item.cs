@@ -1,27 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
-using TwoSides.ModLoader;
 using System.IO;
 
-namespace TwoSides.World
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+
+using TwoSIdes.Utils;
+
+namespace TwoSIdes.World
 {
     [Serializable]
-    sealed public class Item
+    public sealed class Item
     {
         public bool IsEmpty = true;
-        public int ammount = 0;
-        public int iditem;
-        public int power;
-        public float HP { get; set; }
+        public int Ammount;
+        public int Id;
+        public int Power;
+        public float Hp { get; set; }
         public  enum Type
         {
             BLOCKICON = 0,
-            HORISONTALBLOCKICON, // 1
             VERTICALBLOCKICON, //2
             EAT, //3
             WATER, //4
@@ -34,329 +32,434 @@ namespace TwoSides.World
             CRAFTITEM,//11
             PICKAXE,
             SWORD,
-            HAMMER,
-        };
+            HAMMER
+        }
 
 
-        public  const int itemmax = 46;
-        public static Texture2D[] items = new Texture2D[itemmax + Clothes.maxArmor];
-        public void save(BinaryWriter writer)
+        public  const int ItemMax = 55;
+        static readonly Texture2D[] Items = new Texture2D[ItemMax + Clothes.MaxArmor];
+        public void Save(BinaryWriter writer)
         {
             writer.Write(IsEmpty);
-            writer.Write(ammount);
-            writer.Write((double)HP);
-            writer.Write(power);
+            writer.Write(Ammount);
+            writer.Write((double)Hp);
+            writer.Write(Power);
         }
-        public void load(BinaryReader reader)
+        public void Load(BinaryReader reader)
         {
             IsEmpty = reader.ReadBoolean();
-            ammount = reader.ReadInt32();
-            HP = (float)reader.ReadDouble();
-            power = reader.ReadInt32();
+            Ammount = reader.ReadInt32();
+            Hp = (float)reader.ReadDouble();
+            Power = reader.ReadInt32();
         }
-        public int getTypeItem()
+        public int GetTypeItem()
         {
-            if (iditem == -1) return (int)Item.Type.CRAFTITEM;
-            if (iditem == 8) return (int)Item.Type.PICKAXE;
-            if (iditem == 41) return (int)Item.Type.PICKAXE;
-            if (iditem == 42) return (int)Item.Type.HAMMER;
-            if (iditem == 43) return (int)Item.Type.HAMMER;
-            if (iditem == 44) return (int)Item.Type.SWORD;
-            if (iditem == 45) return (int)Item.Type.SWORD;
+            if ( IsPickaxe )
+                return (int) Type.PICKAXE;
+            else if ( IsHammer )
+                return (int) Type.HAMMER;
+            else if ( IsSword )
+                return (int) Type.SWORD;
+            else if ( IsCraftitem )
+                return (int) Type.CRAFTITEM;
+            else if ( IsHeadArmor )
+                return (int) Type.HEAD;
+            else if ( IsBodyArmor )
+                return (int) Type.BODY;
+            else if ( IsLegsArmor )
+                return (int) Type.LEGS;
+            else if (IsGun)
+                return (int) Type.WEAPONGUN;
+            else if ( Id == 26 )
+                return (int) Type.VERTICALBLOCKICON;
+            else if ( IsWater )
+                return (int) Type.WATER;
+            else if ( IsEat)
+                return (int) Type.EAT;
+            else if ( Id == 14 )
+                return (int) Type.BANDAGE;
+            else
+                return (int) Type.BLOCKICON;
+        }
 
+        bool IsEat => Id == 55 || Id == 53 ||  Id == 11;
 
-            if (iditem == 19) return (int)Item.Type.CRAFTITEM;
-            if (iditem == 20) return (int)Item.Type.CRAFTITEM;
-            if (iditem == 21) return (int)Item.Type.CRAFTITEM;
-            if (iditem == 29) return (int)Item.Type.CRAFTITEM;
-            if (iditem == 30) return (int)Item.Type.CRAFTITEM;
-            if (iditem == 37) return (int)Item.Type.CRAFTITEM;
-            if (iditem == 36) return (int)Item.Type.CRAFTITEM;
-            if (iditem == 34) return (int)Item.Type.SWORD;
-            if (iditem == 38) return (int)Item.Type.CRAFTITEM;
+        bool IsWater => Id == 48 || Id==10;
 
-            if (iditem == 47) return (int)Item.Type.CRAFTITEM;
-            if (iditem == 49) return (int)Item.Type.CRAFTITEM;
-            if (iditem == 50) return (int)Item.Type.CRAFTITEM;
-            if (iditem == 51) return (int)Item.Type.CRAFTITEM;
+        bool IsLegsArmor => Id == 24 || Id == 33;
 
-            if (iditem == 22 || iditem == 31) return (int)Item.Type.HEAD;
-            if (iditem == 23 || iditem == 32) return (int)Item.Type.BODY;
-            if (iditem == 24 || iditem == 33) return (int)Item.Type.LEGS;
-            if (iditem == 25) return (int)Item.Type.WEAPONGUN;
-            if (iditem == 26) return (int)Item.Type.VERTICALBLOCKICON;
-            if (iditem == 27) return (int)Item.Type.HORISONTALBLOCKICON;
+        bool IsBodyArmor => Id == 23 || Id == 32;
 
-            if (iditem == 10) return (int)Item.Type.WATER;
-            if (iditem == 48) return (int)Item.Type.WATER;
-            if (iditem == 11) return (int)Item.Type.EAT;
-            if (iditem == 14) return (int)Item.Type.BANDAGE;
+        bool IsHeadArmor => Id == 22 || Id == 31;
 
-            if (iditem >= ModLoader.ModLoader.StartIdItem)
+        bool IsCraftitem => Id == -1 || Id == 19 || Id == 20 || Id == 21 || Id == 29 || Id == 30 || Id == 37 || Id == 36 ||
+                            Id == 38 || Id == 47 || Id == 49 || Id == 50 || Id == 51 || Id == 52 || Id == 54;
+
+        bool IsBandage => Id == 14;
+        bool IsSword => Id == 44 || Id == 45 || Id == 34;
+        bool IsGun => Id == 25;
+        bool IsHammer => Id == 42 || Id == 43;
+
+        bool IsPickaxe => Id == 8 || Id == 41;
+
+        public bool IsTool => IsPickaxe || IsSword || IsHammer;
+        public bool IsArmor => IsBodyArmor || IsLegsArmor || IsHeadArmor;
+        public bool IsHealth => IsEat || IsWater || IsBandage;
+
+        public Item() => Hp = 100;
+
+        public Item(int ammount,int id)
+        {
+            Ammount = ammount;
+            Id = id;
+            IsEmpty = false;
+            Hp = 100;
+        }
+        public int GetHunger()
+        {
+            switch (Id)
             {
-                Console.WriteLine(iditem);
-                return (int)((ItemMod)ModLoader.ModLoader.ItemsMods[ModLoader.ModLoader.getIndexItem(iditem)]).type;
-            } return (int)Item.Type.BLOCKICON;
+                case 11:
+                    return 10;
+                case 53:
+                    return 4;
+                case 55:
+                    return 6;
+                default:
+                    return 0;
+            }
         }
-
-        public Item()
+        public int GetArmorModel()
         {
-            HP = 100;
-        }
-
-        public Item(int ammount,int iditem)
-        {
-            this.ammount = ammount;
-            this.iditem = iditem;
-            this.IsEmpty = false;
-            HP = 100;
-        }
-        public int getHunger()
-        {
-            return 0;
-        }
-        public int getArmorModel()
-        {
-            if (iditem == 22) return 0;
-            if (iditem == 23) return 1;
-            if (iditem == 24) return 2;
-            if (iditem == 31) return 3;
-            if (iditem == 32) return 4;
-            if (iditem == 33) return 5;
-            return 0;
-        }
-
-        public int getArmorSlot()
-        {
-            if (iditem == 22) return 1;
-            if (iditem == 23) return 2;
-            if (iditem == 24) return 3;
-            if (iditem == 31) return 1;
-            if (iditem == 32) return 2;
-            if (iditem == 33) return 3;
-            return 0;
-        }
-
-        public int getDef()
-        {
-            if (iditem == 22) return 3;
-            if (iditem == 23) return 2;
-            if (iditem == 24) return 3;
-            if (iditem == 31) return 4;
-            if (iditem == 32) return 3;
-            if (iditem == 33) return 4;
-            return 0;
-        }
-        public float getMass()
-        {
-            if (iditem == 22) return 30;
-            if (iditem == 23) return 30;
-            if (iditem == 24) return 30;
-            if (iditem == 31) return 100;
-            if (iditem == 32) return 100;
-            if (iditem == 33) return 100;
-            return 0;
-        }
-        public float getMassFactor()
-        {
-            if (getMass() >= 1) return (getMass() / 100);
-            else return 0.01f;
-        }
-        public float getSubMassFactor()
-        {
-            if (getMass() >= 1) return 1.0f-getMassFactor();
-            else return 0.01f;
-        }
-        public float getSpeedModdif()
-        {
-            if (getArmorSlot() == 0) return 1.0f-((getMass() * 0.5f)/100.0f);
-            if (getArmorSlot() == 1) return 1.0f-((getMass() * 0.5f)/100.0f);
-            if (getArmorSlot() == 2) return 1.0f - ((getMass() * 0.8f) / 100.0f);
-            
-            return 1;
-        }
-
-        public void damageslot(float dmg)
-        {
-            if (!IsEmpty)
+            switch (Id)
             {
-                if (ammount == 1)
-                {
-                    HP -= dmg;
-                    if (HP <= 0.01f) HP = 0.01f;
-                }
-                else
-                {
-                    Item num = new Item();
-                    num.ammount = ammount - 1;
-                    num.iditem = iditem;
-                    num.power = power;
-                    num.IsEmpty = false;
-                    ammount = 1;
-                    damageslot(dmg);
-                    int a = Program.game.player.getslotitem(iditem, num.HP, false);
-                    if (a == -1)
-                    {
-                        Program.game.player.slot[Program.game.player.getslotfull()] = num;
-                    }
-                    else { Program.game.player.slot[a].ammount += num.ammount; }
-                }
+                case 22:
+                    return 0;
+                case 23:
+                    return 1;
+                case 24:
+                    return 2;
+                case 31:
+                    return 3;
+                case 32:
+                    return 4;
+                case 33:
+                    return 5;
+                default:
+                    return 0;
             }
         }
 
-        public int getBlockId()
+        public int GetArmorSlot()
         {
-            if (iditem == 9) return 8;
-            if (iditem == 15) return 9;
-            if (iditem == 16) return 10;
-            if (iditem == 17) return 11;
-            if (iditem == 18) return 12;
-            if (iditem == 26) return 19;
-            if (iditem == 27) return 17;
-            if (iditem == 28) return 22;
-            if (iditem == 39) return 26;
-            if (iditem == 40) return 25;
-            if (iditem == 48) return 28;
-            if (iditem >= ModLoader.ModLoader.StartIdItem)
+            switch (Id)
             {
-                Console.WriteLine(iditem);
-                if (((ItemMod)ModLoader.ModLoader.ItemsMods[ModLoader.ModLoader.getIndexItem(iditem)]).type == 0)
-                    return ((ItemMod)ModLoader.ModLoader.ItemsMods[ModLoader.ModLoader.getIndexItem(iditem)]).param;
-                else
-                    return iditem;
-            } return iditem;
+                case 22:
+                case 31:
+                    return 1;
+                case 32:
+                case 23:
+                    return 2;
+                case 33:
+                case 24:
+                    return 3;
+                default:
+                    return 0;
+            }
         }
 
+        public int GetDef()
+        {
+            switch ( Id ) {
+                case 23:
+                    return 2;
+                case 31:
+                    return 4;
+                case 33:
+                    return 4;
+                case 32:
+                case 24:
+                case 22:
+                    return 3;
+                default:
+                    return 0;
+            }
+        }
+        public float GetMass()
+        {
+            switch ( Id ) {
+                case 22:
+                case 23:
+                case 24:
+                    return 30;
+                case 31:
+                case 32:
+                case 33:
+                    return 100;
+                default:
+                    return 0;
+            }
+        }
+        public float GetMassFactor()
+        {
+            if (GetMass() >= 1) return GetMass() / 100;
+
+            return 0.01f;
+        }
+        public float GetSubMassFactor()
+        {
+            if (GetMass() >= 1) return 1.0f-GetMassFactor();
+
+            return 0.01f;
+        }
+        public float GetSpeedModdif()
+        {
+            switch (GetArmorSlot())
+            {
+                case 0:
+                case 1:
+                    return 1.0f - GetMass() * 0.5f / 100.0f;
+                case 2:
+                    return 1.0f - GetMass() * 0.8f / 100.0f;
+                default:
+                    return 1;
+            }
+        }
+
+        public void DamageSlot(float dmg)
+        {
+            if ( IsEmpty ) return;
+
+            if (Ammount == 1)
+            {
+                Hp -= dmg;
+                if (Hp <= 0.01f) Hp = 0.01f;
+            }
+            else
+            {
+                Item num = new Item
+                           {
+                               Ammount = Ammount - 1 ,
+                               Id = Id ,
+                               Power = Power ,
+                               IsEmpty = false
+                           };
+                Ammount = 1;
+                DamageSlot(dmg);
+                int a = Program.Game.Player.GetSlotItem(Id, num.Hp, false);
+                if (a == -1)
+                {
+                    Program.Game.Player.Slot[Program.Game.Player.GetSlotFull()] = num;
+                }
+                else { Program.Game.Player.Slot[a].Ammount += num.Ammount; }
+            }
+        }
+
+        public int GetBlockId()
+        {
+            switch ( Id ) {
+                case 9:
+                    return 8;
+                case 15:
+                    return 9;
+                case 16:
+                    return 10;
+                case 17:
+                    return 11;
+                case 18:
+                    return 12;
+                case 26:
+                    return 19;
+                case 27:
+                    return 17;
+                case 28:
+                    return 22;
+                case 39:
+                    return 26;
+                case 40:
+                    return 25;
+                case 48:
+                    return 28;
+                default:
+
+                    if (Id >= 56 && Id <= 60) return Id - 23;
+                    return Id;
+            }
+        }
         public string GetName()
         {
-            if (iditem == 0) return "dirt";
-            if (iditem == 1) return "stone";
-            if (iditem == 2) return "Gold Ore";
-            if (iditem == 3) return "Iron Ore";
-            if (iditem == 4) return "SnowDirt";
-            if (iditem == 5) return "Wood";
-            if (iditem == 6) return "Torch";
-            if (iditem == 7) return "Coal";
-            if (iditem == 8) return "Stone Pickaxe";
-            if (iditem == 9) return "Chest";
-            if (iditem == 10) return "Water";
-            if (iditem == 11) return "Burger";
-            if (iditem == 12) return "???";
-            if (iditem == 13) return "String";
-            if (iditem == 14) return "plaster";
-            if (iditem == 15) return "Iron Block";
-            if (iditem == 16) return "HellDirt";
-            if (iditem == 18) return "Portal";
-            if (iditem == 19) return "Stick";
-            if (iditem == 20) return "Stick Stone";
-            if (iditem == 21) return "Stick Iron";
-            if (iditem == 22) return "Stone helmet  ";
-            if (iditem == 23) return "Stone Breakplast";
-            if (iditem == 24) return "stone Shoes";
-            if (iditem == 25) return "stone GUN";
-            if (iditem == 26) return "Stul";
-            if (iditem == 27) return "TABLE";
-            //
-            if (iditem == 28) return "Furnace";
-            if (iditem == 29) return "Iron Bar";
-            if (iditem == 30) return "Gold Bar";
-            if (iditem == 31) return "Chain Helmet";
-            if (iditem == 32) return "Chain Mail";
-            if (iditem == 33) return "Chain boots";
-            if (iditem == 34) return "Iron Sword";
-            if (iditem == 35) return "Iron bar(?)";
-            if (iditem == 36) return "Clay";
-            if (iditem == 37) return "Sand";
-            if (iditem == 38) return "Brick bar";
-            if (iditem == 39) return "Brick";
-            if (iditem == 40) return "Sandstone";
-            if (iditem == 41) return "Iron PickAxe";
-            if (iditem == 42) return "Snow Hammer";
-            if (iditem == 43) return "Stone Hammer";
-            if (iditem == 44) return "Copper Sword";
-            if (iditem == 45) return "Stone Sword";
-            if (iditem == 46) return "Cactus";
-            if (iditem == 47) return "Cactus Thorn";
-            if (iditem == 48) return "Cactus juice";
-            if (iditem == 49) return "Wooden tubule";
-            return "???";
-        }
+            if ( Id < 0 || Id >= ItemMax ) return "???";
 
+            string name = $"Item_{Id}";
+            return Localisation.GetName(name);
+        }
+        
         public int GetStack()
         {
-            if (iditem == 8) return 1;
-            if (iditem == 10) return 5;
-            if (iditem == 11) return 5;
-            if (iditem == 12) return 5;
-            if (iditem == 13) return 5;
-            if (iditem == 14) return 5;
-            if (iditem == 22 || iditem == 23 || iditem == 24 || iditem == 25 || iditem == 31 || iditem == 32 || iditem == 33 || iditem == 34 ||
-                iditem == 41 || iditem == 42 || iditem == 43 || iditem == 44 || iditem == 45) return 1;
-            return 64;
+            switch ( Id ) {
+                case 8:
+                    return 1;
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                    return 5;
+                case 22:
+                case 23:
+                case 24:
+                case 25:
+                case 31:
+                case 32:
+                case 33:
+                case 34:
+                case 41:
+                case 42:
+                case 43:
+                case 44:
+                case 45:
+                    return 1;
+                default:
+                    return 64;
+            }
         }
 
         public float GetPower()
         {
-            if (iditem == 8) return 2f;
-            if (iditem == 41) return 2f;
-            if (iditem == 42) return 2f;
-            if (iditem == 43) return 2f;
-            return 0;
+            switch ( Id ) {
+                case 8:
+                case 41:
+                case 42:
+                case 43:
+                    return 2f;
+                default:
+                    return 0;
+            }
         }
 
-        public float Getdamage()
+        public float GetDamage()
         {
-            if (iditem == 1) return 0.6f;
-            if (iditem == 5) return 0.55f;
-            if (iditem == 8) return 2f;
-            if (iditem == 15) return 1f;
-            if (iditem == 19) return 0.60f;
-            if (iditem == 28) return 1f;
-            if (iditem == 34) return 5f;
-            if (iditem == 41) return 3f;
-            if (iditem == 42) return 4f;
-            if (iditem == 43) return 2f;
-            if (iditem == 44) return 4f;
-            if (iditem == 45) return 3f;
-            return 0;
+            switch ( Id ) {
+                case 5:
+                    return 0.55f;
+                case 1:
+                case 19:
+                    return 0.6f;
+                case 8:
+                case 43:
+                    return 2f;
+                case 15:
+                case 28:
+                    return 1f;
+                case 34:
+                    return 5f;
+                case 41:
+                case 45:
+                    return 3f;
+                case 42:
+                case 44:
+                    return 4f;
+                default:
+                    return 0;
+            }
         }
 
         public Color GetColor()
         {
 
-            if (iditem == 0 || iditem == 1 || iditem == 4 || iditem == 5 || iditem == 6 || iditem == 7 || iditem == 16 || iditem == 19||
-                iditem == 26 || iditem == 27 || iditem == 36 || iditem == 37 || iditem == 38 || iditem == 39|| iditem == 40) return Rate.NORMAL_RATE;
-            if (iditem == 8 || iditem == 28 || iditem == 43 || iditem == 45) return Rate.STONE_RATE;
-            if (iditem == 10 || iditem == 11 || iditem == 12 || iditem == 13 || iditem == 14) return Rate.DROP_RATE;
-            if (iditem == 2 || iditem == 3 || iditem == 30 || iditem == 29 || iditem == 44) return Rate.ORE_RATE;
-            if (iditem == 15 || iditem == 22 || iditem == 23 || iditem == 24 || iditem == 31 || iditem == 32|| iditem==33 || iditem == 34||
-                iditem == 41) return Rate.IRON_RATE;
-            if (iditem == 25 || iditem == 42) return Rate.LEGEND_RATE;
-            return Color.Black;
+            switch ( Id ) {
+                case 0:
+                case 1:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 16:
+                case 19:
+                case 26:
+                case 27:
+                case 36:
+                case 37:
+                case 38:
+                case 39:
+                case 40:
+                    return Rate.Normal;
+                case 8:
+                case 28:
+                case 43:
+                case 45:
+                    return Rate.Stone;
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                    return Rate.Drop;
+                case 2:
+                case 3:
+                case 30:
+                case 29:
+                case 44:
+                    return Rate.Ore;
+                case 15:
+                case 22:
+                case 23:
+                case 24:
+                case 31:
+                case 32:
+                case 33:
+                case 34:
+                case 41:
+                    return Rate.Iron;
+                case 25:
+                case 42:
+                    return Rate.Legend;
+                default:
+                    return Color.Black;
+            }
+        }
+        public static void Render(SpriteBatch spriteBatch, int id, Rectangle desc, SpriteEffects effect, float angle, Vector2 center)
+        {
+            Texture2D texture = GetTexture(id);
+            center.X *= texture.Width;
+            center.Y *= texture.Height;
+            spriteBatch.Draw(texture,
+                           desc,
+                           new Rectangle(0, 0, texture.Width, texture.Height),
+                           Color.White, angle, center, effect, 0);
+        }
+        public static void Render(SpriteBatch spriteBatch,int Id,int x,int y,SpriteEffects effect,float angle,Vector2 center)
+        {
+            Render(spriteBatch, Id, new Rectangle(x, y, 16, 16), effect, angle, center);
+        }
+        public static void Render(SpriteBatch spriteBatch, int Id, int x,int y)
+        {
+            Render(spriteBatch, Id, new Rectangle(x, y, 16, 16));
         }
 
-        public static void Render(SpriteBatch spriteBatch,int id, int x, int y)
-        {
-            if (id >= ModLoader.ModLoader.StartIdItem)
-            {
-                id = ModLoader.ModLoader.getIndexItem(id);
-                spriteBatch.Draw(((ItemMod)ModLoader.ModLoader.ItemsMods[id]).texture, new Rectangle(x, y, 16, 16), Color.White);
-            }
-            else spriteBatch.Draw(items[id], new Rectangle(x, y, 16, 16), Color.White);
+        static Texture2D GetTexture(int id) => Items[id];
 
+        public static void Render(SpriteBatch spriteBatch,int Id,Rectangle dest)
+        {
+            Render(spriteBatch, Id, dest, SpriteEffects.None, 0, Vector2.Zero);
         }
         public void Render(SpriteBatch spriteBatch, int x, int y)
         {
-            Render(spriteBatch, iditem, x, y);
-            
+            Render(spriteBatch, Id, x, y);
+
         }
-        public static void LoadedItems(ContentManager Content)
+        public void Render(SpriteBatch spriteBatch, Rectangle dest)
+        {
+            Render(spriteBatch, Id, dest);
+
+        }
+        public static void LoadedItems(ContentManager content)
         {
 
             Program.StartSw();
-            for (int i = 0; i < itemmax + Clothes.maxArmor; i++)
+            for (int i = 0; i < ItemMax + Clothes.MaxArmor; i++)
             {
-                items[i] = Content.Load<Texture2D>(Game1.ImageFolder + "items\\" + i);
+                Items[i] = content.Load<Texture2D>(Game1.ImageFolder + "items\\" + i);
             }
             Program.StopSw("Loaded Sprite Items");
         }

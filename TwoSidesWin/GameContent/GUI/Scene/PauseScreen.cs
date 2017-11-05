@@ -1,70 +1,67 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.GUI.Scene;
-using TwoSides.GUI;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+
+using TwoSides.GUI;
+using TwoSides.GUI.Scene;
 
 namespace TwoSides.GameContent.GUI.Scene
 {
     public class PauseScreen : IScene
     {
-        public bool lastSceneRender { get; set; }
-        public bool lastSceneUpdate { get; set; }
-        ControlScene scene;
-        public Button[] btn = new Button[6];
+        public bool LastSceneRender { get; set; }
+        public bool LastSceneUpdate { get; set; }
+        ControlScene _scene;
+        public Button[] Buttons = new Button[6];
         public void Load(ControlScene scene)
         {
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < Buttons.Length; i++)
             {
-                btn[i] = new Button(Program.game.button, Program.game.Font1, new Rectangle(0, 0, 400, 400), "null");
-                Rectangle rect = new Rectangle(120, (Program.game.heightmenu) + 27 * i, (int)Program.game.Font1.MeasureString("Exit Game").X + 50, 25);
+                Buttons[i] = new Button(Program.Game.Button, Program.Game.Font1, new Rectangle(0, 0, 400, 400), "null");
+                Rectangle rect = new Rectangle(120, Program.Game.HeightMenu + 27 * i, (int)Program.Game.Font1.MeasureString("Exit Game").X + 50, 25);
 
-                btn[i].SetRect(rect);
+                Buttons[i].SetRect(rect);
             }
-            lastSceneRender = true;
-            this.scene = scene;
-            btn[0].Text = "Continue Game";
-            btn[1].Text = "New Game";
-            btn[2].Text = "Load Game";
-            btn[3].Text = "Save Game";
-            btn[4].Text = "Exit";
+            LastSceneRender = true;
+            _scene = scene;
+            Buttons[0].Text = "Continue Game";
+            Buttons[1].Text = "New Game";
+            Buttons[2].Text = "Load Game";
+            Buttons[3].Text = "Save Game";
+            Buttons[4].Text = "Exit";
         }
         public void Render(SpriteBatch spriteBatch)
         {
-            for (int i = 0; i < 6; i++) btn[i].Draw(spriteBatch);
+            foreach ( Button button in Buttons )
+                button.Draw(spriteBatch);
         }
         public void Update(GameTime gameTime)
         {
             KeyboardState keyState = Keyboard.GetState();
-            if (keyState.IsKeyDown(Keys.Up)) Program.game.camera.pos.Y -= 8;
-            if (keyState.IsKeyDown(Keys.Down)) Program.game.camera.pos.Y += 8;
-            if (keyState.IsKeyDown(Keys.Left)) Program.game.camera.pos.X -= 8;
-            if (keyState.IsKeyDown(Keys.Right)) Program.game.camera.pos.X += 8;
-            for (int i = 0; i < 6; i++) btn[i].Update();
-            if (btn[0].IsClicked()) scene.returnScene();
-            else if (btn[1].IsClicked())
+            if (keyState.IsKeyDown(Keys.Up)) Program.Game.Camera.Pos.Y -= 8;
+            else if (keyState.IsKeyDown(Keys.Down)) Program.Game.Camera.Pos.Y += 8;
+            else if (keyState.IsKeyDown(Keys.Left)) Program.Game.Camera.Pos.X -= 8;
+            else if (keyState.IsKeyDown(Keys.Right)) Program.Game.Camera.Pos.X += 8;
+            foreach ( Button button in Buttons )
+                button.Update();
+
+            if (Buttons[0].IsClicked()) _scene.ReturnScene();
+            else if (Buttons[1].IsClicked())
             {
-                scene.changeScene(new MainMenu());
+                _scene.ChangeScene(new MainMenu());
             }
-            else if (btn[2].IsClicked())
+            else if (Buttons[2].IsClicked())
             {
-                scene.changeScene(Progress.instance); 
-                Program.game.loadMap();
+                _scene.ChangeScene(Progress.Instance); 
+                Program.Game.LoadMap();
             }
-            else if (btn[3].IsClicked())
+            else if (Buttons[3].IsClicked())
             {
-                scene.changeScene(Progress.instance); 
-                Program.game.saveMap();
+                _scene.ChangeScene(Progress.Instance); 
+                Program.Game.SaveMap();
             }
-            else if (btn[4].IsClicked()) Program.game.Exit();
+            else if (Buttons[4].IsClicked()) Program.Game.Exit();
         }
-        public void tryExit()
-        {
-            scene.returnScene();
-        }
+        public void TryExit() => _scene.ReturnScene();
     }
 }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -29,8 +29,9 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -44,6 +45,8 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>
     </DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>BasicCorrectnessRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -56,6 +59,9 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>
     </DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>ExtendedCorrectnessRules.ruleset</CodeAnalysisRuleSet>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
@@ -63,12 +69,21 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>TwoSides.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Bind.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Clothes.cs" />
+    <Compile Include="Dust.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="GameContent\Entity\NPC\Pig.cs" />
     <Compile Include="GameContent\Entity\NPC\Wolf.cs" />
+    <Compile Include="GameContent\GenerationResources\Structures\Ruins.cs" />
     <Compile Include="GameContent\GUI\Scene\CreationPerson.cs" />
     <Compile Include="GameContent\GUI\Scene\GameScene.cs" />
     <Compile Include="GameContent\GUI\Scene\MusicMenu.cs" />
@@ -79,30 +94,36 @@
     <Compile Include="GameContent\GUI\Scene\SettingMenu.cs" />
     <Compile Include="GameContent\Tiles\BlockChest.cs" />
     <Compile Include="GameContent\Tiles\BlockNull.cs" />
+    <Compile Include="GameContent\Tiles\BlockPlatform.cs" />
     <Compile Include="GameContent\Tiles\BlockPortal.cs" />
     <Compile Include="GameContent\Tiles\BlockSit.cs" />
+    <Compile Include="GameContent\Tiles\BlockStairs.cs" />
     <Compile Include="GameContent\Tiles\BlockTable.cs" />
     <Compile Include="GameContent\Tiles\BlockTree.cs" />
     <Compile Include="GameContent\Tiles\CloseDoor.cs" />
+    <Compile Include="GameContent\Tiles\DoorDate.cs" />
+    <Compile Include="GlobalSuppressions2.cs" />
+    <Compile Include="World\Tile\ITileDatecs.cs" />
+    <Compile Include="GameContent\Tiles\ITileList.cs" />
     <Compile Include="GameContent\Tiles\OpenDoor.cs" />
     <Compile Include="GameContent\Tiles\StoneBlock.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="GUI\GUIElement.cs" />
     <Compile Include="GUI\Scene\ControlScene.cs" />
-    <Compile Include="ModLoader\ArmorMod.cs" />
-    <Compile Include="Perlin.cs" />
     <Compile Include="Physics\Animation.cs" />
     <Compile Include="Physics\Cloud.cs" />
     <Compile Include="Physics\Explosion.cs" />
     <Compile Include="Physics\Particle.cs" />
     <Compile Include="Physics\Water.cs" />
     <Compile Include="Rate.cs" />
+    <Compile Include="Utils\Language.cs" />
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\NamingVersion.cs" />
+    <Compile Include="World\BaseItem.cs" />
     <Compile Include="World\Tile\BaseTile.cs" />
     <Compile Include="GameContent\Dimensions\Hell.cs" />
     <Compile Include="GameContent\Dimensions\NormalWorld.cs" />
     <Compile Include="GameContent\Dimensions\SnowWorld.cs" />
-    <Compile Include="GameContent\Entity\NPC\Triangle.cs" />
     <Compile Include="GameContent\Entity\NPC\Zombie.cs" />
     <Compile Include="GameContent\GenerationResources\ArrayResource.cs" />
     <Compile Include="GameContent\GenerationResources\SizeGeneratior.cs" />
@@ -127,13 +148,6 @@
     <Compile Include="GUI\RadioButton.cs" />
     <Compile Include="GUI\Scene\IScene.cs" />
     <Compile Include="World\Item.cs" />
-    <Compile Include="ModLoader\BlockMod.cs" />
-    <Compile Include="ModLoader\ItemMod.cs" />
-    <Compile Include="ModLoader\LuaScript.cs" />
-    <Compile Include="ModLoader\ModFile.cs" />
-    <Compile Include="ModLoader\ModLoader.cs" />
-    <Compile Include="Multiplayer.cs" />
-    <Compile Include="Network\NetPlay.cs" />
     <Compile Include="Physics\Colision.cs" />
     <Compile Include="Utils\Utils.cs" />
     <Compile Include="GameContent\Entity\Bullet.cs" />
@@ -151,11 +165,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Race.cs" />
+    <Compile Include="RaceType.cs" />
     <Compile Include="Recipe.cs" />
-    <Compile Include="Settings.cs" />
     <Compile Include="World\Generation\BaseDimension.cs" />
-    <Compile Include="World\Block.cs" />
+    <Compile Include="World\Drop.cs" />
     <Compile Include="World\Generation\Biome.cs" />
     <Compile Include="World\Generation\Ore.cs" />
     <Compile Include="World\Generation\Structures\BaseStruct.cs" />
@@ -163,22 +176,25 @@
     <Compile Include="World\Sector.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Lidgren.Network, Version=3.4.0.456, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\MonoGame\v3.0\Assemblies\Windows\Lidgren.Network.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="MonoGame.Framework, Version=3.5.1.1679, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="NLua">
-      <HintPath>..\..\..\..\..\DCDownloads\NLua.Win32\NLua.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\DestinationUnknown.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Images\clothes\gloveL_0.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Images\clothes\shirtl_0.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Images\clothes\shirtl_1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Images\explosion.png">
@@ -212,9 +228,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Images\armor\5.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Images\Background_0.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Images\Background_1.png">
@@ -260,9 +273,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Images\clothes\shirt_1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Images\clothes\shirt_2.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Images\clothes\shoes_0.png">
@@ -448,6 +458,18 @@
     <Content Include="Content\Images\items\50.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Images\items\52.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Images\items\53.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Images\items\54.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Images\items\55.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Images\items\6.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -505,10 +527,16 @@
     <Content Include="Content\Images\Leveling\Speed.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Images\NPC\pig.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Images\NPC\triangle.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Images\NPC\wolf.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Images\pallete.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Images\plus.png">
@@ -709,6 +737,7 @@
     <Content Include="Content\Images\tiles\9.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Images\tiles\Dust.png" />
     <Content Include="Content\Images\tutorial.PNG">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -789,6 +818,12 @@
     <None Include="Data\Config\genworld.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Lang\en.lang">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Lang\ru.lang">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\Mods\FirstMods\Images\newBelt.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -799,6 +834,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="TwoSides.pfx" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

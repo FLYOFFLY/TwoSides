@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <items>
-  <BlockIcon id ="0" img ="myicon.png" blockID="0"></BlockIcon>
-  <Eat id ="1" img ="myicon.png" hunger="10"></Eat>
-  <CustomItem id ="2" img ="myicon.png" ></CustomItem>
+  <BlockIcon Id ="0" img ="myicon.png" blockID="0"></BlockIcon>
+  <Eat Id ="1" img ="myicon.png" hunger="10"></Eat>
+  <CustomItem Id ="2" img ="myicon.png" ></CustomItem>
 </items>

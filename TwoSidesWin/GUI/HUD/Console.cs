@@ -1,120 +1,124 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
+using System.Globalization;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using TwoSides.World;
-using System.Collections;
-using TwoSides.GameContent.Dimensions;
-using TwoSides.Utils;
-using TwoSides.ModLoader;
-namespace TwoSides.GUI
+
+using TwoSIdes.GameContent.Dimensions;
+using TwoSIdes.Utils;
+using TwoSIdes.World;
+
+namespace TwoSIdes.GUI.HUD
 {
-    sealed public class Console
+    public sealed class Console
     {
-        public bool isactive = false;
-        GUI gui;
-        Log consoleLog = new Log("console");
+        public bool Isactive;
+        readonly XnaLayout _gui;
+        readonly Log _consoleLog = new Log("console");
         public Console(SpriteFont font)
         {
-            gui = new GUI();
+            _gui = new XnaLayout();
             TextField inp = new TextField(new Vector2(100, 100), font);
-            inp.e_OnEnter += updatecheat;
-            gui.AddInput(inp);
+            inp.OnEnter += UpdateCheat;
+            _gui.AddInput(inp);
             Label lab = new Label("", new Vector2(100, 80), font);
-            gui.AddLabel(lab);
-            consoleLog.hasData = true;
+            _gui.AddLabel(lab);
+            _consoleLog.HasData = true;
         }
 
-        public void addLog(string log)
+        public void AddLog(string log)
         {
-            string newline = DateTime.Now.ToString("[yyyy:dd:hh:mm:ss]") + log;
-            string a = gui.GetLabel(0).GetText() + "\n" + newline;
-            consoleLog.WriteLog(log);
-            gui.GetLabel(0).SetText(a);
-            gui.GetLabel(0).Up(14);
+            string newline = DateTime.Now.ToString("[yyyy:dd:hh:mm:ss]", CultureInfo.InvariantCulture) + log;
+            string a = _gui.GetLabel(0).GetText() + "\n" + newline;
+            _consoleLog.WriteLog(log);
+            _gui.GetLabel(0).SetText(a);
+            _gui.GetLabel(0).Up(14);
         }
 
-        void addblock(int blockid)
+        static void AddItem(int blockId)
         {
-            Item temp = new Item();
-            temp.iditem = blockid;
-            temp.ammount = 1;
-            temp.IsEmpty = false;
-            Program.game.player.setslot(temp);
-        }
-
-        public void changeactive()
-        {
-            isactive = !isactive;
-        }
-        public void update()
-        {
-            gui.Update();
-        }
-        public void addBlockWorld(int x, int y,int id)
-        {
-            Program.game.dimension[Program.game.currentD].settexture(x, y, id);
-        }
-        public void updatecheat(Object sender,TextFieldArgs e)
-        {
-            updatecheat(e.Text);
-        }
-
-        public void updatecheat(string text)
-        {
-            String[] fs = text.Split();
-            if (fs.Count() != 0)
-            {
-                if (fs[0] == "Kill".ToUpper() && fs.Count() == 1) Program.game.player.spawn();
-                else if (fs[0] == "ATLA".ToUpper() && fs.Count() == 1) Program.game.player.activespecial(3);
-                else if (fs[0] == "Minenotch".ToUpper() && fs.Count() == 1) Program.game.player.activespecial(1);
-                else if (fs[0] == "DK19981".ToUpper() && fs.Count() == 1) Program.game.player.activespecial(2);
-                else if (fs[0] == "Bind".ToUpper() && fs.Count() > 2)
-                {
-
-                    string command = "";
-                    for (int i = 2; i < fs.Count(); i++)
-                    {
-                        command += fs[i];
-                    }
-                    GameInput.BindKey.Add(new Bind(fs[1], command));
-                }
-                else if (fs[0] == "tp".ToUpper() && fs.Count() == 3) Program.game.player.tp(int.Parse(fs[1]), int.Parse(fs[2]));
-                else if (fs[0] == "tpx".ToUpper() && fs.Count() == 2) Program.game.player.tp(int.Parse(fs[1]));
-                else if (fs[0] == "AddBlock".ToUpper() && fs.Count() == 2) addblock(int.Parse(fs[1]));
-                else if (fs[0] == "ABW".ToUpper() && fs.Count() == 3 + 1) addBlockWorld(int.Parse(fs[1]), int.Parse(fs[2]), int.Parse(fs[3]));
-                else if (fs[0] == "CAVE".ToUpper() && fs.Count() == 1)
-                {
-                    if (Program.game.dimension[Program.game.currentD] is NormalWorld)
-                        ((NormalWorld)Program.game.dimension[Program.game.currentD]).CaveOpenater((int)Program.game.player.getXLocal(), (int)Program.game.player.getYLocal());
-                }
-                foreach (ModFile mod in ModLoader.ModLoader.Mods)
-                {
-                    foreach (LuaScript script in mod.getScripts())
-                    {
-                        foreach (Command cmd in script.userCommandStr)
+            Item temp = new Item
                         {
-                            if (fs[0] == cmd.cmd.ToUpper()) script.callFunction(cmd.funcname);
-                        }
-                    }
+                            Id = blockId ,
+                            Ammount = 1 ,
+                            IsEmpty = false
+                        };
+            Program.Game.Player.SetSlot(temp);
+        }
+
+        public void Changeactive()
+        {
+            Isactive = !Isactive;
+        }
+        public void Update()
+        {
+            _gui.Update();
+        }
+        public void AddBlockWorld(int x, int y,int id)
+        {
+            Program.Game.Dimension[Program.Game.CurrentDimension].SetTexture(x, y, id);
+        }
+        public void UpdateCheat(object sender,TextFieldArgs e)
+        {
+            UpdateCheat(e.Text);
+        }
+
+        public void UpdateCheat(string text)
+        {
+            string[] fs = text.ToUpper(CultureInfo.CurrentCulture).Split();
+            if ( fs.Length == 0 ) return;
+
+            StandartCommand(fs);
+            AddLog(text);
+        }
+
+        public void PlayerCommand(IReadOnlyList<string> fs)
+        {
+            if(fs[0] == "Kill".ToUpper(CultureInfo.CurrentCulture) && fs.Count == 1) Program.Game.Player.Spawn();
+            else if(fs[0] == "ATLA".ToUpper(CultureInfo.CurrentCulture) && fs.Count == 1) Program.Game.Player.ActiveSpecial(3);
+            else if(fs[0] == "Minenotch".ToUpper(CultureInfo.CurrentCulture) && fs.Count == 1) Program.Game.Player.ActiveSpecial(1);
+            else if(fs[0] == "DK19981".ToUpper(CultureInfo.CurrentCulture) && fs.Count == 1) Program.Game.Player.ActiveSpecial(2);
+            
+        }
+
+        void StandartCommand(IReadOnlyList<string> fs)
+        {
+            PlayerCommand(fs);
+            if (fs[0] == "Bind".ToUpper(CultureInfo.CurrentCulture) && fs.Count > 2)
+            {
+
+                string command = "";
+                for (int i = 2; i < fs.Count; i++)
+                {
+                    command += fs[i];
                 }
-                addLog(text);
+                GameInput.BindKey.Add(new Bind(fs[1], command));
+            }
+            else if (fs[0] == "tp".ToUpper(CultureInfo.CurrentCulture) && fs.Count == 3) Program.Game.Player.Teleport(int.Parse(fs[1], CultureInfo.CurrentCulture), int.Parse(fs[2], CultureInfo.CurrentCulture));
+            else if (fs[0] == "tpx".ToUpper(CultureInfo.CurrentCulture) && fs.Count == 2) Program.Game.Player.Teleport(int.Parse(fs[1], CultureInfo.CurrentCulture));
+            else if (fs[0] == "AddBlock".ToUpper(CultureInfo.CurrentCulture) && fs.Count == 2) AddItem(int.Parse(fs[1], CultureInfo.CurrentCulture));
+            else if (fs[0] == "ABW".ToUpper(CultureInfo.CurrentCulture) && fs.Count == 4) AddBlockWorld(int.Parse(fs[1], CultureInfo.CurrentCulture), int.Parse(fs[2], CultureInfo.CurrentCulture), int.Parse(fs[3], CultureInfo.CurrentCulture));
+            else if (fs[0] == "CAVE".ToUpper(CultureInfo.CurrentCulture) && fs.Count == 1)
+            {
+                if (Program.Game.Dimension[Program.Game.CurrentDimension] is NormalWorld world)
+                    world.CaveOpenater((int)Program.Game.Player.GetXLocal(), (int)Program.Game.Player.GetYLocal());
             }
         }
-        public void draw(SpriteBatch spriteBatch)
+
+        public void Draw(SpriteBatch spriteBatch)
         {
-            gui.Draw(spriteBatch);
+            _gui.Draw(spriteBatch);
         }
     }
     public class Command
     {
-        public string cmd;
-        public string funcname;
+        public string Cmd;
+        public string Funcname;
         public Command(string cmd, string funcname)
         {
-            this.cmd = cmd;
-            this.funcname = funcname;
+            Cmd = cmd;
+            Funcname = funcname;
         }
     }
 }

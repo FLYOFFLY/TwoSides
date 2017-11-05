@@ -32,7 +32,7 @@ with.
     <UseKerning>true</UseKerning>
 
     <!--
-    Style controls the style of the font. Valid entries are "Regular", "Bold", "Italic",
+    Style controls the style of the font. ValId entries are "Regular", "Bold", "Italic",
     and "Bold, Italic", and are case sensitive.
     -->
     <Style>Bold</Style>
@@ -54,6 +54,18 @@ with.
       <CharacterRegion>
         <Start>&#32;</Start>
         <End>&#126;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>А</Start>
+        <End>я</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>©</Start>
+        <End>©</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>Ё</Start>
+        <End>ё</End>
       </CharacterRegion>
     </CharacterRegions>
   </Asset>

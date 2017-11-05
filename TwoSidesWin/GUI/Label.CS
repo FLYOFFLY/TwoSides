@@ -1,61 +1,58 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using TwoSides.Utils;
+
 namespace TwoSides.GUI
 {
-    public class Label : GUIElement
+    public class Label : GuiElement
     {
         
-        string str_Text;
+        string _text;
 
-        protected Color color_Diffuse; //Цвет
+        protected Color Color; //Цвет
 
-        [NonSerialized]
-        SpriteFont font_Font;
+        [NonSerialized] readonly SpriteFont _font;
 
-        public Label(string L_text, Vector2 L_pos, SpriteFont L_font)
+        public Label(string text, Vector2 pos, SpriteFont font)
         {
-            this.str_Text =         L_text;
-            this.pos = L_pos;
-            this.font_Font = L_font;
-            this.color_Diffuse = Color.Black;
+            _text = Localisation.GetName(text);
+            Pos = pos;
+            _font = font;
+            Color = Color.Black;
         }
 
-        public Label(string L_text, Vector2 L_pos,SpriteFont L_font,Color L_color)
+        public Label(string text, Vector2 pos,SpriteFont font,Color color)
         {
-            this.str_Text =         L_text;
-            this.pos                = L_pos;
-            this.font_Font =        L_font;
-            this.color_Diffuse = L_color;
+            _text = Localisation.GetName(text);
+            Pos                = pos;
+            _font =        font;
+            Color = color;
         }
 
-        public string GetText()
-        {
-            return str_Text;
-        }
+        public string GetText() => _text;
 
         public void Up(int y)
         {
-           this.pos.Y -= y;
+           Pos.Y -= y;
         }
 
-        public void SetText(string L_text){
-            this.str_Text = L_text;
-        }
-
-        public override void  Draw(SpriteBatch L_spriteBatch)
+        public void SetText(string text)
         {
-            L_spriteBatch.Begin();
-            L_spriteBatch.DrawString(font_Font,
-                str_Text,
-                this.getPos(),
-                color_Diffuse);
+            _text = Localisation.GetName(text);
+        }
 
-            L_spriteBatch.End();
+        public override void  Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Begin();
+            spriteBatch.DrawString(_font,
+                _text,
+                GetPos(),
+                Color);
+
+            spriteBatch.End();
         }
 
     }

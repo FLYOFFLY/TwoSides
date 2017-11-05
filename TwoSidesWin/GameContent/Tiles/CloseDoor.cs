@@ -1,48 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.World.Tile;
-using TwoSides.World.Generation;
+﻿using System.Collections.Generic;
 
-namespace TwoSides.GameContent.Tiles
+using TwoSIdes.Physics.Entity;
+using TwoSIdes.World;
+using TwoSIdes.World.Generation;
+using TwoSIdes.World.Tile;
+
+namespace TwoSIdes.GameContent.Tiles
 {
     public class CloseDoor : BaseTile
     {
-        public CloseDoor(float MaxHP, int id)
-            : base(MaxHP,id)
+        public CloseDoor(float maxHp, int id)
+            : base(maxHp,id)
         {
         }
-        public override bool blockuse(int x, int y, World.Generation.BaseDimension dimension, Physics.Entity.CEntity entity)
+        public override bool UseBlock(int x, int y, BaseDimension dimension, DynamicEntity entity)
         {
             int xDoor = x;
-            int yDoor = y + (2 - dimension.map[x, y].subTexture);
-            int iddoor = dimension.map[xDoor, yDoor].idtexture;
+            int yDoor = y + (2 - dimension.MapTile[x, y].IdSubTexture);
+            int idDoor = dimension.MapTile[xDoor, yDoor].IdTexture;
             for (int j = 0; j < 3; j++)
             {
                 dimension.Reset(xDoor, yDoor - j);
             }
-            dimension.addDoor(iddoor, xDoor, yDoor, true);
+            dimension.AddDoor(idDoor, xDoor, yDoor, true);
             return true;
         }
-        public void destorySide(BaseDimension dimension,int xDoor,int yDoor)
+        public void DestorySIde(BaseDimension dimension,int xDoor,int yDoor)
         {
             for (int i = 0; i <= 3; i++)
             {
                 dimension.Reset(xDoor, yDoor - i);
             }
         }
-        public override List<World.Item> destory(int x, int y, World.Generation.BaseDimension dimension, Physics.Entity.CEntity entity)
+        public override List<Item> Destory(int x, int y, BaseDimension dimension, DynamicEntity entity)
         {
             int yDoor = y;
-            yDoor -= dimension.map[x, y].subTexture;
-            destorySide(dimension, x, yDoor);
-            return base.destory(x, y, dimension, entity);
+            yDoor -= dimension.MapTile[x, y].IdSubTexture;
+            DestorySIde(dimension, x, yDoor);
+            return base.Destory(x, y, dimension, entity);
         }
-        public override void update(int x, int y, World.Generation.BaseDimension dimension, Physics.Entity.CEntity entity)
+        public override void Update(int x, int y, BaseDimension dimension, DynamicEntity entity)
         {
-            if (dimension.map[x, y + 1].active) return;
-            dimension.map[x, y].destory(x, y, entity);
+            if (dimension.MapTile[x, y + 1].Active) return;
+            dimension.MapTile[x, y].Destory(x, y, entity);
         }
     }
 }

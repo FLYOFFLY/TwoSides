@@ -1,36 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.World.Tile;
-using TwoSides.World;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
+using TwoSides.GameContent.Entity;
 using TwoSides.Physics.Entity;
 using TwoSides.World.Generation;
+using TwoSides.World.Tile;
 
 namespace TwoSides.GameContent.Tiles
 {
-    class BlockTree: BaseTile
+    internal class BlockTree: BaseTile
     {
-        public BlockTree(float MaxHP,int id)
-            : base(MaxHP,id)
+        public BlockTree(float maxHp,int id)
+            : base(maxHp,id)
         {
         }
-        public override bool issolid()
+        public override bool IsSolid() => false;
+
+        public override void Render(ITileDatecs tileDate, SpriteBatch spriteBatch, Texture2D texture, BaseDimension dimension, Vector2 pos, int x, int y, int frame, int subTexture, Color color)
         {
-            return false;
+            TreeDate treeDate = (TreeDate)tileDate;
+            if (dimension.MapTile[x,y].IdTexture == 16)
+                spriteBatch.Draw(texture, new Rectangle((int)pos.X-25, (int)pos.Y-42, 64, 64), new Rectangle(64 * frame, 64 * treeDate.TypeTree, 64, 64), color, 0.0f, Vector2.Zero, SpriteEffects.None, 0);
+            else if (dimension.MapTile[x, y].IdTexture == 38)
+                spriteBatch.Draw(texture, new Rectangle((int)pos.X, (int)pos.Y, 16, 16), new Rectangle(16 * subTexture, 16 * treeDate.TypeTree, 16, 16), color, 0.0f, Vector2.Zero, SpriteEffects.None, 0);
+            else base.Render(tileDate, spriteBatch, texture, dimension, pos, x, y, frame, subTexture, color);
         }
-        public override void InTile(CEntity entity)
+        public override void InTile(DynamicEntity entity)
         {
-            if (entity is Player) {
-                ((Player)entity).isHorisontal = true;
+            if (entity is Player player) {
+                player.IsHorisontal = true;
             }
         }
-        public override void update(int x, int y, BaseDimension dimension,CEntity entity)
+        public override ITileDatecs ChangeTile() => new TreeDate();
+
+        public override void Update(int x, int y, BaseDimension dimension,DynamicEntity entity)
         {
-            if (dimension.map[x, y + 1].active) return;
-            if (entity is Player)
+            if (dimension.MapTile[x, y].IdTexture == 38)
             {
-                ((Player)entity).getDrop(x, y);
+                if (dimension.MapTile[x, y + 1].Active || dimension.MapTile[x, y - 1].Active) return;
+            }
+            else if (dimension.MapTile[x, y + 1].Active) return;
+            if (entity is Player player)
+            {
+                player.GetDrop(x, y);
             }
         }
     }

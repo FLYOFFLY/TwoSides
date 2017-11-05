@@ -1,689 +1,690 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="TwoSides.Bind" Collapsed="true">
-    <Position X="31" Y="0.5" Width="1.5" />
+  <Class Name="TwoSIdes.Bind" Collapsed="true">
+    <Position X="119.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAABAQAAAAAAAAAAAQAAAAAAAAAAAAEAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAABAQAAAAAAAAAAAQAAAAAAQAAAAAEAAA=</HashCode>
       <FileName>Bind.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Camera" Collapsed="true">
-    <Position X="36.25" Y="0.5" Width="1.5" />
+  <Class Name="TwoSIdes.Camera" Collapsed="true">
+    <Position X="166.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ACIAAAAAAAIAAAAAEIAAAIAAAAAAAAAAAAAAgAAKgAA=</HashCode>
       <FileName>Camera.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Clothes" Collapsed="true">
-    <Position X="24" Y="1.5" Width="1.5" />
+  <Class Name="TwoSIdes.Clothes" Collapsed="true">
+    <Position X="61" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AEAAAAAAgKDAEAEAgCAIAFAICAAAIAEQggQABBIAAAA=</HashCode>
+      <HashCode>AFAAAAAAoKDAEAEAgCAIAFAICAAAIAEQghQABBIAAAA=</HashCode>
       <FileName>Clothes.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Game1" Collapsed="true">
-    <Position X="25.75" Y="2.5" Width="1.5" />
+  <Class Name="TwoSIdes.Game1" Collapsed="true">
+    <Position X="178.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>lQWnsMBRhoq7N8EwmLC/6rh8oyFJNG4BAO6nUgaMJcw=</HashCode>
+      <HashCode>lQ2nsMBRhoq7N8EwmLC/6rh8oyFJNG4BAO6nUgaMJcw=</HashCode>
       <FileName>Game1.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameInput" Collapsed="true">
-    <Position X="27.5" Y="2.5" Width="1.5" />
+  <Class Name="TwoSIdes.GameInput" Collapsed="true">
+    <Position X="88" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAiARAAAAAAACQAAAAgBAAAEIQBAAAAAAAAA=</HashCode>
       <FileName>GameInput.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Multiplayer" Collapsed="true">
-    <Position X="36.25" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Multiplayer.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TwoSides.Perlin" Collapsed="true">
-    <Position X="34.5" Y="4.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Perlin.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TwoSides.Program" Collapsed="true">
-    <Position X="36.25" Y="4.5" Width="1.5" />
+  <Class Name="TwoSIdes.Program" Collapsed="true">
+    <Position X="180" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAEAAAAAAAAAAAAAEAGIAAAABAAAAAA=</HashCode>
       <FileName>Program.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Race" Collapsed="true">
-    <Position X="29.25" Y="5.5" Width="1.5" />
+  <Class Name="TwoSIdes.Race" Collapsed="true">
+    <Position X="103.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AABAgIBAAAAAAAAAAAAAgAAAAAAIIACAAAAAgAAAAAA=</HashCode>
       <FileName>Race.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Rate" Collapsed="true">
-    <Position X="31" Y="5.5" Width="1.5" />
+  <Class Name="TwoSIdes.Rate" Collapsed="true">
+    <Position X="121.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAEAIAAAAAAAAAAAAAAAABAACAAAAAAAAAAACAABA=</HashCode>
+      <HashCode>AEAAEAAAADAAAAAAAAgAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Rate.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Recipe" Collapsed="true">
-    <Position X="32.75" Y="5.5" Width="1.5" />
+  <Class Name="TwoSIdes.Recipe" Collapsed="true">
+    <Position X="135.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IAgAAAAAAAAAQECABAAAAAABAAAAgAAAAABCAAAAAAA=</HashCode>
       <FileName>Recipe.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Dimensions.Hell" Collapsed="true">
-    <Position X="8.25" Y="13.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Dimensions.Hell" Collapsed="true">
+    <Position X="25.25" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAACAAAAAAAAAAIAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
       <FileName>GameContent\Dimensions\Hell.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Dimensions.NormalWorld" Collapsed="true">
-    <Position X="10.5" Y="13.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Dimensions.NormalWorld" Collapsed="true">
+    <Position X="27.5" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAACAAAAAgAgAAIAIAEEAAABAAEIAAAMAQAgAkAAA=</HashCode>
+      <HashCode>AAAAACAAAAAgAgAAIgIAEEAAABAAFIAAAEAQAgAkAAA=</HashCode>
       <FileName>GameContent\Dimensions\NormalWorld.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Dimensions.SnowWorld" Collapsed="true">
-    <Position X="10.5" Y="15.25" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Dimensions.SnowWorld" Collapsed="true">
+    <Position X="27.5" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameContent\Dimensions\SnowWorld.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Entity.Bullet" Collapsed="true">
-    <Position X="12.25" Y="5.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Entity.Bullet" Collapsed="true">
+    <Position X="18.5" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIAxAAACAgAAAIDAAAQAAAAAAAEBAAAAAECAAEAAAAI=</HashCode>
+      <HashCode>AIAxAEAAAgAAAIDAAAQAAAAAAAEBAgAAAECAAEAAAAI=</HashCode>
       <FileName>GameContent\Entity\Bullet.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Entity.NPC.Boss" Collapsed="true">
-    <Position X="5.5" Y="10.25" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Entity.NPC.Boss" Collapsed="true">
+    <Position X="11.75" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
       <FileName>GameContent\Entity\NPC\Boss.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Entity.NPC.Civilian" Collapsed="true">
-    <Position X="3.25" Y="8.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Entity.NPC.Civilian" Collapsed="true">
+    <Position X="9.5" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAEAICAAQAACAAAAAAAAAAQAAQAAAIAAABkAAA=</HashCode>
       <FileName>GameContent\Entity\NPC\Civilian.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Entity.NPC.Triangle" Collapsed="true">
-    <Position X="7.75" Y="7.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAIgAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAEAAA=</HashCode>
-      <FileName>GameContent\Entity\NPC\Triangle.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TwoSides.GameContent.Entity.NPC.Wolf" Collapsed="true">
-    <Position X="10" Y="7.25" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Entity.NPC.Wolf" Collapsed="true">
+    <Position X="16.25" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAAAAAAAQAAAAAAQAEAAA=</HashCode>
       <FileName>GameContent\Entity\NPC\Wolf.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Entity.NPC.Zombie" Collapsed="true">
-    <Position X="5.5" Y="8.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Entity.NPC.Zombie" Collapsed="true">
+    <Position X="11.75" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAIgAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
       <FileName>GameContent\Entity\NPC\Zombie.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Physics.Entity.Achivement" Collapsed="true">
-    <Position X="24" Y="0.5" Width="1.5" />
+  <Class Name="TwoSIdes.Physics.Entity.Achivement" Collapsed="true">
+    <Position X="63.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>gAAAAAAAAAAAAAIAAAAAABQAAAAAAAAAAAAAQAAAAAA=</HashCode>
       <FileName>GameContent\Entity\Player.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Physics.Entity.Stats" Collapsed="true">
-    <Position X="29.25" Y="6.5" Width="1.5" />
+  <Class Name="TwoSIdes.Physics.Entity.Stats" Collapsed="true">
+    <Position X="106" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAEAAAAAAAAAAAKAAAAAAAAAACAAAAAAAAAAAABAAEA=</HashCode>
+      <HashCode>AAEQAAAAAAAAAAKAAAAAAAAAACAAAAAAAAAAAABAAEA=</HashCode>
       <FileName>GameContent\Entity\Player.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Physics.Entity.Player" Collapsed="true">
-    <Position X="1" Y="5.75" Width="1.5" />
+  <Class Name="TwoSIdes.Physics.Entity.Player" Collapsed="true">
+    <Position X="7.25" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>KQU2Bm4SmKPmIYSKTIQJoBVllJ0YSAGicIUfB2BfgAU=</HashCode>
+      <HashCode>KQU2Bm4SmKPmIYSKTIQJqBVllL0YSAGicIUfB2BfgAU=</HashCode>
       <FileName>GameContent\Entity\Player.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Physics.Entity.CEntity" Collapsed="true">
-    <Position X="8.75" Y="4.5" Width="1.5" />
+  <Class Name="TwoSIdes.Physics.Entity.BaseEntity" Collapsed="true">
+    <Position X="15" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAEgAAICAAAAAAAAAIAAAAAAIAAAAAAQAAAAEAAA=</HashCode>
+      <HashCode>AAAAAUgAAICAAAAAAAAAIAAAAAAIAAAAAAQAAAAEAAA=</HashCode>
       <FileName>Physics\Entity\CEntity.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Physics.Entity.Drop" Collapsed="true">
-    <Position X="14.5" Y="5.75" Width="1.5" />
+  <Class Name="TwoSIdes.Physics.Entity.Drop" Collapsed="true">
+    <Position X="20.75" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAgAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAACAAAUAAA=</HashCode>
       <FileName>Physics\Entity\Drop.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.GenerationResources.ArrayResource" Collapsed="true">
-    <Position X="29.25" Y="0.5" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.GenerationResources.ArrayResource" Collapsed="true">
+    <Position X="108.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IAEAAAAAAIgQEAAAAAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameContent\GenerationResources\ArrayResource.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.GenerationResources.SizeGeneratior" Collapsed="true">
-    <Position X="27.5" Y="6.5" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.GenerationResources.SizeGeneratior" Collapsed="true">
+    <Position X="90.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAEAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameContent\GenerationResources\SizeGeneratior.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.World.Structures.Caves" Collapsed="true">
-    <Position X="0.5" Y="12.75" Width="1.5" />
+  <Class Name="TwoSIdes.World.Structures.Caves" Collapsed="true">
+    <Position X="0.5" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAIAAAAAAAAAAAAAAAAABAAAAAAAAAAAAABAAAAA=</HashCode>
       <FileName>GameContent\GenerationResources\Structures\Caves.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.World.Structures.Factory" Collapsed="true">
-    <Position X="2.75" Y="12.75" Width="1.5" />
+  <Class Name="TwoSIdes.World.Structures.Factory" Collapsed="true">
+    <Position X="2.75" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAAAAEAAAAAA=</HashCode>
       <FileName>GameContent\GenerationResources\Structures\Factory.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.World.Structures.Home" Collapsed="true">
-    <Position X="5" Y="12.75" Width="1.5" />
+  <Class Name="TwoSIdes.World.Structures.Home" Collapsed="true">
+    <Position X="5" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAACAAgAAAAAAAABAAAAAAAAAACAAAAAAAg=</HashCode>
       <FileName>GameContent\GenerationResources\Structures\Home.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.World.Structures.BaseStruct" Collapsed="true">
-    <Position X="2.75" Y="11.5" Width="1.5" />
+  <Class Name="TwoSIdes.World.Structures.BaseStruct" Collapsed="true">
+    <Position X="2.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAABAAAAAAAEAABgAAAAAAA=</HashCode>
       <FileName>World\Generation\Structures\BaseStruct.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.GUI.Scene.CreationPerson" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="32.75" Y="1.5" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.GUI.Scene.CreationPerson" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="137.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAYgoCAAAAAIAAAAAAAAAIAAAAAACAAAEBACAEAAAAA=</HashCode>
+      <HashCode>AAYgoiAAACAIAAAAAAAAAIAAEIAACAAAEBASAkAAAAA=</HashCode>
       <FileName>GameContent\GUI\Scene\CreationPerson.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="TwoSides.GameContent.GUI.Scene.GameScene" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="29.25" Y="2.5" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.GUI.Scene.GameScene" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="110.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQggAAAAAAIAAAAAAAAAIAAAAAACAAAABAAAAAAAAA=</HashCode>
       <FileName>GameContent\GUI\Scene\GameScene.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="TwoSides.GameContent.GUI.Scene.GraphicsMenu" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="32.75" Y="2.5" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.GUI.Scene.GraphicsMenu" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="139.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BCQgoQAAAAAIEAAEAAAAAIAAAAAACAAAABAAAAAAAAA=</HashCode>
       <FileName>GameContent\GUI\Scene\GraphicsMenu.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="TwoSides.GameContent.GUI.Scene.MainMenu" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="31" Y="3.5" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.GUI.Scene.MainMenu" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="124" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQggCAAAAAIAAAAAAAAAIAAEAAACAAAEBAAAAAAAAA=</HashCode>
       <FileName>GameContent\GUI\Scene\MainMenu.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="TwoSides.GameContent.GUI.Scene.MusicMenu" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="24" Y="4.5" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.GUI.Scene.MusicMenu" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="65.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQgoAAAAAAIAAAQAAAAAIAAAAAACAAAABAAAAAAAAA=</HashCode>
       <FileName>GameContent\GUI\Scene\MusicMenu.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="TwoSides.GameContent.GUI.Scene.PauseScreen" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="32.75" Y="4.5" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.GUI.Scene.PauseScreen" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="142" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQggAAAAAAIAAAAAAAAAIAAAAAACAAAEBAAAAAAAAA=</HashCode>
       <FileName>GameContent\GUI\Scene\PauseScreen.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="TwoSides.GameContent.GUI.Scene.Progress" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="24" Y="5.5" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.GUI.Scene.Progress" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="67.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQgiCAAAAAIAAAAAAAAAAAAAABACAAAABAAAAAAAAA=</HashCode>
+      <HashCode>AAQgiCAAAAAIAAAAAAAAAAAAAABACAAAQBAAAAAAAAA=</HashCode>
       <FileName>GameContent\GUI\Scene\Progress.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="TwoSides.GameContent.GUI.Scene.SelectRace" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="36.25" Y="5.5" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.GUI.Scene.SelectRace" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="171.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQggCAAAAAIAAAAAAAAAIAAAAAACAAAABAAAAAAAAA=</HashCode>
       <FileName>GameContent\GUI\Scene\SelectRace.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="TwoSides.GameContent.GUI.Scene.SettingMenu" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="24" Y="6.5" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.GUI.Scene.SettingMenu" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="70" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQggAAAAAAIAAAAAAAAAIAAAAAACAAAEBAAAAAAAAA=</HashCode>
       <FileName>GameContent\GUI\Scene\SettingMenu.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="TwoSides.GameContent.Tiles.BlockChest" Collapsed="true">
-    <Position X="1.25" Y="1.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Tiles.BlockChest" Collapsed="true">
+    <Position X="29.75" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAIAAAACAAAAAAAAAAAAAAAABAAAAAAA=</HashCode>
       <FileName>GameContent\Tiles\BlockChest.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Tiles.BlockNull" Collapsed="true">
-    <Position X="5.75" Y="1.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Tiles.BlockNull" Collapsed="true">
+    <Position X="34.25" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAIAAAACAAAACAAAAAAAEAAAAAQAEAAE=</HashCode>
       <FileName>GameContent\Tiles\BlockNull.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Tiles.BlockPortal" Collapsed="true">
-    <Position X="8" Y="1.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Tiles.BlockPortal" Collapsed="true">
+    <Position X="36.5" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAABAAAAAAAAAAAAAAAAAACgAAAAAAEAAAAAQAAAAA=</HashCode>
       <FileName>GameContent\Tiles\BlockPortal.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Tiles.BlockSit" Collapsed="true">
-    <Position X="10.25" Y="1.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Tiles.BlockSit" Collapsed="true">
+    <Position X="38.75" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAABAAAAAAAAIAAAACAAAADAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAABAAAAAAAAIAAAACAAAADAAAEAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameContent\Tiles\BlockSit.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Tiles.BlockTable" Collapsed="true">
-    <Position X="12.5" Y="1.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Tiles.BlockTable" Collapsed="true">
+    <Position X="41" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAIAAAACAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameContent\Tiles\BlockTable.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Tiles.BlockTree" Collapsed="true">
-    <Position X="14.75" Y="1.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Tiles.BlockTree" Collapsed="true">
+    <Position X="43.25" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAEAAE=</HashCode>
       <FileName>GameContent\Tiles\BlockTree.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Tiles.CloseDoor" Collapsed="true">
-    <Position X="17" Y="1.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Tiles.CloseDoor" Collapsed="true">
+    <Position X="45.5" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAABCAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
       <FileName>GameContent\Tiles\CloseDoor.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Tiles.GrassBlock" Collapsed="true">
-    <Position X="19.25" Y="1.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Tiles.GrassBlock" Collapsed="true">
+    <Position X="47.75" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAACAAAAEIAA=</HashCode>
       <FileName>GameContent\Tiles\GrassBlock.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Tiles.LightBlock" Collapsed="true">
-    <Position X="21.5" Y="1.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Tiles.LightBlock" Collapsed="true">
+    <Position X="50" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAABAAAAAAAAAAAAAACAAAAAAAEAAAAAQAAAAA=</HashCode>
       <FileName>GameContent\Tiles\LightBlock.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Tiles.OpenDoor" Collapsed="true">
-    <Position X="17" Y="3.25" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Tiles.OpenDoor" Collapsed="true">
+    <Position X="45.5" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAABAAAABAAAIAAAAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameContent\Tiles\OpenDoor.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Tiles.StoneBlock" Collapsed="true">
-    <Position X="3.5" Y="1.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Tiles.StoneBlock" Collapsed="true">
+    <Position X="32" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameContent\Tiles\StoneBlock.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GameContent.Tiles.TileTwoSides" Collapsed="true">
-    <Position X="31" Y="6.5" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Tiles.TileTwoSIdes" Collapsed="true">
+    <Position X="126.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAIAAAAEAIAAAAAAAAAAAAAAEAAAARAAQgAAgAAgg=</HashCode>
-      <FileName>GameContent\Tiles\TileTwoSides.cs</FileName>
+      <FileName>GameContent\Tiles\TileTwoSIdes.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="TwoSides.GUI.Button" Collapsed="true">
-    <Position X="10.75" Y="9.75" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.Button" Collapsed="true">
+    <Position X="54.5" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAACDAAAAgAAAEEAgAAAAAAAACAAAAAACEACAAA=</HashCode>
+      <HashCode>AAQAAAACDAAAAgAAAEABgAAAAAAAACAAAAAACEACAAA=</HashCode>
       <FileName>GUI\Button.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GUI.Dialog" Collapsed="true">
-    <Position X="34.5" Y="1.5" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.Dialog" Collapsed="true">
+    <Position X="153.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AgQAQAACIAAIEQAIAAABQAAAAAQAAQhAAAIAAAASAAA=</HashCode>
       <FileName>GUI\Dialog.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GUI.FlashText" Collapsed="true">
-    <Position X="8.5" Y="11.25" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.FlashText" Collapsed="true">
+    <Position X="52.25" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAACAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GUI\FlashText.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GUI.GUI" Collapsed="true">
-    <Position X="34.5" Y="2.5" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.XnaLayout" Collapsed="true">
+    <Position X="155.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAACAAAABAgCAAAAACACQgAAACAAAQAAAAAQCAAA=</HashCode>
       <FileName>GUI\GUI.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GUI.GUIElement" Collapsed="true">
-    <Position X="11.75" Y="8.5" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.GUIElement" Collapsed="true">
+    <Position X="55.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAACAAAAAAgBAAAAAQIAAAAAIAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GUI\GUIElement.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GUI.Console" Collapsed="true">
-    <Position X="29.25" Y="1.5" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.Console" Collapsed="true">
+    <Position X="112.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAhAAAAAAAAAAAIAABAAABgAAAAAAAAEAAAEBBA=</HashCode>
+      <HashCode>AAAAAAhAAAAAAAAAAEIAABAAABgAAAAAAAAEAAAEJBA=</HashCode>
       <FileName>GUI\HUD\Console.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GUI.Command" Collapsed="true">
-    <Position X="27.5" Y="1.5" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.Command" Collapsed="true">
+    <Position X="92.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
       <FileName>GUI\HUD\Console.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GUI.Image" Collapsed="true">
-    <Position X="15.25" Y="9.75" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.Image" Collapsed="true">
+    <Position X="59" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAIAAAAABAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAgBAAAAAAAAAAAAAAAAAAAIAAAAABQA=</HashCode>
       <FileName>GUI\Image.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GUI.Label" Collapsed="true">
-    <Position X="8.5" Y="9.75" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.Label" Collapsed="true">
+    <Position X="52.25" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAgAIBIAAgAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
       <FileName>GUI\Label.CS</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GUI.ProgressBar" Collapsed="true">
-    <Position X="25.75" Y="5.5" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.ProgressBar" Collapsed="true">
+    <Position X="76.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAIAQAAAAAAgBAAAAAQIAACAAAAAACCIAJAgAAAAAAA=</HashCode>
       <FileName>GUI\ProgressBar.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GUI.Goals" Collapsed="true">
-    <Position X="31" Y="2.5" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.Goals" Collapsed="true">
+    <Position X="128.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAABAAAAAAAAEAQAAAAABAAAAAABAAAQAAAAAAAAQAA=</HashCode>
       <FileName>GUI\Quest.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GUI.Quest" Collapsed="true">
-    <Position X="27.5" Y="5.5" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.Quest" Collapsed="true">
+    <Position X="94.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ABIhAAAAABAAAAAAAAAABIAACAAEAAAAAAAgAAAQAAA=</HashCode>
       <FileName>GUI\Quest.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GUI.RadioButton" Collapsed="true">
-    <Position X="10.75" Y="11.25" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.RadioButton" Collapsed="true">
+    <Position X="54.5" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAgABMAAAAAgAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GUI\RadioButton.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GUI.TextField" Collapsed="true">
-    <Position X="13" Y="9.75" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.TextField" Collapsed="true">
+    <Position X="56.75" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BAAAAAAAQAAABgAAAEAAiAAAAIAACAAAAAAAAAAAAFA=</HashCode>
+      <HashCode>BAAAAAAAQAAABgAAAEAAiAAAAIAACAAAAIAAAAAAAEA=</HashCode>
       <FileName>GUI\TextField.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.GUI.Scene.ControlScene" Collapsed="true">
-    <Position X="31" Y="1.5" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.Scene.ControlScene" Collapsed="true">
+    <Position X="130.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQgAAAAACAAAAAAAAAAAAAAAAAAAAAAgBACoAAAAAA=</HashCode>
       <FileName>GUI\Scene\ControlScene.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.ModLoader.ArmorMod" Collapsed="true">
-    <Position X="27.5" Y="0.5" Width="1.5" />
+  <Class Name="TwoSIdes.Modding.ArmorMod" Collapsed="true">
+    <Position X="97" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <HashCode>AAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
       <FileName>ModLoader\ArmorMod.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.ModLoader.BlockMod" Collapsed="true">
-    <Position X="34.5" Y="0.5" Width="1.5" />
+  <Class Name="TwoSIdes.Modding.BlockMod" Collapsed="true">
+    <Position X="157.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAABAAADAAAgIAAkAAQAAADwAAAAoAgAAAAAAAAAAA=</HashCode>
       <FileName>ModLoader\BlockMod.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.ModLoader.ItemMod" Collapsed="true">
-    <Position X="24" Y="3.5" Width="1.5" />
+  <Class Name="TwoSIdes.Modding.ItemMod">
+    <Position X="72.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAACgAAAgAAQAAAAAAABAoAgAAAAAgAAAAA=</HashCode>
       <FileName>ModLoader\ItemMod.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.ModLoader.LuaScript" Collapsed="true">
-    <Position X="29.25" Y="3.5" Width="1.5" />
+  <Class Name="TwoSIdes.Modding.LuaScript" Collapsed="true">
+    <Position X="115" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ACAAAAAgACAAAAAIAAAAAACAAAAAQAACAAAAAAAAAIA=</HashCode>
       <FileName>ModLoader\LuaScript.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="TwoSides.ModLoader.ModFile" Collapsed="true">
-    <Position X="32.75" Y="3.5" Width="1.5" />
+  <Class Name="TwoSIdes.Modding.ModFile" Collapsed="true">
+    <Position X="144.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAABIEAgAYAAAJAggEAAACIASAWAAIwACAQABAEBAAM=</HashCode>
       <FileName>ModLoader\ModFile.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.ModLoader.ModLoader" Collapsed="true">
-    <Position X="34.5" Y="3.5" Width="1.5" />
+  <Class Name="TwoSIdes.Modding.ModLoader" Collapsed="true">
+    <Position X="160" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IAAAAAAgEAAAIAgIgBAAABEACAGAAIAAIDBAECAABAA=</HashCode>
       <FileName>ModLoader\ModLoader.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Network.NetPlay" Collapsed="true">
-    <Position X="27.5" Y="4.5" Width="1.5" />
+  <Class Name="TwoSIdes.Network.NetPlay" Collapsed="true">
+    <Position X="99.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAwAAAAAAAAACAAAgAAAJAAAAAAAAAAAAAAABAAAAEI=</HashCode>
+      <HashCode>AAgAAAAAAAAACAAAgEAIJAIAAAAAAAAAAAAABAAAAEI=</HashCode>
       <FileName>Network\NetPlay.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Physics.Animation" Collapsed="true">
-    <Position X="25.75" Y="0.5" Width="1.5" />
+  <Class Name="TwoSIdes.Physics.Animation" Collapsed="true">
+    <Position X="79" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAgQAAAgAAAAEAAIRCADAAAACAAAAQIAAASAA=</HashCode>
+      <HashCode>AAQAAAAAgQAAAgAAAAEAAIRCADAAAACQAAAQIAAASAA=</HashCode>
       <FileName>Physics\Animation.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Physics.Cloud" Collapsed="true">
-    <Position X="16.75" Y="5.75" Width="1.5" />
+  <Class Name="TwoSIdes.Physics.Cloud" Collapsed="true">
+    <Position X="23" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
       <FileName>Physics\Cloud.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Physics.Colision" Collapsed="true">
-    <Position X="25.75" Y="1.5" Width="1.5" />
+  <Class Name="TwoSIdes.Physics.Colision" Collapsed="true">
+    <Position X="81.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAACAAAAAIEAAAAAAAA=</HashCode>
       <FileName>Physics\Colision.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Physics.Explosion" Collapsed="true">
-    <Position X="24" Y="2.5" Width="1.5" />
+  <Class Name="TwoSIdes.Physics.Explosion" Collapsed="true">
+    <Position X="74.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAABAAAAgAgAAAAAEAAAAAAAAAgAIAAAAAAAAA=</HashCode>
       <FileName>Physics\Explosion.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Physics.Particle" Collapsed="true">
-    <Position X="31" Y="4.5" Width="1.5" />
+  <Class Name="TwoSIdes.Physics.Particle" Collapsed="true">
+    <Position X="133" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAgAAAAAAAAAAIIAAIABAAAAAgCAAEQAAACECAA=</HashCode>
       <FileName>Physics\Particle.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Physics.Water" Collapsed="true">
-    <Position X="34.5" Y="6.5" Width="1.5" />
+  <Class Name="TwoSIdes.Physics.Water" Collapsed="true">
+    <Position X="162.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Physics\Water.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Physics.Entity.NPC.BaseCivNpc" Collapsed="true">
-    <Position X="4.25" Y="7.25" Width="1.5" />
+  <Class Name="TwoSIdes.Physics.Entity.NPC.BaseCivNpc" Collapsed="true">
+    <Position X="10.5" Y="4.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAEAAAICAAAAAAAQAAAAAAAAAAASAAAAAAAAkAAA=</HashCode>
+      <HashCode>AAAgAEAAAICAAAAAAAQBAAAAAAAAAASAAAAAAAAkAAA=</HashCode>
       <FileName>Physics\Entity\NPC\BaseCivNpc.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Physics.Entity.NPC.BaseNpc" Collapsed="true">
-    <Position X="6.5" Y="5.75" Width="1.5" />
+  <Class Name="TwoSIdes.Physics.Entity.NPC.BaseNpc" Collapsed="true">
+    <Position X="12.75" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAIAAKGJIQRAUAIAIAgAAIgBQAQgAABAAAIUAAA=</HashCode>
+      <HashCode>AAACAgIAAKGJIQRAUAMAoAgAAIgBQgQgAABAAAIUAAA=</HashCode>
       <FileName>Physics\Entity\NPC\BaseNPC.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Properties.Settings" Collapsed="true">
-    <Position X="25.75" Y="6.5" Width="1.5" />
+  <Class Name="TwoSIdes.Properties.Settings" Collapsed="true">
+    <Position X="178.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAIAAAAAABAAAAAAAAAAAACAA=</HashCode>
       <FileName>Settings.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Utils.Log" Collapsed="true">
-    <Position X="27.5" Y="3.5" Width="1.5" />
+  <Class Name="TwoSIdes.Utils.Log" Collapsed="true">
+    <Position X="101.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAEACAAAAAAAAAAAAAgACAAAAAAA=</HashCode>
       <FileName>Utils\Log.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Utils.NamingVersion" Collapsed="true">
-    <Position X="25.75" Y="4.5" Width="1.5" />
+  <Class Name="TwoSIdes.Utils.NamingVersion" Collapsed="true">
+    <Position X="83.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIAAIAAABICgAAAAAAAAAAAAIAAAEAgAAIAAAAAAIAA=</HashCode>
       <FileName>Utils\NamingVersion.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.Utils.Util" Collapsed="true">
-    <Position X="32.75" Y="6.5" Width="1.5" />
+  <Class Name="TwoSIdes.Utils.Tools" Collapsed="true">
+    <Position X="146.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>gAAAABABAGAQIAAAIACAAAAAAAAAAAAAAAAAAGAAAAA=</HashCode>
       <FileName>Utils\Utils.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.World.DROP" Collapsed="true">
-    <Position X="36.25" Y="1.5" Width="1.5" />
+  <Class Name="TwoSIdes.World.DROP" Collapsed="true">
+    <Position X="173.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AQABAAABAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>World\Block.cs</FileName>
+      <FileName>World\Drop.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.World.Item" Collapsed="true">
-    <Position X="36.25" Y="2.5" Width="1.5" />
+  <Class Name="TwoSIdes.World.Item" Collapsed="true">
+    <Position X="175.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AABAiAgAAoiAEACAAAgAAgBAeQEAAQCAABAAEAkEBAA=</HashCode>
+      <HashCode>AABAiAgAAoiAEgCAAAgAAgBAeQEAAQCAABAAEAkEBAA=</HashCode>
       <FileName>World\Item.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.World.Sector" Collapsed="true">
-    <Position X="34.5" Y="5.5" Width="1.5" />
+  <Class Name="TwoSIdes.World.Sector" Collapsed="true">
+    <Position X="164.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAgAA=</HashCode>
       <FileName>World\Sector.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.World.Generation.BaseDimension" Collapsed="true">
-    <Position X="9.5" Y="12.5" Width="1.5" />
+  <Class Name="TwoSIdes.World.Generation.BaseDimension" Collapsed="true">
+    <Position X="26.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>IBYUlKEAAICABwAgIBICSAABACCIAAQACAAQYAAsQBA=</HashCode>
+      <HashCode>IBYUlKEAAICABwAgIBICSAABACCIBAQACAAQYAAsQBA=</HashCode>
       <FileName>World\Generation\BaseDimension.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.World.Generation.Biome" Collapsed="true">
-    <Position X="32.75" Y="0.5" Width="1.5" />
+  <Class Name="TwoSIdes.World.Generation.Biome" Collapsed="true">
+    <Position X="148.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAAQAAAAAACAQAAAgCAAAAAAAAAAAICAAMAAAAAEAgA=</HashCode>
       <FileName>World\Generation\Biome.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.World.Generation.Ore" Collapsed="true">
-    <Position X="29.25" Y="4.5" Width="1.5" />
+  <Class Name="TwoSIdes.World.Generation.Ore" Collapsed="true">
+    <Position X="117.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ACAAAEAIAAAAAAAAAAAAAAAAAAAAgAAAAAAAACAAAAA=</HashCode>
       <FileName>World\Generation\Ore.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.World.Tile.BaseTile" Collapsed="true">
-    <Position X="11.25" Y="0.5" Width="1.5" />
+  <Class Name="TwoSIdes.World.Tile.BaseTile" Collapsed="true">
+    <Position X="39.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQABAAABBAAAIAAAACAAAADgBAAAAAEAACAAQAEIgE=</HashCode>
+      <HashCode>AAQABAAABBAAAIAAAACAAAADgBAEAAAEAACAAQAEIgE=</HashCode>
       <FileName>World\Tile\BaseTile.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TwoSides.World.Tile.ITile" Collapsed="true">
-    <Position X="25.75" Y="3.5" Width="1.5" />
+  <Class Name="TwoSIdes.World.Tile.ITile" Collapsed="true">
+    <Position X="85.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQABIIABACQQoSBACCAAARDwQIIIQAEAhHEIQAEOgE=</HashCode>
+      <HashCode>AAQABAIBBACQQoSBACCAAARDwQIIIQAEAhHEIQAEOgE=</HashCode>
       <FileName>World\Tile\ITile.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="System.Object" Collapsed="true">
-    <Position X="39.25" Y="1.25" Width="1.5" />
+    <Position X="88" Y="0.5" Width="1.5" />
     <TypeIdentifier />
   </Class>
-  <Class Name="TwoSides.GUI.TextFieldArgs" Collapsed="true">
-    <Position X="0.5" Y="0.5" Width="1.5" />
+  <Class Name="TwoSIdes.GUI.TextFieldArgs" Collapsed="true">
+    <Position X="180" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
       <FileName>GUI\TextField.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="TwoSides.GUI.Scene.IScene" Collapsed="true">
-    <Position X="24" Y="7.75" Width="1.5" />
+  <Class Name="TwoSIdes.GameContent.Entity.NPC.Pig" Collapsed="true">
+    <Position X="3" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAQAEAAA=</HashCode>
+      <FileName>GameContent\Entity\NPC\Pig.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TwoSIdes.Utils.Localisation" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAgAAAAAAAAAAAAAAgAAAAAAAAAEAAAIAAA=</HashCode>
+      <FileName>Utils\Language.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="TwoSIdes.GUI.Scene.IScene" Collapsed="true">
+    <Position X="178.25" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQggAAAAAAIAAAAAAAAAAAAAAAACAAAABAAAAAAAAA=</HashCode>
       <FileName>GUI\Scene\IScene.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="TwoSIdes.GameContent.Tiles.ITileList" Collapsed="true">
+    <Position X="5.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAARAAAAAAgAAAA=</HashCode>
+      <FileName>GameContent\Tiles\ITileList.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />

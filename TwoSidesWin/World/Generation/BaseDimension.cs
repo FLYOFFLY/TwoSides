@@ -1,84 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 
 using Microsoft.Xna.Framework;
-using System.Collections;
-using TwoSides.World.Structures;
-using TwoSides.Physics.Entity.NPC;
-using TwoSides.World.Generation;
-using TwoSides.GameContent.GenerationResources;
-using TwoSides.GameContent.Tiles;
-using TwoSides.World.Tile;
-using System.IO;
-using TwoSides.GUI;
-using TwoSides.GameContent.Entity.NPC;
-using TwoSides.Physics;
 using Microsoft.Xna.Framework.Graphics;
-using TwoSides.Network;
-using Lidgren.Network;
-namespace TwoSides.World.Generation
+
+using TwoSIdes.GameContent.Entity.NPC;
+using TwoSIdes.GameContent.GenerationResources;
+using TwoSIdes.GameContent.Tiles;
+using TwoSIdes.GUI;
+using TwoSIdes.Physics;
+using TwoSIdes.World.Generation.Structures;
+
+using Console = System.Console;
+
+namespace TwoSIdes.World.Generation
 {
     [Serializable]
     public class BaseDimension
     {
-        public bool active { get;  set; }
-        public float globallighting = 5;
+        public bool Active { get;  set; }
+        public float Globallighting = 5;
         protected List<Point> UpdateTile = new List<Point>();
-        public ArrayList Zombies = new ArrayList();
-        public ArrayList civil = new ArrayList();
-        List<Explosion>  explosions = new List<Explosion>();
-        public int[] mapHeight = new int[SizeGeneratior.WorldWidth];
-        public ITile[,] map = new ITile[SizeGeneratior.WorldWidth, SizeGeneratior.WorldHeight];
-        public Biome[] mapB = new Biome[SizeGeneratior.WorldWidth];
+        public List<Zombie> Zombies = new List<Zombie>();
+        public List<Civilian> Civil = new List<Civilian>();
+        List<Explosion>  _explosions = new List<Explosion>();
+        public int[] MapHeight = new int[SizeGeneratior.WorldWidth];
+        public Tile.Tile[,] MapTile = new Tile.Tile[SizeGeneratior.WorldWidth, SizeGeneratior.WorldHeight];
+        public Biome[] MapBiomes = new Biome[SizeGeneratior.WorldWidth];
+        public List<Dust> Dusts = new List<Dust>();
 
-        public Random rand = new Random();
-
-        [NonSerialized]
-        public bool isPortal;
+        public Random Rand = new Random();
 
         [NonSerialized]
-        public ArrayList StructuresList = new ArrayList();
+        public bool IsPortal;
 
-        public bool getEmptyOrNull(int x,int y){
-            if (x < 0 || x >= SizeGeneratior.WorldWidth || y < 0 || y > SizeGeneratior.WorldHeight - 1) return true;
+        [NonSerialized]
+        public List<BaseStruct> StructuresList = new List<BaseStruct>();
+        public virtual bool IsUpdate(int idTextutre) => false;
 
-            if (!map[(int)x, (int)y].active) return true;
-            return false;
+        public bool IsNullOrEmpty(int x,int y){
+            if (x < 0 || x >= SizeGeneratior.WorldWidth || y < 0 || y > SizeGeneratior.WorldHeight - 1) return true;           
+            return !MapTile[x, y].Active;
         }
-        public void addUpdate(int x, int y)
-        {
-            UpdateTile.Add(new Point(x, y));
-        }
-        public void addDoor(int id, int x, int y, bool isOpen)
+        public void AddUpdateTile(int x, int y) => UpdateTile.Add(new Point(x, y));
+
+        public void AddDoor(int id, int x, int y, bool isOpen)
         {
             if (!isOpen)
             {
-                settexture(x, y, id, 2);
-                settexture(x, y - 1, id, 1);
-                settexture(x, y - 2, id, 0);
+                SetTexture(x, y, id, 2);
+                SetTexture(x, y - 1, id, 1);
+                SetTexture(x, y - 2, id);
             }
             else
             {
                 id = id + 1;
-                settexture(x, y, id, 2);
-                settexture(x, y - 1, id, 1);
-                settexture(x, y - 2, id, 0);
-                settexture(x+1, y, id, 2);
-                settexture(x+1, y - 1, id, 1);
-                settexture(x+1, y - 2, id, 0);
+                SetTexture(x, y, id, 2);
+                SetTexture(x, y - 1, id, 1);
+                SetTexture(x, y - 2, id);
+                SetTexture(x+1, y, id, 2);
+                SetTexture(x+1, y - 1, id, 1);
+                SetTexture(x+1, y - 2, id);
             }
         }
-        public bool getEmptyOrGrass(int x, int y)
+        public static bool IsEmptyOrGround(int x, int y)
         {
             if (x < 0 || x >= SizeGeneratior.WorldWidth || y < 0 || y > SizeGeneratior.WorldHeight - 1) return true;
 
-            if (y < SizeGeneratior.rockLayer) return true;
-            return false;
+            return y < SizeGeneratior.RockLayer;
         }
 
-        public List<Cloud> cloud = new List<Cloud>();
+        public List<Cloud> Cloud = new List<Cloud>();
 
         public void AddExplosion(Vector2 enemyPosition, Texture2D explosionTexture)
         {
@@ -94,44 +88,48 @@ namespace TwoSides.World.Generation
 
             Explosion explosion = new Explosion(explosionAnimation, enemyPosition);
 
-            explosions.Add(explosion);
+            _explosions.Add(explosion);
         }
 
-        public virtual void cleardimension()
+        public virtual void Clear()
         {
             for (int i = 0; i < SizeGeneratior.WorldWidth; i++)
             {
                 for (int j = 0; j < SizeGeneratior.WorldHeight; j++)
                 {
-                    map[i, j] = new ITile(this);
+                    MapTile[i, j] = new Tile.Tile(this);
                 }
             }
-            for (int j = 0; j < SizeGeneratior.WorldWidth; j++)
-            {
-                mapB[j] = new Biome();
-            }
-            active = false;
+            Active = false;
             StructuresList.Clear();
             Zombies.Clear();
-            isPortal = false;
+            IsPortal = false;
         }
-        public virtual void load(BinaryReader reader, ProgressBar bar)
+
+        /// <param name="reader">todo: describe reader parameter on Load</param>
+        /// <param name="bar">todo: describe bar parameter on Load</param>
+        /// <param name="version">todo: describe version parameter on Load</param>
+        /// <exception cref="EndOfStreamException">The end of the stream is reached. </exception>
+        /// <exception cref="IOException">An I/O error occurs. </exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed. </exception>
+        public virtual void Load(BinaryReader reader, ProgressBar bar,int version)
         {
            bar.Reset();
-           bar.setText("Load World");
+           bar.SetText("Load World");
             reader.ReadString();
 
             for (int i = 0; i < SizeGeneratior.WorldWidth; i++)
             {
-                mapB[i].read(reader);
-                mapHeight[i] = reader.ReadInt32();
+                MapBiomes[i] = new Biome();
+                MapBiomes[i].Read(reader);
+                MapHeight[i] = reader.ReadInt32();
                 for (int j = 0; j < SizeGeneratior.WorldHeight; j++)
                 {
-                    map[i, j].read(reader);
+                    MapTile[i, j].Read(reader,version);
                 }
                 bar.Add(1);
             }
-            Zombies.Clear();
+           /* Zombies.Clear();
             int countBlocks = reader.ReadInt32();
             for (int i = 0; i < countBlocks; i++)
             {
@@ -146,25 +144,31 @@ namespace TwoSides.World.Generation
                 Civilian civ = new Civilian(Vector2.Zero);
                 civ.load(reader);
                 civil.Add(civ);
-            }
-
+            }*/
         }
-        public virtual void save(BinaryWriter writer, ProgressBar bar)
+
+        /// <param name="writer">todo: describe writer parameter on Save</param>
+        /// <param name="bar">todo: describe bar parameter on Save</param>
+        /// <exception cref="IOException">An I/O error occurs. </exception>
+        /// <exception cref="ArgumentNullException">
+        ///         <paramref name="writer" /> is null. </exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed. </exception>
+        public virtual void Save(BinaryWriter writer, ProgressBar bar)
         {
             bar.Reset();
-            bar.setText("SAVE world");
-            writer.Write("World");
+            bar.SetText("SAVE world");
+            writer.Write(@"World");
             for (int i = 0; i < SizeGeneratior.WorldWidth; i++) {
-                mapB[i].save(writer);
-                writer.Write(mapHeight[i]);
+                MapBiomes[i].Save(writer);
+                writer.Write(MapHeight[i]);
                 for (int j = 0; j < SizeGeneratior.WorldHeight; j++)
                 {
-                    map[i, j].save(writer);
+                    MapTile[i, j].Save(writer);
                 }
                 bar.Add(1);
             }
 
-            bar.setText("SAVE NPC");
+         /*   bar.setText("SAVE NPC");
             writer.Write(Zombies.Count);
             foreach (Zombie zombie in Zombies)
             {
@@ -174,7 +178,7 @@ namespace TwoSides.World.Generation
             foreach (Civilian civ in civil)
             {
                 civ.save(writer);
-            }
+            }*/
         }
 
         public int GetTemperature(int x, int y)
@@ -183,186 +187,219 @@ namespace TwoSides.World.Generation
             if (x >= SizeGeneratior.WorldWidth) x = SizeGeneratior.WorldWidth - 1;
             if (y < 0) y = 0;
             if (y >= SizeGeneratior.WorldHeight) y = SizeGeneratior.WorldHeight - 1;
-            return (mapB[(int)x].Temperature + (int)(
-                    map[(int)x, (int)y].light * 0.05f));
+            return MapBiomes[x].Temperature + (int)(
+                                                  MapTile[x, y].Light * 0.05f);
         }
-        public void SetWallID(int x, int y,short id)
+        public void SetWallId(int x, int y,short id)
         {
-            if (x >= 0 && y >= 0 && x <= SizeGeneratior.WorldWidth - 1 && y <= SizeGeneratior.WorldHeight - 1)
-            {
-                Reset(x, y);
-                map[x, y].wallid = id;
-            }
+            if ( x < 0 || y < 0 || x > SizeGeneratior.WorldWidth - 1 || y > SizeGeneratior.WorldHeight - 1 ) return;
+
+            Reset(x, y);
+            MapTile[x, y].IdWall = id;
         }
         public void Reset(int x, int y)
         {
-            if (x >= 0 && y >= 0 && x <= SizeGeneratior.WorldWidth - 1 && y <= SizeGeneratior.WorldHeight - 1)
-            {
-                if (map[x, y].active) removeFromUpdate(new Point(x, y));
-                
-                if (map[x, y].isLightBlock())
-                {
+            if ( x < 0 || y < 0 || x > SizeGeneratior.WorldWidth - 1 || y > SizeGeneratior.WorldHeight - 1 ) return;
 
-                    map[x, y].light = 0;
-                    for (int i = -20; i < 20; i++)
+            if (!MapTile[x, y].Active) return;
+            RemoveFromUpdate(new Point(x, y));
+                
+            if (MapTile[x, y].IsLightBlock())
+            {
+                MapTile[x, y].Light = 0;
+                for (int i = -20; i < 20; i++)
+                {
+                    for (int j = -20; j < 20; j++)
                     {
-                        for (int j = -20; j < 20; j++)
-                        {
-                            if (x + i >= 0 && y + j >= 0 && x + i <= SizeGeneratior.WorldWidth - 1 && y + j <= SizeGeneratior.WorldHeight - 1)
-                            {
-                                if (!map[x + i, y + j].isLightBlock()) map[x + i, y + j].light = 0;
-                            }
-                        }
+                        if ( x + i < 0 || y + j < 0 || x + i > SizeGeneratior.WorldWidth - 1 ||
+                             y + j > SizeGeneratior.WorldHeight - 1 ) continue;
+
+                        if (!MapTile[x + i, y + j].IsLightBlock()) MapTile[x + i, y + j].Light = 0;
                     }
                 }
-                map[x, y].blockheight = 1;
-                updateblock(x, y, 0, 1);
-                map[x, y].active = false;
-                map[x, y].idtexture = (short)0;
+            }
+            MapTile[x, y].Blockheight = 1;
+            UpdateBlock(x, y, 0, 1);
+            MapTile[x, y].Active = false;
+            MapTile[x, y].IdTexture = 0;
+        }
+
+        /// <param name="x">todo: describe x parameter on UpdateBlock</param>
+        /// <param name="y">todo: describe y parameter on UpdateBlock</param>
+        /// <param name="type">todo: describe type parameter on UpdateBlock</param>
+        /// <param name="step">todo: describe step parameter on UpdateBlock</param>
+        /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
+        public void UpdateBlock(int x , int y , int type , short step)
+        {
+            while ( true )
+            {
+                switch ( type )
+                {
+                    case 0:
+                        if ( MapTile[x , y].IdTexture == 16 || MapTile[x , y].IdTexture == 15 || MapTile[x , y].IdTexture == 14 )
+                        {
+                            y = y + 1;
+                            type = 1;
+                            step = 1;
+                            continue;
+                        }
+
+                        break;
+                    case 1:
+                        if ( MapTile[x , y].IdTexture == 15 || MapTile[x , y].IdTexture == 14 )
+                        {
+                            SetTextureOnly(x , y , 16);
+                        }
+                        else if ( MapTile[x , y].IdTexture == 13 )
+                        {
+                            UpdateBlock(x , y , 2 , 1);
+                        }
+                        MapTile[x , y].Blockheight = 1;
+                        y = y + 1;
+                        type = 2;
+                        step = (short) (step + 1);
+                        continue;
+                    case 2:
+                        MapTile[x , y].Blockheight = step;
+                        if ( MapTile[x , y].IdTexture == 15 || MapTile[x , y].IdTexture == 14 || MapTile[x , y].IdTexture == 16 )
+                        {
+                            y = y + 1;
+                            type = 2;
+                            step = (short) (step + 1);
+                            continue;
+                        }
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                break;
             }
         }
-        
-        public void updateblock(int x, int y, int type, int step)
+
+        public void UpdateMaxY(int x)
         {
-            if (type == 0)
-            {
-                if (map[x, y].idtexture == 16 || map[x, y].idtexture == 15 || map[x, y].idtexture == 14)
-                {
-                    updateblock(x, y + 1, 1, 1);
-                }
-            }
-            else if (type == 1)
-            {
-                if (map[x, y].idtexture == 15 || map[x, y].idtexture == 14)
-                {
-                    settextureonly(x, y, 16);
-                }
-                else if (map[x, y].idtexture == 13)
-                {
-                    updateblock(x, y, 2, 1);
-                }
-                map[x, y].blockheight = 1;
-                updateblock(x, y + 1, 2, step + 1);
-            }
-            else if (type == 2)
-            {
-                map[x, y].blockheight = step;
-                if (map[x, y].idtexture == 15 || map[x, y].idtexture == 14 || map[x, y].idtexture == 16)
-                {
-                    updateblock(x, y + 1, 2, (step) + 1);
-                }
-            }
-        }
-        
-        public void maxy(int x)
-        {
-            mapHeight[x] = 0;
+            MapHeight[x] = 0;
             for (int i = 0; i < SizeGeneratior.WorldHeight; i++)
             {
-                if (map[x, i].issolid()) { mapHeight[x] = i; break; }
+                if ( !MapTile[x , i].IsSolId() ) continue;
+
+                MapHeight[x] = i; break;
             }
         }
-        public void settextureonly(int x, int y, int id)
+        public void SetTextureOnly(int x, int y, int id)
         {
-            map[x, y].idtexture = (short)id;
+            MapTile[x, y].IdTexture = (short)id;
         }
-        public void removeFromUpdate(Point point){
-            if(UpdateTile.Contains(point))
+        public void RemoveFromUpdate(Point point){
+            if (MapTile[point.X, point.Y].Active && IsUpdate(MapTile[point.X, point.Y].IdTexture))
             {
                     UpdateTile.Remove(point);
             }
         }
-        public void settexture(int x, int y, int id,byte subID = 0, bool inf = false)
+        public void SetTexture(int x, int y, int id,byte subId = 0)
         {
-            if (x >= 0 && y >= 0 && x <= SizeGeneratior.WorldWidth - 1 && y <= SizeGeneratior.WorldHeight - 1)
-            {
-                if(map[x,y].active)removeFromUpdate(new Point(x, y));
-                map[x, y].idtexture = (short)id;
-                if (map[x,y].isLightBlock()) { 
-                    map[x, y].light = 15; 
-                    for (int i = -20; i < 20; i++)
+            if ( x < 0 || y < 0 || x > SizeGeneratior.WorldWidth - 1 || y > SizeGeneratior.WorldHeight - 1 ) return;
+
+            RemoveFromUpdate(new Point(x, y));
+
+            MapTile[x, y].IdTexture = (short)id;
+            if (MapTile[x,y].IsLightBlock()) { 
+                MapTile[x, y].Light = 15; 
+                for (int i = -20; i < 20; i++)
+                {
+                    for (int j = -20; j < 20; j++)
                     {
-                        for (int j = -20; j < 20; j++)
-                        {
-                            if (x + i >= 0 && y + j >= 0 && x + i <= SizeGeneratior.WorldWidth - 1 && y + j <= SizeGeneratior.WorldHeight - 1)
-                            {
-                                if (!map[x + i, y + j].isLightBlock()) map[x + i, y + j].light = 0;
-                            }
-                        }
+                        if ( x + i < 0 || y + j < 0 || x + i > SizeGeneratior.WorldWidth - 1 ||
+                             y + j > SizeGeneratior.WorldHeight - 1 ) continue;
+
+                        if (!MapTile[x + i, y + j].IsLightBlock()) MapTile[x + i, y + j].Light = 0;
                     }
                 }
-                map[x, y].infected = inf;
-                map[x, y].active = true;
-                map[x, y].idtexture = (short)id;
-                map[x, y].updateHP();
-                map[x, y].subTexture = subID;
-                map[x, y].frame = 0;
             }
+            MapTile[x, y].Active = true;
+            MapTile[x, y].IdTexture = (short)id;
+            MapTile[x, y].UpdateHp();
+            MapTile[x, y].IdSubTexture = subId;
+            MapTile[x, y].Frame = 0;
+            MapTile[x, y].UpdateTileDate();
         }
 
         
-        public int GetMax(int w)
-        {
-            return mapHeight[w];
-        }
+        public int GetHeight(int w) => MapHeight[w];
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public virtual void Draw(SpriteBatch spriteBatch,ITileList tileList,Rectangle radious)
         {
+            /*   foreach (Cloud cloud in cloud)
+               {
 
-            foreach (Explosion exp in explosions)
+                   spriteBatch.Draw(tiles.textures[1],
+                       new Rectangle((int)(cloud.position.X), (int)(cloud.position.Y),
+                           16,
+                           16),
+                           Color.White);
+               }*/
+            tileList.RenderPlasters(this, radious, spriteBatch);
+            tileList.RenderWall(this, radious, spriteBatch);
+            tileList.RenderTiles(this, radious, spriteBatch);
+            foreach (Explosion exp in _explosions)
             {
                 exp.Draw(spriteBatch);
             }
-        }
-        public virtual void update(GameTime gameTime,Camera camera)
-        {
-            for (int i = 0; i < cloud.Count; i++)
+            foreach(Dust dust in Dusts)
             {
-                cloud[i].update();
-            }
-            foreach (Explosion exp in explosions)
-            {
-                exp.Update(gameTime);
-                if (!exp.Active)
-                {
-                    explosions.Remove(exp);
-                    break;
-                }
-            }
-            foreach (Point point in this.UpdateTile)
-            {
-                map[point.X, point.Y].Update(point.X, point.Y, camera);
+                dust.Render(spriteBatch);
             }
         }
-        public virtual void start(ProgressBar bar)
+        
+        public virtual void Update(GameTime gameTime,Camera camera)
         {
-            bar.setMaxValue(SizeGeneratior.WorldWidth);
+
+            foreach (Zombie npc in Zombies)
+            {
+                npc.Update();
+                if ( !(npc.Hp <= 1) ) continue;
+
+                npc.Kill();
+                Zombies.Remove(npc);
+                break;
+            }
+            foreach (Civilian npc in Civil) npc.Update();
+            foreach ( Cloud cloud in Cloud )cloud.Update();
+
+            _explosions = _explosions?.Where(exp => {exp.Update(gameTime);return exp.Active;}).ToList();
+            foreach (Point point in UpdateTile)
+                MapTile[point.X, point.Y].Update(point.X, point.Y, camera);
+
+            foreach (Dust dust in Dusts)
+                dust.Update();
+        }
+        public virtual void Start(ProgressBar bar)
+        {
+            bar.SetMaxValue(SizeGeneratior.WorldWidth);
             GenerationBiomes(bar);
             GeneratorHeight(bar);
             GenerationTerrain(bar);
             GenerationStructes(bar);
             Clearring(bar);
-            active = true;
+            Active = true;
             for (int i = 0; i < 1; i++)
             {
-                cloud.Add(new Cloud(new Vector2(i*10,SizeGeneratior.rockLayer-120)));
+                Cloud.Add(new Cloud(new Vector2(i*10,SizeGeneratior.RockLayer-120)));
             }
         }
 
         protected virtual void Clearring(ProgressBar bar) { StructuresList.Clear(); }
-        protected virtual void GenerationBiomes(ProgressBar bar) { }
+        protected virtual void GenerationBiomes(ProgressBar progressBar) { }
         protected virtual void GenerationStructes(ProgressBar bar) { }
+
+        /// <param name="bar">todo: describe bar parameter on GeneratorHeight</param>
+        /// <exception cref="IOException">An I/O error occurred. </exception>
         protected virtual void GeneratorHeight(ProgressBar bar)
         {
-            System.Console.WriteLine("Base");
-            System.Console.ReadLine();
+            Console.WriteLine("Base");
         }
         protected virtual void GenerationTerrain(ProgressBar bar) { }
-
-       
-        
-        public void updateblock(int frame)
-        {
-        }
     }//концовка класса=
 }

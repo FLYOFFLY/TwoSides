@@ -1,59 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.GUI.Scene;
-using TwoSides.GUI;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+
+using TwoSides.GUI;
+using TwoSides.GUI.Scene;
 
 namespace TwoSides.GameContent.GUI.Scene
 {
     public class SettingMenu : IScene
     {
-        public bool lastSceneRender { get; set; }
-        public bool lastSceneUpdate { get; set; }
-        ControlScene scene;
-        Button[] btn = new Button[2];
+        public bool LastSceneRender { get; set; }
+        public bool LastSceneUpdate { get; set; }
+        ControlScene _scene;
+        readonly Button[] _buttons = new Button[2];
         public void Load(ControlScene scene)
         {
-            int sizeButton = (int)Program.game.Font1.MeasureString("Exit Game").X + 50;
-            for (int i = 0; i < 2; i++)
+            int sizeButton = (int)Program.Game.Font1.MeasureString("Exit Game").X + 50;
+            for (int i = 0; i < _buttons.Length; i++)
             {
-                btn[i] = new Button(Program.game.button, Program.game.Font1, new Rectangle(0, 0, 400, 400), "null");
-                Rectangle rect = new Rectangle(Program.game.graphics.PreferredBackBufferWidth / 2-sizeButton/2, (Program.game.heightmenu) + 35 * i, sizeButton, 30);
-                btn[i].SetRect(rect);
+                _buttons[i] = new Button(Program.Game.Button, Program.Game.Font1, new Rectangle(0, 0, 400, 400), "null");
+                Rectangle rect = new Rectangle(Program.Game.Resolution.X / 2-sizeButton/2, Program.Game.HeightMenu + 35 * i, sizeButton, 30);
+                _buttons[i].SetRect(rect);
             }
-            btn[0].Text = "Graphics";
-            btn[1].Text = "Music";
-            this.scene = scene;
+            _buttons[0].Text = "Graphics";
+            _buttons[0].OnClicked += (_ , __) => {_scene.ChangeScene(new GraphicsMenu());};
+            _buttons[1].Text = "Music";
+            _buttons[1].OnClicked += (_, __) => { _scene.ChangeScene(new MainMenu()); };
+            _scene = scene;
         }
         public void Render(SpriteBatch spriteBatch)
         {
-            for (int i = 0; i < 2; i++)
-            {
-                btn[i].Draw(spriteBatch);
-            }
+            foreach ( Button button in _buttons )
+                button.Draw(spriteBatch);
         }
         public void Update(GameTime gameTime)
         {
-
-            for (int i = 0; i < 2; i++)
-            {
-                btn[i].Update();
-            }
-            if (btn[0].IsClicked())
-            {
-                scene.changeScene(new GraphicsMenu());
-            }
-            if (btn[1].IsClicked())
-            {
-                scene.changeScene(new MusicMenu());
-            }
+            foreach ( Button button in _buttons )
+                button.Update();
         }
-        public void tryExit()
-        {
-            scene.returnScene();
-        }
+        public void TryExit() => _scene.ReturnScene();
     }
 }

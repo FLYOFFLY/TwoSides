@@ -1,57 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 
 namespace TwoSides.Utils
 {
     public class NamingVersion
     {
-        byte major, minor, build, revesion;
-        byte idVersion, idSubVersion;
-        Version versionThis;
+        byte _major;
+        byte _minor;
+        byte _build;
+        byte _revesion;
+        byte _idVersion, _idSubVersion;
+        readonly Version _versionThis;
         public NamingVersion(byte idSubVersion, byte idVersion, byte major, byte minor, byte build, byte revesion)
         {
             // TODO: Complete member initialization
-            this.idSubVersion = idSubVersion;
-            this.idVersion = idVersion;
-            this.major = major;
-            this.minor = minor;
-            this.build = build;
-            this.revesion = revesion;
-            versionThis = new Version(major, minor, build, revesion);
+            _idSubVersion = idSubVersion;
+            _idVersion = idVersion;
+            _major = major;
+            _minor = minor;
+            _build = build;
+            _revesion = revesion;
+            _versionThis = new Version(major, minor, build, revesion);
         }
-        public string getVersion()
+        public string GetVersion() => _versionThis.ToString();
+
+        public void Load(BinaryReader reader)
         {
-            return versionThis.ToString();
+            _idSubVersion = reader.ReadByte();
+            _idVersion = reader.ReadByte();
+            _major = reader.ReadByte();
+            _minor = reader.ReadByte();
+            _build = reader.ReadByte();
+            _revesion = reader.ReadByte();
         }
-        public void load(BinaryReader reader)
+        public void Save(BinaryWriter writer)
         {
-            idSubVersion = reader.ReadByte();
-            idVersion = reader.ReadByte();
-            major = reader.ReadByte();
-            minor = reader.ReadByte();
-            build = reader.ReadByte();
-            revesion = reader.ReadByte();
+            writer.Write(_idSubVersion);
+            writer.Write(_idVersion);
+            writer.Write(_major);
+            writer.Write(_minor);
+            writer.Write(_build);
+            writer.Write(_revesion);
         }
-        public void save(BinaryWriter writer)
-        {
-            writer.Write(idSubVersion);
-            writer.Write(idVersion);
-            writer.Write(major);
-            writer.Write(minor);
-            writer.Write(build);
-            writer.Write(revesion);
-        }
-        public int getCode()
-        {
-            return idSubVersion * 100000 +
-                idVersion * 10000 +
-                major * 1000 +
-                minor * 100 +
-                build * 10 +
-                revesion;
-        }
+        public int GetCode() => _idSubVersion * 100000 +
+                                _idVersion * 10000 +
+                                _major * 1000 +
+                                _minor * 100 +
+                                _build * 10 +
+                                _revesion;
     }
 }

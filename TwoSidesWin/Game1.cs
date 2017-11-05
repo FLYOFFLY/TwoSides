@@ -1,131 +1,173 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-//Именно это пространство имен поддерживает многопоточность
+using System.Threading;
 using System.Xml;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-using TwoSides.GUI;
-using TwoSides.Physics.Entity;
-using TwoSides.Physics.Entity.NPC;
 
-using TwoSides.World;
-using System.Threading;
-using TwoSides.GameContent.GenerationResources;
 using TwoSides.GameContent.Dimensions;
-using TwoSides.GameContent.Entity.NPC;
 using TwoSides.GameContent.Entity;
-using TwoSides.GameContent.Tiles;
-using TwoSides.World.Tile;
-using TwoSides.World.Generation;
-using TwoSides.Utils;
-using TwoSides.GUI.Scene;
+using TwoSides.GameContent.Entity.NPC;
+using TwoSides.GameContent.GenerationResources;
 using TwoSides.GameContent.GUI.Scene;
-using TwoSides.ModLoader;
-using TwoSides.Physics;
-using TwoSides.Network;
+using TwoSides.GameContent.Tiles;
+using TwoSides.GUI;
+using TwoSides.GUI.Scene;
+using TwoSides.Utils;
+using TwoSides.World;
+using TwoSides.World.Generation;
+using TwoSides.World.Tile;
+
+using Console = TwoSides.GUI.HUD.Console;
+using Drop = TwoSides.Physics.Entity.Drop;
+
 namespace TwoSides
 {
     /// <summary>
     /// Дальше идёт код без комментарий, поэтому читайте код, только про качки навыка догадливасти до максиума
     /// А лучше вообще не читайте, а то будете меня оскорблять 
     /// </summary>
-    sealed public class Game1 : Microsoft.Xna.Framework.Game
+    public sealed class Game1 : Game
     {
         //Константы
-        const int brightness = 51;
-        public const int maxframe = 100;
-        public const int addmaxt = 13;
-        public const int maxPosters = 1;
-        public const int MaxD = 3;
+        const int BRIGHTNESS = 51;
+        public const int MaxFrame = 100;
+        public const int MaxSpecialTexture = 13;
+        public const int MaxPosters = 1;
+        public const int MaxDimension = 3;
         public const int RecipeTyp = 8;
         public const int SizeCarmaHeight = 16;
         public const int SizeCarmaWidth = 80;
-      
-        //Переменные
-        int globalfps = 0;
-        public int heightmenu;
-        public int type = 0;
-        public int currentD = 0;
-        public float seconds;
-        public TwoSides.GUI.Console console;
 
+        //Переменные
+        public int HeightMenu;
+        public int Type = 0;
+        public int CurrentDimension;
+        public float Seconds;
+        public Console Console;
 
         //Листы
-        static List<FlashText> flash = new List<FlashText>();
-        static List<Drop> drop = new List<Drop>();
-        public List<Bullet> bullets = new List<Bullet>();
-        public List<GUI.GUI> guis = new List<GUI.GUI>();
+        static readonly List<FlashText> Flash = new List<FlashText>();
+        static readonly List<Drop> Drops = new List<Drop>();
+        public List<Bullet> Bullets = new List<Bullet>();
+        public List<XnaLayout> Guis = new List<XnaLayout>();
         //Массивы
-        Race[] racestd = new Race[2];
-        public BaseDimension[] dimension = new BaseDimension[MaxD];
-        public List<Recipe> recipes = new List<Recipe>();
-
+        public BaseDimension[] Dimension = new BaseDimension[MaxDimension];
         //Объекты
-        private SpriteBatch spriteBatch;
+        SpriteBatch _spriteBatch;
         //Song music;
-        public SpriteFont font2;
+        public SpriteFont Font2;
 
-        static GUI.GUI guiremove;
-        public Effect effects;
-        public KeyboardState keyState = Keyboard.GetState();
-        public GraphicsDeviceManager graphics;
+        static XnaLayout _guiRemove;
+        public Effect Effects;
+        public KeyboardState KeyState = Keyboard.GetState();
+        readonly GraphicsDeviceManager _graphics;
         public SpriteFont Font1;
-        public Random rand = new Random();
-        public Player player = new Player();
-        public MouseState mouseState = Mouse.GetState();
+        public Random Rand = new Random();
+        public Player Player = new Player();
+        public MouseState MouseState = Mouse.GetState();
 
         //Текстуры
-        Texture2D fog;
-        Texture2D cursor;
-        Texture2D shadow;
-        static Texture2D head;
-        static Texture2D eye;
-        static Texture2D body;
-        static Texture2D legs;
-        public Texture2D carma;
-        Texture2D head2;
-        Texture2D blood;
-        public Texture2D[] slots = new Texture2D[6];
-        Texture2D[] background = new Texture2D[3];
-        public Texture2D texturestonetile { get; set; }
-        public Texture2D dialogtex { get; set; }
-        public Texture2D achivement;
-        public Texture2D inv;
-        public Texture2D button;
-        public Texture2D black;
-        public Texture2D shootgun;
+        Texture2D _fog;
+        Texture2D _cursor;
+        Texture2D _shadow;
+        static Texture2D _head;
+        static Texture2D _eye;
+        static Texture2D _body;
+        static Texture2D _legs;
+        public Texture2D Carma;
+        Texture2D _head2;
+        Texture2D _blood;
+        public Texture2D[] Slots = new Texture2D[6];
+        readonly Texture2D[] _background = new Texture2D[3];
+        public Texture2D StoneTile { get; set; }
+        public Texture2D Dialogtex { get; set; }
+        public Texture2D Achivement;
+        public Texture2D Inv;
+        public Texture2D Button;
+        public Texture2D Black;
+        public Texture2D Shootgun;
         public const string ImageFolder = @"Images/";
-        public Texture2D ramka;
-        public Texture2D galka;
-        ControlScene controlScene = new ControlScene();
-        Log log = new Log("time");
+        public Texture2D Ramka;
+        public Texture2D Galka;
+        readonly ControlScene _controlScene;
+        readonly Log _log = new Log("time");
+
+        public Point Resolution
+        {
+            get => new Point(_graphics.PreferredBackBufferWidth,_graphics.PreferredBackBufferHeight);
+            set {
+                _graphics.PreferredBackBufferWidth = value.X;
+                _graphics.PreferredBackBufferHeight = value.Y;
+                _graphics.ApplyChanges();
+            }
+        }
+
+        public DisplayMode DisplayMode
+        {
+            get => _graphics.GraphicsDevice.DisplayMode;
+            set
+            {
+                _graphics.PreferredBackBufferWidth = value.Width;
+                _graphics.PreferredBackBufferHeight = value.Height;
+                _graphics.PreferredBackBufferFormat = value.Format;
+                _graphics.ApplyChanges();
+            }
+        }
+
+        public bool IsFullScreen
+        {
+            get => _graphics.IsFullScreen;
+            set
+            {
+                _graphics.IsFullScreen = value;
+                _graphics.ApplyChanges();
+            }
+        }
+
+        public bool InScreen(Vector2 coord) =>  new Rectangle(Point.Zero,Resolution).Contains(coord);
+
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
-            graphics.PreferredBackBufferWidth = 1366;
-            graphics.PreferredBackBufferHeight = 768;
-            graphics.IsFullScreen = true; 
+            _graphics = new GraphicsDeviceManager(this)
+                       {
+                           PreferredBackBufferWidth = 1366 ,
+                           PreferredBackBufferHeight = 768 ,
+                           IsFullScreen = true
+                       };
+            _controlScene = new ControlScene();
             LoadSetting();
             Content.RootDirectory = "Content"; 
-            log.hasData = true;
-            this.Window.AllowAltF4 = true;
-            
+            _log.HasData = true;
+            Window.AllowAltF4 = true;
         }
+
+        /// <summary>
+        /// Выводит на экран меню игрока в определенном маштабе
+        /// </summary>
+        /// <param name="scale">Маштаб</param>
         public void PlayerRender(float scale = 1.0f)
         {
-            player.render(eye, head, body, legs, spriteBatch,scale);
-            player.renderleft(hand, spriteBatch, scale);
+            Player.RenderLeftPart(Hand, _spriteBatch, scale);
+            Player.Render(_eye, _head, _body, _legs, _spriteBatch,scale);
         }
+
+        /// <summary>
+        /// Рисует на игроке, заданную текстуру с заданым маштабам
+        /// </summary>
+        /// <param name="texture">Текстура</param>
+        /// <param name="scale">Маштаб</param>
         public void PlayerRenderTexture(Texture2D texture,float scale = 1.0f)
         {
-            spriteBatch.Draw(texture, new Rectangle((int)(
-                player.position.X + (player.width - head.Width) - 0), (int)(player.position.Y - 0),
-                (int)(body.Width*scale), (int)(body.Height*scale)), new Rectangle(0, 0, body.Width, body.Height),
+            _spriteBatch.Draw(texture, new Rectangle((int)(
+                Player.Position.X + (Player.Width - _head.Width) - 0), (int)(Player.Position.Y - 0),
+                (int)(_body.Width*scale), (int)(_body.Height*scale)), new Rectangle(0, 0, _body.Width, _body.Height),
                 Color.Red, 0, Vector2.Zero, SpriteEffects.None, 0);
         }
         //Базовые методы игрового цикла
@@ -134,81 +176,58 @@ namespace TwoSides
             IsMouseVisible = false;
             base.Initialize();
         }
-        public TileTwoSides tiles;
+
+        public TileTwoSides Tiles;
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            Localisation.LoadLocalisation(new[]{ @"data/lang/en.lang", @"data/lang/ru.lang" });
+            Localisation.SetLanguage(Localisation.Language.RU);
             LoadedGui();
             LoadedHuman();
-            Clothes.Loadclothes(base.Content);
+            Clothes.Loadclothes(Content);
+            Dust.LoadContent();
             LoadBackImage();
-            tiles = new TileTwoSides();
-            tiles.Loadtiles(base.Content);
-            Item.LoadedItems(base.Content);
-            Bullet.LoadBullet(base.Content);
-            heightmenu = (int)(graphics.PreferredBackBufferHeight / 2 - 3 * 27);
+            Tiles = new TileTwoSides();
+            Tiles.Loadtiles(Content);
+            Item.LoadedItems(Content);
+            Bullet.LoadBullet(Content);
+            HeightMenu = _graphics.PreferredBackBufferHeight / 2 - 3 * 27;
             LoadStdRaces();
             CreateConsole();
             LoadRecipe();
-            LoadMods();
-            LoadModeClothes();
-            LoadModeBlocks();
             //music = Content.Load<Song>("music");
-            fog = base.Content.Load<Texture2D>(ImageFolder + "fog");
-            postEffect = base.Content.Load<Effect>(EffectFolder + "NewSpriteEffect");
-            dimension[0] = new NormalWorld();
-            dimension[1] = new Hell();
-            dimension[2] = new SnowWorld();
-            controlScene.changeScene(new MainMenu());
-            //blocksis[1].itemnead = (int)Block.tool.pickaxe;
-            // recipes[8] = new Recipe(new Slot(5000, 1, 10, 25), 20.0f);
-            //   recipes[8].addigr(1, 3);
-            //recipes[1].addigr(5, 1);
-            //recipes[2].addigr(5, 1);
-            //recipes[3].addigr(5, 1);
-            // TODO: use this.Content to load your game content here
+            _fog = Content.Load<Texture2D>(ImageFolder + "fog");
+            //  postEffect = base.Content.Load<Effect>(EffectFolder + "NewSpriteEffect");
+            Dimension[0] = new NormalWorld();
+            Dimension[1] = new Hell();
+            Dimension[2] = new SnowWorld();
+            _controlScene.ChangeScene(new MainMenu());
         }
         public const string EffectFolder = @"Effects\";
         protected override void Update(GameTime gameTime)
         {
-            if (player.typeKill == 0) player.killnpc(false);
-            else if (player.typeKill == 1) player.killnpc(true);
+            if (Player.TypeKill >= 0) Player.KillNpc(Player.TypeKill==1);
             // Allows the game to exit
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape) && !keyState.IsKeyDown(Keys.Escape))
-            {
-                controlScene.tryExit();
-            }
-            mouseState = Mouse.GetState();
-            keyState = Keyboard.GetState();
-            GameInput.updateMouse(mouseState);
-            // TODO: Add your update logic here
-            controlScene.Update(gameTime);
-         /*   switch (state)
-            {
-                case (int)State.MENU: MenuUpdate(gameTime); break;
-                case (int)State.Game: GameUpdate(gameTime); break;
-                case (int)State.SelectRace: SRUpdate(gameTime); break;
-                case (int)State.CreateGame: CreatePersonUpdate(gameTime); break;
-                case (int)State.Rpgsystem: RpgSystemUpdate(gameTime); break;
-                case (int)State.Pause: PauseUpdate(gameTime); break;
-                default: break;
-                //case (int)State.Progress: GenerationsUpdate(gameTime); break;
-            }*/
-            foreach (GUI.GUI mygui in guis)
-            {
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape) && !KeyState.IsKeyDown(Keys.Escape))
+                _controlScene.TryExit();
+            MouseState = Mouse.GetState();
+            KeyState = Keyboard.GetState();
+            GameInput.UpdateMouse(MouseState);
+            _controlScene.Update(gameTime);
+            foreach (XnaLayout mygui in Guis)
                 mygui.Update();
-            }
-            foreach (FlashText fl in flash)
+            foreach (FlashText fl in Flash)
             {
                 if (fl.IsInvisible())
                 {
-                    flash.Remove(fl);
+                    Flash.Remove(fl);
                     break;
                 }
                 fl.Update();
             }
-            guis.Remove(guiremove);
+            Guis.Remove(_guiRemove);
             base.Update(gameTime);
         }
         public void DrawText(string text, int x, int y)
@@ -217,22 +236,20 @@ namespace TwoSides
         }
         public void DrawText(string text, int x,int y,Color color)
         {
-            spriteBatch.DrawString(Font1,text,new Vector2(x,y),color);
+            _spriteBatch.DrawString(Font1,text,new Vector2(x,y),color);
         }
         public void AddFlash(int x,int y,string text, Color color)
         {
-            flash.Add(new FlashText(new Vector2(x, y), text, Font1, color));
+            Flash.Add(new FlashText(new Vector2(x, y), text, Font1, color));
         }
         protected override void Draw(GameTime gameTime)
         {
            // ModLoader.callFunction("PreDraw");
             GraphicsDevice.Clear(new Color(228,241,255));
             //SpriteEffects effect = SpriteEffects.None;
-            foreach (FlashText fl in flash)
-            {
-                fl.Draw(spriteBatch);
-            }
-       /*     if (state == (int)State.Game || state == (int)State.Pause)
+            foreach (FlashText fl in Flash)
+                fl.Draw(_spriteBatch);
+            /*     if (state == (int)State.Game || state == (int)State.Pause)
             {
                
             }
@@ -250,46 +267,26 @@ namespace TwoSides
             if (state == (int)State.Rpgsystem) rpgSystem(effect);
             if (state == (int)State.Game) spriteBatch.End();
             */
-            controlScene.Render(spriteBatch);
-            spriteBatch.Begin();
+            _controlScene.Render(_spriteBatch);
+            _spriteBatch.Begin();
            // ModLoader.callFunction("Draw");
-            spriteBatch.End();
-            foreach (GUI.GUI mygui in guis)
-            {
-                mygui.Draw(spriteBatch);
-            }
-            spriteBatch.Begin();
-            spriteBatch.Draw(cursor, new Vector2(mouseState.X, mouseState.Y), Color.Blue);
-            spriteBatch.End();
-            ModLoader.ModLoader.callFunction("Draw");
+            _spriteBatch.End();
+            foreach (XnaLayout mygui in Guis)
+                mygui.Draw(_spriteBatch);
+
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(_cursor, new Vector2(MouseState.X, MouseState.Y), Color.Blue);
+            _spriteBatch.End();
             base.Draw(gameTime);
-        }
-        protected override bool BeginDraw()
-        {
-            ModLoader.ModLoader.callFunction("preDraw");
-            return base.BeginDraw();
-        }
-        protected override void EndDraw()
-        {
-            ModLoader.ModLoader.callFunction("endDraw");
-            base.EndDraw();
         }
         protected override void UnloadContent()
         {
             SaveSetting();
-            base.Content.Unload();
+            Content.Unload();
         }
         //Методы связанные с Initalize
         public const string ConfigFolder = @"Data/Config";
         public const string ModsFolder = @"Data/Mods";
-        public void changeDisplayMode(DisplayMode disp)
-        {
-            graphics.PreferredBackBufferHeight = disp.Height;
-            graphics.PreferredBackBufferFormat = disp.Format;
-            graphics.PreferredBackBufferWidth = disp.Width;
-            graphics.ApplyChanges();
-            
-        }
         void LoadSetting()
         {
             Program.StartSw();
@@ -297,25 +294,24 @@ namespace TwoSides
             xDoc.Load(ConfigFolder+@"/Graphics.xml");
             // получим корневой элемент
             XmlElement xRoot = xDoc.DocumentElement;
+            Debug.Assert(xRoot != null , nameof( xRoot ) + " != null");
             foreach (XmlNode xnode in xRoot)
             {
-                System.Console.WriteLine(xnode.Name);
-                // если узел - company
-                if (xnode.Name == "Width")
-                {
-                    graphics.PreferredBackBufferWidth = int.Parse(xnode.InnerText);
-                }
-                // если узел - company
-                if (xnode.Name == "Height")
-                {
-                    graphics.PreferredBackBufferHeight = int.Parse(xnode.InnerText);
-                }
-                // если узел - company
-                System.Console.WriteLine(xnode.Name.ToString());
-                if (xnode.Name == "FullScreen")
-                {
-                    System.Console.WriteLine(int.Parse(xnode.InnerText));
-                    if (int.Parse(xnode.InnerText) == 0) graphics.IsFullScreen = false;
+                switch ( xnode.Name ) {
+                    case "Width":
+                        _graphics.PreferredBackBufferWidth = int.Parse(xnode.InnerText,CultureInfo.InvariantCulture);
+                        break;
+                    case "Height":
+                        _graphics.PreferredBackBufferHeight = int.Parse(xnode.InnerText, CultureInfo.InvariantCulture);
+                        break;
+                    case "FullScreen":
+
+                        if (int.Parse(xnode.InnerText, CultureInfo.InvariantCulture) == 0)
+                            _graphics.IsFullScreen = false;
+                        break;
+                    default:
+                        System.Console.WriteLine(xnode.Name);
+                        break;
                 }
             }
             Program.StopSw("Init Graphics Setting");
@@ -323,16 +319,15 @@ namespace TwoSides
             Program.StartSw();
             xDoc = new XmlDocument();
             xDoc.Load(ConfigFolder + @"/Sound.xml");
-            // получим корневой элемент
             xRoot = xDoc.DocumentElement;
+            Debug.Assert(xRoot != null , nameof( xRoot ) + " != null");
             foreach (XmlNode xnode in xRoot)
             {
-                System.Console.WriteLine(xnode.Name);
-                // если узел - company
+                // ReSharper disable once InvertIf
                 if (xnode.Name == "Mutted")
                 {
-                    System.Console.WriteLine(int.Parse(xnode.InnerText));
-                    if (int.Parse(xnode.InnerText) != 0)MediaPlayer.IsMuted = true;
+                    System.Console.WriteLine(xnode.InnerText);
+                    if (int.Parse(xnode.InnerText, CultureInfo.InvariantCulture) != 0)MediaPlayer.IsMuted = true;
                 }
             }
             Program.StopSw("Init Sound Setting");
@@ -346,51 +341,42 @@ namespace TwoSides
             // получим корневой элемент
           
             XmlElement xRoot = xDoc.DocumentElement;
+            Debug.Assert(xRoot != null , nameof( xRoot ) + " != null");
             foreach (XmlNode xnode in xRoot)
             {
-                System.Console.WriteLine(xnode.Name);
-                // если узел - company
-                if (xnode.Name == "Width")
-                {
-                    xnode.InnerText = graphics.PreferredBackBufferWidth.ToString();
-                }
-                // если узел - company
-                if (xnode.Name == "Height")
-                {
-                    xnode.InnerText = graphics.PreferredBackBufferHeight.ToString();
-                }
-                // если узел - company
-                System.Console.WriteLine(xnode.Name.ToString());
-                if (xnode.Name == "FullScreen")
-                {
-                    System.Console.WriteLine(int.Parse(xnode.InnerText));
-                    if (graphics.IsFullScreen) xnode.InnerText = "1";
-                    else xnode.InnerText = "0";
+                switch ( xnode.Name ) {
+                    case "Width":
+                        xnode.InnerText = _graphics.PreferredBackBufferWidth.ToString( CultureInfo.InvariantCulture);
+                        break;
+                    case "Height":
+                        xnode.InnerText = _graphics.PreferredBackBufferHeight.ToString(CultureInfo.InvariantCulture);
+                        break;
+                    case "FullScreen":
+                        xnode.InnerText = _graphics.IsFullScreen ? "1" : "0";
+                        break;
+                    default:
+                        System.Console.WriteLine(xnode.Name);
+                        break;
                 }
             }
 
             File.Delete(ConfigFolder + @"/Graphics.xml");
             xDoc.Save(ConfigFolder + @"/Graphics.xml");
-            System.Console.WriteLine("TEST");
             Program.StopSw("Save Graphics Setting");
-            ///
             Program.StartSw();
             xDoc = new XmlDocument();
             xDoc.Load(ConfigFolder + @"/Sound.xml");
             // получим корневой элемент
 
             xRoot = xDoc.DocumentElement;
+            Debug.Assert(xRoot != null , nameof( xRoot ) + " != null");
             foreach (XmlNode xnode in xRoot)
             {
-                System.Console.WriteLine(xnode.Name);
                 // если узел - company
                 // если узел - company
-                System.Console.WriteLine(xnode.Name.ToString());
-                if (xnode.Name == "Mutted")
-                {
-                    if (MediaPlayer.IsMuted) xnode.InnerText = "1";
-                    else xnode.InnerText = "0";
-                }
+                if ( xnode.Name != "Mutted" ) continue;
+
+                xnode.InnerText = MediaPlayer.IsMuted ? "1" : "0";
             }
 
             File.Delete(ConfigFolder + @"/Sound.xml");
@@ -398,497 +384,323 @@ namespace TwoSides
             System.Console.WriteLine("TEST");
             Program.StopSw("Save Graphics Setting");
         }
-        void LoadInput()
+
+        static void LoadInput()
         {
             Program.StartSw();
             XmlDocument xDoc = new XmlDocument();
             xDoc.Load(ConfigFolder + @"/Input.xml");
             // получим корневой элемент
             XmlElement xRoot = xDoc.DocumentElement;
+            Debug.Assert(xRoot != null , nameof( xRoot ) + " != null");
             foreach (XmlNode xnode in xRoot)
             {
                 System.Console.WriteLine(xnode.Name);
                 // если узел - company
-                if (xnode.Name == "Jump")
-                {
-                    GameInput.Jump = int.Parse(xnode.InnerText);
-                }
-                // если узел - company
-                else if (xnode.Name == "Left")
-                {
-                    GameInput.MoveLeft = int.Parse(xnode.InnerText);
-                }
-                else if (xnode.Name == "Right")
-                {
-                    GameInput.MoveRight = int.Parse(xnode.InnerText);
-                }
-                else if(xnode.Name == "ActiveIventory"){
-                    GameInput.ActiveIventory = int.Parse(xnode.InnerText);
-                }
-                if (xnode.Name == "Drop")
-                {
-                    GameInput.Drop = int.Parse(xnode.InnerText);
+                switch ( xnode.Name ) {
+                    case "Jump":
+                        GameInput.Jump = int.Parse(xnode.InnerText,CultureInfo.InvariantCulture);
+                        break;
+                    case "Left":
+                        GameInput.MoveLeft = int.Parse(xnode.InnerText, CultureInfo.InvariantCulture);
+                        break;
+                    case "Right":
+                        GameInput.MoveRight = int.Parse(xnode.InnerText, CultureInfo.InvariantCulture);
+                        break;
+                    case "ActiveIventory":
+                        GameInput.ActiveIventory = int.Parse(xnode.InnerText, CultureInfo.InvariantCulture);
+                        break;
+                    case "Drop":
+                        GameInput.Drop = int.Parse(xnode.InnerText,CultureInfo.InvariantCulture);
+                        break;
+                    default:
+                        System.Console.WriteLine(xnode.Name);
+                        break;
                 }
             }
             Program.StopSw("Init Input Setting");
         }
         //Методы связанные с LoadContent
-        private void CreateConsole()
+        void CreateConsole()
         {
             Program.StartSw();
-            console = new TwoSides.GUI.Console(Font1);
-            console.addLog("Maximum:" + (Item.itemmax + TileTwoSides.TileMax));
+            Console = new Console(Font1);
+            Console.AddLog("Maximum:" + (Item.ItemMax + TileTwoSides.TileMax));
             Program.StopSw("Creating Console");
         }
 
-
-  
         void LoadBackImage()
         {
-            black = base.Content.Load<Texture2D>(ImageFolder + "black");
+            Black = Content.Load<Texture2D>(ImageFolder + "black");
             Program.StartSw();
             for (int i = 0; i < 3; i++)
-            {
-                background[i] = Content.Load<Texture2D>(ImageFolder + "background_" + i);
-            }
-            texturestonetile = Content.Load<Texture2D>(ImageFolder + "stonetiles");
+                _background[i] = Content.Load<Texture2D>(ImageFolder + "background_" + i);
+
+            StoneTile = Content.Load<Texture2D>(ImageFolder + "stonetiles");
             Program.StopSw("Loaded Background");
         }
         void LoadedHuman()
         {
             Program.StartSw();
-            blood = Content.Load<Texture2D>(ImageFolder + "blood");
-            head = base.Content.Load<Texture2D>(ImageFolder + "head");
-            hand = base.Content.Load<Texture2D>(ImageFolder + "hand");
-            eye = base.Content.Load<Texture2D>(ImageFolder + "eyes");
-            head2 = base.Content.Load<Texture2D>(ImageFolder + "head2");
-            body = base.Content.Load<Texture2D>(ImageFolder + "body");
-            legs = base.Content.Load<Texture2D>(ImageFolder + "legs");
-            shadow = base.Content.Load<Texture2D>(ImageFolder + "shadow");
+            _blood = Content.Load<Texture2D>(ImageFolder + "blood");
+            _head = Content.Load<Texture2D>(ImageFolder + "head");
+            Hand = Content.Load<Texture2D>(ImageFolder + "hand");
+            _eye = Content.Load<Texture2D>(ImageFolder + "eyes");
+            _head2 = Content.Load<Texture2D>(ImageFolder + "head2");
+            _body = Content.Load<Texture2D>(ImageFolder + "body");
+            _legs = Content.Load<Texture2D>(ImageFolder + "legs");
+            _shadow = Content.Load<Texture2D>(ImageFolder + "shadow");
             Program.StopSw("Loaded Human");
         }
-        public  const string fontFolder = @"Fonts\";
+        public  const string FontFolder = @"Fonts\";
         void LoadedGui()
         {
             Program.StartSw();
-            button = base.Content.Load<Texture2D>(ImageFolder + "button");
-            carma = base.Content.Load<Texture2D>(ImageFolder + "carma");
-            achivement = base.Content.Load<Texture2D>(ImageFolder + "achivement");
-            cursor = base.Content.Load<Texture2D>(ImageFolder + "cursor");
-            inv = base.Content.Load<Texture2D>(ImageFolder + "invsphere");
-            galka = base.Content.Load<Texture2D>(ImageFolder + "galka");
-            ramka = base.Content.Load<Texture2D>(ImageFolder + "ramka");
-            emptyDrougt = base.Content.Load<Texture2D>(ImageFolder + @"hud/emptyDrougt");
-            fullDrougt = base.Content.Load<Texture2D>(ImageFolder + @"hud/fullDrougt");
-            wolfskin = base.Content.Load<Texture2D>(ImageFolder + @"NPC/wolf");
-            eatHunger = base.Content.Load<Texture2D>(ImageFolder + @"hud/hunger");
-            explosion = base.Content.Load<Texture2D>(ImageFolder + @"explosion");
-            music = Content.Load<Song>("DestinationUnknown");
-            snowTexture = base.Content.Load<Texture2D>(ImageFolder + "snow");
-            bloodBody = base.Content.Load<Texture2D>(ImageFolder + @"skelet/body");
+            Button = Content.Load<Texture2D>(ImageFolder + "button");
+            Carma = Content.Load<Texture2D>(ImageFolder + "carma");
+            Achivement = Content.Load<Texture2D>(ImageFolder + "achivement");
+            _cursor = Content.Load<Texture2D>(ImageFolder + "cursor");
+            Inv = Content.Load<Texture2D>(ImageFolder + "invsphere");
+            Galka = Content.Load<Texture2D>(ImageFolder + "galka");
+            Ramka = Content.Load<Texture2D>(ImageFolder + "ramka");
+            EmptyDrougt = Content.Load<Texture2D>(ImageFolder + @"hud\emptyDrougt");
+            FullDrougt = Content.Load<Texture2D>(ImageFolder + @"hud/fullDrougt");
+            WolfSkin = Content.Load<Texture2D>(ImageFolder + @"NPC/wolf");
+            _pigSkin = Content.Load<Texture2D>(ImageFolder + @"NPC/pig");
+            EatHunger = Content.Load<Texture2D>(ImageFolder + @"hud/hunger");
+            _explosion = Content.Load<Texture2D>(ImageFolder + @"explosion");
+            _music = Content.Load<Song>("DestinationUnknown");
+            _snowTexture = Content.Load<Texture2D>(ImageFolder + "snow");
+            BloodBody = Content.Load<Texture2D>(ImageFolder + @"skelet/body");
             for(int i = 0;i<4;i++)
-            bloodTexture[i] = base.Content.Load<Texture2D>(ImageFolder + @"skelet/"+i);
-            dialogtex = carma;
+            BloodTexture[i] = Content.Load<Texture2D>(ImageFolder + @"skelet/"+i);
+            Dialogtex = Carma;
             Program.StopSw("Loaded Image Gui (50 milisecond First load Content)");
 
             Program.StartSw();
-            Font1 = Content.Load<SpriteFont>(fontFolder+ "myfont");
-            font2 = Content.Load<SpriteFont>(fontFolder + "myfont2");
-            Font3 = Content.Load<SpriteFont>(fontFolder + "myfont3");
+            Font1 = Content.Load<SpriteFont>(FontFolder+ "myfont");
+            Font2 = Content.Load<SpriteFont>(FontFolder + "myfont2");
+            Font3 = Content.Load<SpriteFont>(FontFolder + "myfont3");
             Program.StopSw("Loaded Font Gui");
         }
-        void LoadRecipe()
+
+        static void LoadRecipe()
         {
             Program.StartSw();
             Recipe test = new Recipe(new Item(1, 6), 100.0f);
 
-            test.addigr(7, 2);
-            test.addigr(5, 1);
-            recipes.Add(test);
-            recipes.Add(new Recipe(new Item( 5,    19),    20.0f));
-            recipes.Add(new Recipe(new Item(1,    8),     20.0f));
-            recipes.Add(new Recipe(new Item(1,22),   20.0f));
-            recipes.Add(new Recipe(new Item(1,23),    20.0f));
-            recipes.Add(new Recipe(new Item(1, 24), 20.0f));
-            ((Recipe)recipes[1]).addigr(5, 1);
-            ((Recipe)recipes[2]).addigr(19, 2);
-            ((Recipe)recipes[2]).addigr(1, 3);
-            ((Recipe)recipes[3]).addigr(1, 3);
-            ((Recipe)recipes[4]).addigr(1, 2);
-            ((Recipe)recipes[5]).addigr(1, 3);
-            //NEW UPDATE
-
-            recipes.Add(new Recipe(new Item(1, 26), 20.0f));
-            ((Recipe)recipes[6]).addigr(19, 6);
-            ((Recipe)recipes[6]).addigr(5, 6);
-            recipes.Add(new Recipe(new Item(1, 27), 20.0f));
-            ((Recipe)recipes[7]).addigr(19, 4);
-            ((Recipe)recipes[7]).addigr(5, 3);
-            recipes.Add(new Recipe(new Item(1, 28), 20.0f));
-            ((Recipe)recipes[8]).addigr(1, 10);
-           
-            recipes.Add(new Recipe(new Item(1, 29),22, 20.0f));
-            ((Recipe)recipes[9]).addigr(3, 4);
+            Recipe.AddRecipe(test, new[] { new Item(2, 7),new Item(1,5) });
             
-            recipes.Add(new Recipe(new Item(1, 30),22, 20.0f));
-            ((Recipe)recipes[10]).addigr(2, 4);
-            //Anvil
-            recipes.Add(new Recipe(new Item(1, 31), 20.0f));
-            ((Recipe)recipes[11]).addigr(29, 5);
-            recipes.Add(new Recipe(new Item(1, 32), 20.0f));
-            ((Recipe)recipes[12]).addigr(29, 4);
-            recipes.Add(new Recipe(new Item(1, 33), 20.0f));
-            ((Recipe)recipes[13]).addigr(29, 5);
-            recipes.Add(new Recipe(new Item(1, 34), 20.0f)); // sword
-            ((Recipe)recipes[14]).addigr(29, 1);
-            ((Recipe)recipes[14]).addigr(19, 2);
-            //End Anvil
-            recipes.Add(new Recipe(new Item(1, 38),22, 20.0f));
-            ((Recipe)recipes[15]).addigr(36, 4);
+            Recipe.AddRecipe(new Recipe(new Item( 5,    19),    20.0f),new[] {new Item(1,5)});
+            Recipe.AddRecipe(new Recipe(new Item(1,    8),     20.0f), new[] { new Item(2, 19), new Item(3, 1) });
+            Recipe.AddRecipe(new Recipe(new Item(1,22),   20.0f), new[] { new Item(3,1) });
+            Recipe.AddRecipe(new Recipe(new Item(1,23),    20.0f), new[] { new Item(2, 1) });
+            Recipe.AddRecipe(new Recipe(new Item(1, 24), 20.0f), new[] { new Item(3, 1) });
+            //NEW UPDATE
+            Recipe.AddRecipe(new Recipe(new Item(1, 26), 20.0f),new[] { new Item(6, 19), new Item(6, 5) });
+            Recipe.AddRecipe(new Recipe(new Item(1, 27), 20.0f),new[] { new Item(4, 19), new Item(3, 5) });
+            Recipe.AddRecipe(new Recipe(new Item(1, 28), 20.0f), new[] { new Item(1,10) });
+            Recipe.AddRecipe(new Recipe(new Item(1, 29),22, 20.0f),new[] { new Item(4,3)});
+            Recipe.AddRecipe(new Recipe(new Item(1, 30),22, 20.0f),new[] {new Item(4,2) });
+            Recipe.AddRecipe(new Recipe(new Item(1, 31), 20.0f), new[] { new Item(5, 29) });
+            Recipe.AddRecipe(new Recipe(new Item(1, 32), 20.0f), new[] { new Item(4, 29) });
+            Recipe.AddRecipe(new Recipe(new Item(1, 33), 20.0f), new[] { new Item(5, 29) });
+            Recipe.AddRecipe(new Recipe(new Item(1, 34), 20.0f), new[] { new Item(1, 29), new Item(2, 19) }); // sword
+            Recipe.AddRecipe(new Recipe(new Item(1, 38),22, 20.0f), new[] { new Item(4, 36) });
+            Recipe.AddRecipe(new Recipe(new Item(1, 43), 20.0f), new[] { new Item(6, 1), new Item(1, 19) }); // hammer
+            Recipe.AddRecipe(new Recipe(new Item(1, 41), 22, 20.0f), new[] { new Item(3, 29), new Item(1, 10) }); // pickaxe
+            Recipe.AddRecipe(new Recipe(new Item(1, 44), 22, 20.0f), new[] { new Item(1, 2), new Item(2, 19) });
+            Recipe.AddRecipe(new Recipe(new Item(1, 39), 20.0f), new[] { new Item(4, 38) });
+            Recipe.AddRecipe(new Recipe(new Item(1, 45), 22, 20.0f), new[] { new Item(1, 1), new Item(2, 19) });
+            Recipe.AddRecipe(new Recipe(new Item(4, 47), 20.0f), new[] { new Item(1, 46) });
+            Recipe.AddRecipe(new Recipe(new Item(1, 48), 20.0f), new[] { new Item(1, 46), new Item(1, 49) });
 
-            recipes.Add(new Recipe(new Item(1, 43), 20.0f)); // hammer
-            ((Recipe)recipes[16]).addigr(1, 6);
-            ((Recipe)recipes[16]).addigr(19, 1);
-            //Anvil
-            recipes.Add(new Recipe(new Item(1, 41), 22, 20.0f)); // pickaxe
-            ((Recipe)recipes[17]).addigr(29, 3);
-            ((Recipe)recipes[17]).addigr(19, 1);
-            recipes.Add(new Recipe(new Item(1, 44), 22, 20.0f));
-            ((Recipe)recipes[18]).addigr(2, 1);
-            ((Recipe)recipes[18]).addigr(19, 2);
-            //End Anvil
-
-            recipes.Add(new Recipe(new Item(1, 39), 20.0f));
-            ((Recipe)recipes[19]).addigr(38, 4);
-            recipes.Add(new Recipe(new Item(1, 45), 22, 20.0f));
-            ((Recipe)recipes[20]).addigr(1, 1);
-            ((Recipe)recipes[20]).addigr(19, 2);
-
-            recipes.Add(new Recipe(new Item(4, 47), 22, 20.0f));
-            ((Recipe)recipes[21]).addigr(46, 1);
-
-            recipes.Add(new Recipe(new Item(1, 48), 22, 20.0f));
-            ((Recipe)recipes[22]).addigr(49, 1);
-            ((Recipe)recipes[22]).addigr(46, 1);
-
-            recipes.Add(new Recipe(new Item(1, 49), 22, 20.0f));
-            ((Recipe)recipes[23]).addigr(47, 1);
-            ((Recipe)recipes[23]).addigr(19, 1);
+            Recipe.AddRecipe(new Recipe(new Item(1, 49), 20.0f), new[] { new Item(1, 19), new Item(1, 47) });
+            //EAT
+            Recipe.AddRecipe(new Recipe(new Item(1, 52), 19, 20.0f), new[] { new Item(4, 51) });
+            //EAT
+            Recipe.AddRecipe(new Recipe(new Item(1, 53), 22, 20.0f), new[] { new Item(1, 52), new Item(1, 10) });
 
             Program.StopSw("Created Recipe");
         }
-        Texture2D loadfromPngTex2D(string path)
-        {
-            FileStream setStream = File.Open(path, FileMode.Open);
-            Texture2D newTex = Texture2D.FromStream(GraphicsDevice, setStream);
-            setStream.Dispose();
-            return newTex;
-        }
-        void LoadModeClothes()
-        {
-            Program.StartSw();
-            foreach (string beltPath in ModLoader.ModLoader.beltMods)
-            {
-                Clothes.beltMods.Add(loadfromPngTex2D(beltPath));
-
-            }
-            foreach (string shirtPath in ModLoader.ModLoader.ShirtMods)
-            {
-                Clothes.shirtMods.Add(loadfromPngTex2D(shirtPath));
-
-            }
-            foreach (string specialPath in ModLoader.ModLoader.SpecialMods)
-            {
-                Clothes.specialMods.Add(loadfromPngTex2D(specialPath));
-
-            }
-            foreach (string pantsPath in ModLoader.ModLoader.PantsMods)
-            {
-                Clothes.pantsMods.Add(loadfromPngTex2D(pantsPath));
-
-            }
-            Program.StopSw("Load Mods Clothes");
-        }
-        
-        void LoadModeItems()
-        {
-            Program.StartSw();
-            foreach (ItemMod im in ModLoader.ModLoader.ItemsMods)
-            {
-                im.setTexture(loadfromPngTex2D(im.IMG));
-            }
-            Program.StopSw("Load Mods Items");
-        }
-        
-        void LoadModeBlocks()
-        {
-            Program.StartSw();
-            foreach (BlockMod bm in ModLoader.ModLoader.BlocksMods)
-            {
-                bm.setTexture(loadfromPngTex2D(bm.IMG));
-            }
-            Program.StopSw("Load Mods Blocks");
-            LoadModeItems();
-        }
-
-        void LoadMods()
-        {
-            Program.StartSw();
-            ModLoader.ModLoader.loadModedList(ModsFolder);
-            Program.StopSw("Init Mods");
-        }
-
-
-
-        const string nameSubVersion = "Alpha";
-        const string nameVersion = "Hammer & Anvil";
-        const byte idSubVersion = 0;
-        const byte idVersion = 0;
-        const byte major = 0;
-        const byte minor = 0;
-        const byte build = 2;
-        const byte revesion = 0;
-        NamingVersion versionThis = new NamingVersion(idSubVersion,idVersion,major,minor,build,revesion);
-        Song music;
+        const string NAME_SUB_VERSION = "Alpha";
+        const string NAME_VERSION = "Hammer & Anvil";
+        const byte ID_SUB_VERSION = 0;
+        const byte ID_VERSION = 0;
+        const byte MAJOR = 0;
+        const byte MINOR = 0;
+        const byte BUILD = 3;
+        const byte REVESION = 0;
+        readonly NamingVersion _versionThis = new NamingVersion(ID_SUB_VERSION,ID_VERSION,MAJOR,MINOR,BUILD,REVESION);
+        Song _music;
         //Методы меню
-        public void loadSlots()
+        public void LoadSlots()
         {
             for (int i = 0; i < 6; i++)
-            {
-                slots[i] = Content.Load<Texture2D>(ImageFolder + "slot\\slot_" + i);
-            }
+                Slots[i] = Content.Load<Texture2D>(ImageFolder + "slot\\slot_" + i);
         }
-
-        public void loadClient(object thread)
+        
+        public void NewGeneration()
         {
-            controlScene.changeScene(Progress.instance);
-            currentD = 0;
-            dimension[0].cleardimension();
-            NetPlay.sendMsg(3,0 ,0, 20,0 , SizeGeneratior.WorldHeight);
-            while (!dimension[currentD].active) { }
-            startGame();
-        }
-        public void newGeneration(object thread)
-        {
-            controlScene.changeScene(Progress.instance);
-            for (int i = 0; i < MaxD; i++)
+            _controlScene.ChangeScene(Progress.Instance);
+            for (int i = 0; i < MaxDimension; i++)
             {
-                currentD = i;
-                dimension[i].cleardimension();
-                dimension[i].start(Progress.instance.bar);
+                CurrentDimension = i;
+                Dimension[i].Clear();
+                Dimension[i].Start(Progress.Instance.Bar);
             }
-            startGame();
+            StartGame();
         }
 
-        void startGame() {
-
-            dimension[1].globallighting = 1;
-            dimension[0].globallighting = 51;
-            currentD = 0;
-            player.spawn();
-            controlScene.changeScene(new GameScene());
-            MediaPlayer.Play(music);
+        void StartGame() {
+            Dimension[1].Globallighting = 1;
+            Dimension[0].Globallighting = 51;
+            CurrentDimension = 0;
+            Player.Spawn();
+            _controlScene.ChangeScene(new GameScene());
+            MediaPlayer.Play(_music);
         }
 
         //Методы выборы Расы
         void LoadStdRaces()
         {
-            int r = -1;
             Program.StartSw();
-            Race.LoadRace(Font1,heightmenu,button,ConfigFolder+@"/racelist.xml", ref r);
+            Race.LoadRace(Font1,HeightMenu,Button,ConfigFolder+@"/racelist.xml", -1);
             Program.StopSw("Loaded default Race's");
-            Program.StartSw();
-            foreach (ModFile mod in ModLoader.ModLoader.Mods)
-            {
-                foreach (string RLP in mod.getPathRaceList())
-                {
-                    string a = RLP;
-                    if (new FileInfo(a).Exists) Race.LoadRace(Font1, heightmenu, button, a, ref r);
-                }
-            }
-            Program.StopSw("Loaded User Race's");
         }
-
-        void standartkey()
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                Rectangle rect = new Rectangle(120, (120) + 27 * i, 100, 25);
-                if (i == 1) racestd[i] = new Race(new Color(0, 0, 0), new Button(button, Font1, rect, "Niger"));
-                else racestd[i] = new Race(new Color(0, 0, 0), new Button(button, Font1, rect, "Europian"));
-            }
-        }
-        bool keyconsole = false;
-        bool day = true;
-        public Camera camera = new Camera();
+        bool _activeConsole;
+        bool _day = true;
+        public Camera Camera = new Camera();
         //Методы игры
         public void GameUpdate(GameTime gameTime)
         {
-          
-            var delta = (float)gameTime.ElapsedGameTime.TotalMinutes;
-            player.update(delta, seconds);
-            foreach (Zombie npc in Program.game.dimension[Program.game.currentD].Zombies) npc.update();
-            foreach (Civilian npc in Program.game.dimension[Program.game.currentD].civil) npc.update();
-            dimension[currentD].update(gameTime,camera);
-            camera.pos.X = (int)player.position.X;
-            camera.pos.Y = (int)player.position.Y;
-            if (camera.pos.Y> (SizeGeneratior.WorldHeight - 1) * ITile.TileMaxSize) camera.pos.Y = (SizeGeneratior.WorldHeight - 1) * ITile.TileMaxSize;
-            if (camera.pos.Y < graphics.PreferredBackBufferHeight/2) camera.pos.Y = graphics.PreferredBackBufferHeight/2;
-            if (camera.pos.X > (SizeGeneratior.WorldWidth - 1) * ITile.TileMaxSize) camera.pos.X = (SizeGeneratior.WorldWidth - 1) * ITile.TileMaxSize;
-            if (camera.getLeftUpper.X < 0) camera.getLeftUpper = new Vector2(0,camera.getLeftUpper.Y);
-            seconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (!keyconsole && keyState.IsKeyDown(Keys.OemTilde))
+            float delta = (float)gameTime.ElapsedGameTime.TotalMinutes;
+            Player.Update(delta, Seconds);
+            Dimension[CurrentDimension].Update(gameTime,Camera);
+            Camera.Pos.X = (int)Player.Position.X;
+            Camera.Pos.Y = (int)Player.Position.Y;
+            if (Camera.Pos.Y> (SizeGeneratior.WorldHeight - 1) * Tile.TileMaxSize) Camera.Pos.Y = (SizeGeneratior.WorldHeight - 1) * Tile.TileMaxSize;
+            if (Camera.Pos.Y < _graphics.PreferredBackBufferHeight/2.0f) Camera.Pos.Y = _graphics.PreferredBackBufferHeight/2.0f;
+            if (Camera.Pos.X > (SizeGeneratior.WorldWidth - 1) * Tile.TileMaxSize) Camera.Pos.X = (SizeGeneratior.WorldWidth - 1) * Tile.TileMaxSize;
+            if (Camera.GetLeftUpper.X < 0) Camera.GetLeftUpper = new Vector2(0,Camera.GetLeftUpper.Y);
+            Seconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (!_activeConsole && KeyState.IsKeyDown(Keys.OemTilde))
             {
-                console.changeactive();
-                keyconsole = true;
+                Console.Changeactive();
+                _activeConsole = true;
             }
-            else if (keyState.IsKeyUp(Keys.OemTilde)) keyconsole = false;
-            if (console.isactive) console.update();
-            if (day) dimension[0].globallighting += (brightness / 24) * delta;
-            else dimension[0].globallighting -= (brightness / 24) * delta;
-            if (dimension[0].globallighting >= brightness && day) { day = false; }
-            else if (dimension[0].globallighting <= 0 && !day) { day = true; }
-            if (spawnTime > 0) spawnTime--;
-            else if (rand.Next(0, 5*((NormalWorld)dimension[0]).wolfs.Count+1) == 0 )
-            {
-                int spawnX = (int)(player.position.X+graphics.PreferredBackBufferWidth)/ITile.TileMaxSize;
-                spawnTime = 100;
-               //((NormalWorld)dimension[0]).wolfs.Add(new Wolf(spawnX,wolfskin));
-            }
-            foreach (Bullet bullet in bullets)
-            {
-                if (!bullet.move())
-                {
-                    bullet.destory();
-                    bullets.Remove(bullet);
-                    break;
+            else if (KeyState.IsKeyUp(Keys.OemTilde))
+                _activeConsole = false;
 
-                }
-            }
-            foreach (Drop drops in drop)
+            if (Console.Isactive) Console.Update();
+            if (_day) Dimension[0].Globallighting += BRIGHTNESS / 24.0f * delta;
+            else Dimension[0].Globallighting -= BRIGHTNESS / 24.0f * delta;
+            if (Dimension[0].Globallighting >= BRIGHTNESS && _day) _day = false;
+            else if (Dimension[0].Globallighting <= 0 && !_day) _day = true;
+            if (SpawnTime > 0)
+                SpawnTime--;
+            else if (Rand.Next(0, 5 * ((NormalWorld)Dimension[0]).Npcs.Count + 1) == 0)
             {
-                drops.update();
+                int spawnX = (int)(Player.Position.X + _graphics.PreferredBackBufferWidth) / Tile.TileMaxSize;
+                SpawnTime = 1000;
+                if (Rand.Next(0, 100) == 0) ((NormalWorld)Dimension[0]).Npcs.Add(new Wolf(spawnX, WolfSkin));
+                else ((NormalWorld)Dimension[0]).Npcs.Add(new Pig(spawnX, _pigSkin));
+            }
+            for (int i = 0; i < Bullets.Count; i++)
+            {
+                if ( Bullets[i].Move() ) continue;
+
+                Bullets[i].Destory(Dimension[CurrentDimension]);
+                Bullets.RemoveAt(i);
+                break;
+            }
+            for (int i = 0; i < Drops.Count; i++)
+            {
+                Drops[i].Update();
+                if ( !Player.Rect.Intersects(new Rectangle((int) Drops[i].Position.X , (int) Drops[i].Position.Y , 16 ,
+                                                           16)) ) continue;
+
+                Drops[i].GetSlot().IsEmpty = false;
+                Player.SetSlot(Drops[i].GetSlot());
+                Drops.RemoveAt(i);
+                break;
             }
         }
-        public int spawnTime = 0;
+        public int SpawnTime;
         public void AddBulletToMouse(int x,int y)
         {
-            bullets.Add(new Bullet(new Vector2(x, y), Util.directional(new Vector2(x, y))));
+            Bullets.Add(new Bullet(new Vector2(x, y), Tools.Distance(new Vector2(x, y))));
         }
         //RenderTarget2D shadowSprite;
-        public void GameDraw(SpriteEffects effect)
+        public void GameDraw()
         {
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.LinearWrap, null, null);
-            Rectangle dest2 = new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
-            Rectangle src2 = new Rectangle((int)camera.getLeftUpper.X, (int)camera.getLeftUpper.Y, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
-            spriteBatch.Draw(texturestonetile, dest2, src2, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
-            //  spriteBatch.Draw(background[1], new Vector2(0, 0), new Rectangle((int)(ScreenPosX * 0.5f),Genworld.rocklayer-background[1].Height, background[1].Width, graphics.PreferredBackBufferHeight), Color.White);
-            //   spriteBatch.Draw(background[2], new Vector2(0, 0), new Rectangle((int)(ScreenPosX * 0.8f), Genworld.rocklayer, background[2].Width, graphics.PreferredBackBufferHeight), Color.White);
-
-            //spriteBatch.Draw(background, new Rectangle(0, 0, background.Width, background.Height), Color.White);
-            spriteBatch.End();
-            // else if (currentD >= 1) GraphicsDevice.Clear(Color.Red);
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp, null, null);
-            //spriteBatch.Draw(background[currentD], new Vector2(-ScreenPosX,-ScreenPosY), new Rectangle(0, 0, (CWorld.TileMaxX * Tile.TileMaxSize), (CWorld.TileMaxY * Tile.TileMaxSize)), Color.White);
-            //  Rectangle dest = new Rectangle(-ScreenPosX, -ScreenPosY + CWorld.TileMaxY / 3 * Tile.TileMaxSize, CWorld.TileMaxX * Tile.TileMaxSize, (CWorld.TileMaxY - CWorld.TileMaxY / 3 - CWorld.TileMaxY / 3) * Tile.TileMaxSize);
-
-            Rectangle dest = new Rectangle(0, (int)-camera.pos.Y + SizeGeneratior.WorldHeight / 3 * ITile.TileMaxSize + 600 * ITile.TileMaxSize,
-                graphics.PreferredBackBufferWidth, (SizeGeneratior.WorldHeight - SizeGeneratior.WorldHeight / 3 - SizeGeneratior.WorldHeight / 3 - 600) * ITile.TileMaxSize);
-            Rectangle src = new Rectangle(0, 0, 48, 1300);
-            spriteBatch.Draw(background[currentD], dest, src, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
-            //  spriteBatch.Draw(background[1], new Vector2(0, 0), new Rectangle((int)(ScreenPosX * 0.5f),Genworld.rocklayer-background[1].Height, background[1].Width, graphics.PreferredBackBufferHeight), Color.White);
-            //   spriteBatch.Draw(background[2], new Vector2(0, 0), new Rectangle((int)(ScreenPosX * 0.8f), Genworld.rocklayer, background[2].Width, graphics.PreferredBackBufferHeight), Color.White);
-
-            //spriteBatch.Draw(background, new Rectangle(0, 0, background.Width, background.Height), Color.White);
-            spriteBatch.End();
-
-            drawBackground(0.9f);
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, camera.getViewTran(graphics));
-            int i0 = (int)((camera.getLeftUpper.X) / ITile.TileMaxSize - 1f);
-            int i1 = (int)((camera.getRightDown.X) / ITile.TileMaxSize) + 2;
-            int j0 = (int)((camera.getLeftUpper.Y) / ITile.TileMaxSize - 1f);
-            int j1 = (int)((camera.getRightDown.Y) / ITile.TileMaxSize) + 2;
-            if(NetPlay.typeNet == 2) NetPlay.sendMsg(3, 0, i0, i1, j0, j1);
-            tiles.renderWall(i0, i1, j0, j1,spriteBatch);
-            tiles.renderPlasters(i0, i1, j0, j1, spriteBatch);
-            tiles.renderTiles(i0, i1, j0, j1, spriteBatch);
+            DrawBackgrounds();
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Camera.GetViewTran(_graphics));
+            int i0 = (int)(Camera.GetLeftUpper.X / Tile.TileMaxSize - 1f);
+            int i1 = (int)(Camera.GetRightDown.X / Tile.TileMaxSize) + 2;
+            int j0 = (int)(Camera.GetLeftUpper.Y / Tile.TileMaxSize - 1f);
+            int j1 = (int)(Camera.GetRightDown.Y / Tile.TileMaxSize) + 2;
+            Dimension[CurrentDimension].Draw(_spriteBatch, Tiles, new Rectangle(i0, j0, i1 - i0, j1 - j0));
             // spriteBatch.DrawString(Font1, onetwo.ToString(), new Vector2(120, 130), Color.White)
-            player.render(hand,eye, head, body, legs,spriteBatch, shadow);
+            Player.Render(Hand, _eye, _head, _body, _legs, _spriteBatch, _shadow);
 
             //  spriteBatch.Draw(legs2, new Rectangle((int)(player.position.X + (player.width - head.Width) - ScreenPosX), (int)(player.position.Y - ScreenPosY), legs.Width, legs.Height), new Rectangle(0, 0, legs.Width, legs.Height), Color.Red, 0, Vector2.Zero, effect, 0);
 
-            foreach (Bullet bullet in bullets)
-            {
-                bullet.par.draw(spriteBatch);
-                spriteBatch.Draw(tiles.textures[1],
-                    new Rectangle((int)(bullet.position.X), (int)(bullet.position.Y),
-                        16,
-                        16),
-                        Color.White);
-            }
-            foreach(Cloud cloud in dimension[currentD].cloud)
-            {
-                
-                spriteBatch.Draw(tiles.textures[1],
-                    new Rectangle((int)(cloud.position.X), (int)(cloud.position.Y),
-                        16,
-                        16),
-                        Color.White);
-            }
-            effect = SpriteEffects.None;
-            foreach (Zombie npc in Program.game.dimension[Program.game.currentD].Zombies)
-            {
-                npc.DrawNPC(effect, spriteBatch, Font1, head, head2, body, legs,blood,eye, shadow);
-            }
-            foreach (Civilian npc in Program.game.dimension[Program.game.currentD].civil)
-            {
-                npc.DrawNPC(effect, spriteBatch, Font1, head, head2, body, legs, shadow);
-            }
-            foreach (Drop drops in drop)
-            {
-                drops.render(spriteBatch, (int)drops.position.X, (int)drops.position.Y);
-            }
-            foreach (Drop drops in drop)
-            {
-                if (player.rect.Intersects(new Rectangle((int)drops.position.X, (int)drops.position.Y, 16, 16)))
-                {
-                    drops.getslot().IsEmpty = false;
-                    player.setslot(drops.getslot());
-                    drop.Remove(drops);
-                    break;
-                }
-            }
-            isSnowing = dimension[currentD].mapB[(int)player.position.X / ITile.TileMaxSize] == ArrayResource.snow;
+            foreach (Zombie npc in Program.Game.Dimension[Program.Game.CurrentDimension].Zombies)
+                npc.RenderNpc(_spriteBatch, Font1, _head, _head2, _body, _legs, _blood, _eye, Hand, _shadow);
+            foreach (Civilian npc in Program.Game.Dimension[Program.Game.CurrentDimension].Civil)
+                npc.RenderNpc(_spriteBatch, Font1, _head, _body, _legs, Hand, _shadow);
+            foreach (Drop drops in Drops)
+                drops.Render(_spriteBatch, (int)drops.Position.X, (int)drops.Position.Y);
+
+            _isSnowing = ReferenceEquals(Dimension[CurrentDimension].MapBiomes[(int)Player.Position.X / Tile.TileMaxSize] , ArrayResource.Snow);
             DrawSnow();
-            renderLight(i0, i1, j0, j1);
-            dimension[currentD].Draw(spriteBatch);
-            player.renderfog(fog, spriteBatch);
-            spriteBatch.Begin();
-            drawHud();
-            if (console.isactive)
-            {
-                spriteBatch.End();
-                console.draw(spriteBatch);
-                spriteBatch.Begin();
-            }
-            spriteBatch.End();
+            RenderLight(i0, i1, j0, j1);
+            Player.RenderFog(_fog, _spriteBatch);
+            _spriteBatch.Begin();
+            DrawHud();
+            _spriteBatch.End();
         }
-        private bool isSnowing = false;        
-        private Texture2D snowTexture;        
-        private Random random;
-        Point[] snow = new Point[50];
+
+        void DrawBackgrounds()
+        {
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.LinearWrap);
+            Rectangle dest2 = new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
+            Rectangle src2 = new Rectangle((int)Camera.GetLeftUpper.X, (int)Camera.GetLeftUpper.Y, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
+            _spriteBatch.Draw(StoneTile, dest2, src2, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
+            //  spriteBatch.Draw(background[1], new Vector2(0, 0), new Rectangle((int)(ScreenPosX * 0.5f),Genworld.rocklayer-background[1].Height, background[1].Width, graphics.PreferredBackBufferHeight), Color.White);
+            //   spriteBatch.Draw(background[2], new Vector2(0, 0), new Rectangle((int)(ScreenPosX * 0.8f), Genworld.rocklayer, background[2].Width, graphics.PreferredBackBufferHeight), Color.White);
+            //spriteBatch.Draw(background, new Rectangle(0, 0, background.Width, background.Height), Color.White);
+            _spriteBatch.End();
+            // else if (CurrentDimension >= 1) GraphicsDevice.Clear(Color.Red);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp);
+            //spriteBatch.Draw(background[CurrentDimension], new Vector2(-ScreenPosX,-ScreenPosY), new Rectangle(0, 0, (CWorld.TileMaxX * Tile.TileMaxSize), (CWorld.TileMaxY * Tile.TileMaxSize)), Color.White);
+            //  Rectangle dest = new Rectangle(-ScreenPosX, -ScreenPosY + CWorld.TileMaxY / 3 * Tile.TileMaxSize, CWorld.TileMaxX * Tile.TileMaxSize, (CWorld.TileMaxY - CWorld.TileMaxY / 3 - CWorld.TileMaxY / 3) * Tile.TileMaxSize);
+            Rectangle dest = new Rectangle(0, (int)-Camera.Pos.Y + SizeGeneratior.WorldHeight / 3 * Tile.TileMaxSize + 600 * Tile.TileMaxSize,
+                _graphics.PreferredBackBufferWidth, (SizeGeneratior.WorldHeight - SizeGeneratior.WorldHeight / 3 - SizeGeneratior.WorldHeight / 3 - 600) * Tile.TileMaxSize);
+            Rectangle src = new Rectangle(0, 0, 48, 1300);
+            _spriteBatch.Draw(_background[CurrentDimension], dest, src, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
+            //  spriteBatch.Draw(background[1], new Vector2(0, 0), new Rectangle((int)(ScreenPosX * 0.5f),Genworld.rocklayer-background[1].Height, background[1].Width, graphics.PreferredBackBufferHeight), Color.White);
+            //   spriteBatch.Draw(background[2], new Vector2(0, 0), new Rectangle((int)(ScreenPosX * 0.8f), Genworld.rocklayer, background[2].Width, graphics.PreferredBackBufferHeight), Color.White);
+            //spriteBatch.Draw(background, new Rectangle(0, 0, background.Width, background.Height), Color.White);
+            _spriteBatch.End();
+            DrawBackground(0.9f);
+        }
+
+        bool _isSnowing;
+        Texture2D _snowTexture;
+        Random _random;
+        readonly Point[] _snow = new Point[50];
         public void DrawSnow()
-        {     
-            Point quitPoint;                   
-            Point startPoint;     
-            quitPoint = new Point(0,
-               (int)this.dimension[currentD].mapHeight[0]*ITile.TileMaxSize+ this.snowTexture.Height);
+        {
+            Point quitPoint = new Point(0,
+                                        Dimension[CurrentDimension].MapHeight[0]*Tile.TileMaxSize+ _snowTexture.Height);
 
             //Set the snow's start point. It's the top of the screen minus the texture's height so it looks like it comes from somewhere, rather than appearing
-            startPoint = new Point(0,
-                (int)this.camera.getLeftUpper.Y - this.snowTexture.Height);
+            Point startPoint = new Point(0,
+                                         (int)Camera.GetLeftUpper.Y - _snowTexture.Height);
             //If it's not supposed to be snowing, exit
-            if (!isSnowing)
+            if (!_isSnowing)
                 return;
 
             //This will be used as the index within our snow array
@@ -896,324 +708,320 @@ namespace TwoSides
 
             //NOTE: The following conditional is not exactly the best "initializer."
             //If snow has not been initialized
-            if (this.snow[0] == new Point(0, 0))
+            if (_snow[0] == new Point(0, 0))
             {
                 //Make the random a new random
-                this.random = new Random();
+                _random = new Random();
 
                 //For every snow particle within our snow array,
-                for (i = 0; i < this.snow.Length; i++)
+                for (i = 0; i < _snow.Length; i++)
                 {
                     //Give it a new, random x and y. This will give the illusion that it was already snowing
                     //and won't cluster the particles
-                    this.snow[i] = new Point(
-                        (random.Next((int)this.camera.getLeftUpper.X, (int)(this.camera.getLeftUpper.X + graphics.PreferredBackBufferWidth * this.camera.Zoom - this.snowTexture.Width))),
-                        (random.Next(0, (this.graphics.PreferredBackBufferHeight))));
-                    this.snow[i].Y =random.Next((int)this.camera.getLeftUpper.Y,(int)(this.camera.getLeftUpper.Y + graphics.PreferredBackBufferHeight * this.camera.Zoom));
+                    _snow[i] = new Point(
+                                         _random.Next((int) Camera.GetLeftUpper.X ,
+                                                        (int) (Camera.GetLeftUpper.X +
+                                                            _graphics.PreferredBackBufferWidth
+                                                                * Camera.Zoom -_snowTexture.Width)) ,
+                                         _random.Next((int) Camera.GetLeftUpper.Y ,
+                                                        (int) (Camera.GetLeftUpper.Y +
+                                                                _graphics.PreferredBackBufferHeight *
+                                                                    Camera.Zoom))
+                               );
                 }
             }
 
             //Make the random a new random (again, if just starting)
-            this.random = new Random();
+            _random = new Random();
 
             //Go back to the beginning of the snow array
             i = 0;
 
             //Begin displaying the snow
-            foreach (Point snowPnt in this.snow)
+            foreach (Point snowPnt in _snow)
             {
                 //Get the exact rectangle for the snow particle
                 Rectangle snowParticle = new Rectangle(
-                    snowPnt.X, snowPnt.Y, this.snowTexture.Width, this.snowTexture.Height);
+                    snowPnt.X, snowPnt.Y, _snowTexture.Width, _snowTexture.Height);
 
-                this.spriteBatch.Draw(this.snowTexture, snowParticle, Color.White);
+                _spriteBatch.Draw(_snowTexture, snowParticle, Color.White);
 
-                this.snow[i].Y += random.Next(0, 5);
+                _snow[i].Y += _random.Next(0, 5);
 
-                if (this.snow[i].Y >= quitPoint.Y)
-                    this.snow[i] = new Point(
-                        (random.Next((int)this.camera.getLeftUpper.X, (int)(this.camera.getLeftUpper.X + graphics.PreferredBackBufferWidth * this.camera.Zoom - this.snowTexture.Width))),
-                        startPoint.Y);
+                if (_snow[i].Y >= quitPoint.Y)
+                {
+                    _snow[i] = new Point(
+                       _random.Next((int)Camera.GetLeftUpper.X, (int)(Camera.GetLeftUpper.X + _graphics.PreferredBackBufferWidth * Camera.Zoom - _snowTexture.Width)),
+                       startPoint.Y);
+                }
 
                 i++;
             }
         }
 
-        private void drawBackground(float zoom)
+        void DrawBackground(float zoom)
         {
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicWrap, null, null, null, camera.getViewTran(graphics, zoom));
-            Rectangle src = new Rectangle(0, 0, (int)(SizeGeneratior.WorldWidth * ITile.TileMaxSize / zoom), (int)(background[2].Height));
-            Rectangle dest = new Rectangle(-src.Width, (dimension[currentD].mapB[(int)player.position.X/ITile.TileMaxSize].maxHeight * ITile.TileMaxSize) - (int)(src.Height * zoom), src.Width, src.Height);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicWrap, null, null, null, Camera.GetViewTran(_graphics, zoom));
+            Rectangle src = new Rectangle(0, 0, (int)(SizeGeneratior.WorldWidth * Tile.TileMaxSize / zoom), _background[2].Height);
+            Rectangle dest = new Rectangle(-src.Width, Dimension[CurrentDimension].MapBiomes[(int)Player.Position.X/Tile.TileMaxSize].MaxHeight * Tile.TileMaxSize - (int)(src.Height * zoom), src.Width, src.Height);
             src.Width *= 2;
             dest.Width = src.Width;
-            spriteBatch.Draw(background[2], dest, src, Color.White);
-            spriteBatch.End();
+            _spriteBatch.Draw(_background[2], dest, src, Color.White);
+            _spriteBatch.End();
         }
-        public const bool isDebug = false;
+        public const bool IsDebug = false;
      
         //Сообственные методы
 
-        bool isnumkey()
-        {
-            return !(keyState.IsKeyUp(Keys.D1) && keyState.IsKeyUp(Keys.D2) && keyState.IsKeyUp(Keys.D3) && keyState.IsKeyUp(Keys.D4)
-                && keyState.IsKeyUp(Keys.D5) && keyState.IsKeyUp(Keys.D6) && keyState.IsKeyUp(Keys.D7) && keyState.IsKeyUp(Keys.D8)
-                && keyState.IsKeyUp(Keys.D9));
-        }
-        NamingVersion versionMap = new NamingVersion(0, 0, 0, 0, 0, 0);
-        void load(object thread)
+        readonly NamingVersion _versionMap = new NamingVersion(0, 0, 0, 0, 0, 0);
+        void Load(object thread)
         {
             FileStream stream = File.OpenRead("save.sav");
             BinaryReader reader = new BinaryReader(stream);
-            versionMap.load(reader);
-            for (int d = 0; d < MaxD; d++)
+            _versionMap.Load(reader);
+            for (int d = 0; d < MaxDimension; d++)
             {
-                currentD = d;
-                dimension[d].cleardimension();
-                dimension[d].load(reader,Progress.instance.bar);
-                
+                CurrentDimension = d;
+                Dimension[d].Clear();
+                Dimension[d].Load(reader,Progress.Instance.Bar,_versionMap.GetCode());
             }
-            player.load(reader);
-            startGame();
+            Player.Load(reader);
+            StartGame();
             reader.Close();
         }
-        public void loadMap()
+        public void LoadMap()
         {
-            ThreadPool.QueueUserWorkItem(new WaitCallback(load));
+            ThreadPool.QueueUserWorkItem(Load);
         }
 
-        void save(object thread)
+        void Save(object thread)
         {
             FileStream stream =  File.Create("save.sav");
             BinaryWriter writer = new BinaryWriter(stream);
-            versionThis.save(writer);
-            for (int d = 0; d < MaxD; d++)
-            {
-                dimension[d].save(writer,Progress.instance.bar);
-                
-            }
-            player.save(writer);
+            _versionThis.Save(writer);
+            for (int d = 0; d < MaxDimension; d++)
+                Dimension[d].Save(writer, Progress.Instance.Bar);
+            Player.Save(writer);
             writer.Close();
-            controlScene.returnScene();
+            _controlScene.ReturnScene();
         }
-        public string getVersion()
-        {
-            return nameSubVersion + " " + versionThis.getVersion();
-        }
+        public string GetVersion() => NAME_SUB_VERSION + " " + _versionThis.GetVersion();
 
-        public string getFullVersion()
+        public string GetFullVersion() => "Two sides " + NAME_VERSION+" "+NAME_SUB_VERSION + " " + _versionThis.GetVersion();
+
+        public void SaveMap()
         {
-            return "Two sides " + nameVersion+" "+nameSubVersion + " " + versionThis.getVersion();
-        }
-        public void saveMap()
-        {
-            ThreadPool.QueueUserWorkItem(new WaitCallback(save));
+            ThreadPool.QueueUserWorkItem(Save);
         }
         
-        void renderLight(int i0, int i1, int j0, int j1)
+        void RenderLight(int i0, int i1, int j0, int j1)
         {
             for (int i = i0; i < i1; i++)
             {
-
-                if (i < SizeGeneratior.WorldWidth && i >= 0) dimension[Program.game.currentD].maxy(i);
+                if (i < SizeGeneratior.WorldWidth && i >= 0) Dimension[Program.Game.CurrentDimension].UpdateMaxY(i);
                 for (int j = j0; j < j1; j++)
                 {
                     if (i > SizeGeneratior.WorldWidth - 1 || i < 0) continue;
                     if (j > SizeGeneratior.WorldHeight - 1 || j < 0) continue;
-                    //dimension[currentD].globallighting = 1;
-                    dimension[currentD].map[i, j].lightu(i, j, (int)dimension[currentD].globallighting,SizeGeneratior.rockLayer);
-                    dimension[currentD].map[i, j].lightupdate(i, j);
-                    int lighting = 255 - dimension[currentD].map[i, j].light * 5;
-                     spriteBatch.Draw(black, new Vector2(ITile.TileMaxSize * i, ITile.TileMaxSize * j), new Color(0, 0, 0, lighting));
+                    //dimension[CurrentDimension].globallighting = 1;
+                    Dimension[CurrentDimension].MapTile[i, j].SetLight(i, j, (short)Dimension[CurrentDimension].Globallighting,SizeGeneratior.RockLayer);
+                    Dimension[CurrentDimension].MapTile[i, j].UpdateLight(i, j);
+                    int lighting = 255 - Dimension[CurrentDimension].MapTile[i, j].Light * 5;
+                     _spriteBatch.Draw(Black, new Vector2(Tile.TileMaxSize * i, Tile.TileMaxSize * j), new Color(0, 0, 0, lighting));
                 }
             }
         }
         
-        void drawHud()
+        void DrawHud()
         {
-            if (player.controlJ)
+            if (Player.ControlJ)
             {
-                drawSlotItem(player.currentMaxSlot);
-                int r = -1;
-                for (int i = Player.slotmax; i < Player.slotmax + 3; i++)
+                DrawSlotItem(Player.CurrentMaxSlot);
+                for (int i = Player.Slotmax; i < Player.Slotmax + 3; i++)
                 {
-                    spriteBatch.Draw(inv, new Rectangle((i - Player.slotmax) * 32, graphics.PreferredBackBufferHeight - 32, 32, 32), Color.White);
-                    if (!player.slot[i].IsEmpty)
-                        player.slot[i].Render(spriteBatch, (i - Player.slotmax) * 32 + 8, graphics.PreferredBackBufferHeight - 32 + 8);
+                    _spriteBatch.Draw(Inv, new Rectangle((i - Player.Slotmax) * 32, _graphics.PreferredBackBufferHeight - 32, 32, 32), Color.White);
+                    if (!Player.Slot[i].IsEmpty)
+                        Player.Slot[i].Render(_spriteBatch, (i - Player.Slotmax) * 32 + 8, _graphics.PreferredBackBufferHeight - 32 + 8);
                 }
 
                 int a = 0;
-                for (int i = 0; i < recipes.Count; i++)
+                for (int i = 0; i < Recipe.Recipes.Count; i++)
                 {
-                    if (player.getvalidrecipes(i))
+                    if ( !Player.GetValidRecipes(i) ) continue;
+
+                    _spriteBatch.Draw(Inv, new Rectangle(a * 32, 32 + -32, 32, 32), Color.Black);
+                    Recipe.Recipes[i].Slot.Render(_spriteBatch, a * 32 + 16 - 8, 35 + (16 - 8) + -32);
+                    for (int j = 0; j < Recipe.Recipes[i].GetSize(); j++)
                     {
-                        spriteBatch.Draw(inv, new Rectangle(a * 32, 32 + 32 * r, 32, 32), Color.Black);
-                        ((Recipe)recipes[i]).slot.Render(spriteBatch, (a * 32) + 16 - 8, 35 + (16 - 8) + 32 * r);
-                        for (int j = 0; j < ((Recipe)recipes[i]).getsize(); j++)
-                        {
-                            spriteBatch.Draw(inv, new Rectangle(a * 32, (j + 2) * 35 + 32 * r, 32, 32), Color.Green);
-                            Item.Render(spriteBatch, ((Recipe)recipes[i]).getigr(j), (a * 32) + 16 - 8, (j + 2) * 35 + (16 - 8) + 32 * r);
-                            spriteBatch.DrawString(Font1, ((Recipe)recipes[i]).getconut(j).ToString(), new Vector2(((a + 1) * 32) - 10, (j + 2) * 35 + (16 - 8) + 32 * r), Color.White);
-                        }
-                        a++;
+                        _spriteBatch.Draw(Inv, new Rectangle(a * 32, (j + 2) * 35 + -32, 32, 32), Color.Green);
+                        Item.Render(_spriteBatch, Recipe.Recipes[i].GetIngrident(j), a * 32 + 16 - 8, (j + 2) * 35 + (16 - 8) + -32);
+                        _spriteBatch.DrawString(Font1, Recipe.Recipes[i].GetSize(j).ToString(CultureInfo.CurrentCulture), new Vector2((a + 1) * 32 - 10, (j + 2) * 35 + (16 - 8) + -32), Color.White);
                     }
+                    a++;
                 }
-                drawBloodBody(a*32, 0);
+                DrawBloodBody(a*32, 0);
             }
             else
             {
-                drawSlotItem(9);
-                drawBloodBody(0, 0);
-            } int wcarma = (int)(10 + SizeCarmaWidth * (0.01 * player.carma));
-            int hptext = (int)(player.width * (player.blood/5000));
-            int color = (int)(200 * (0.01 * player.carma));
-            if (!player.MouseItem.IsEmpty) player.MouseItem.Render(spriteBatch, mouseState.X + 16, mouseState.Y + 5);
-            spriteBatch.Draw(carma, new Rectangle(graphics.PreferredBackBufferWidth - wcarma, graphics.PreferredBackBufferHeight - SizeCarmaHeight, wcarma, SizeCarmaHeight), new Color(color * (color / 255), color * (color / 255), color, color));
-            spriteBatch.DrawString(Font3, "Karma", new Vector2(graphics.PreferredBackBufferWidth - wcarma, graphics.PreferredBackBufferHeight - Font3.MeasureString("Karma").Y ), Color.White);
+                DrawSlotItem(9);
+                DrawBloodBody(0, 0);
+            } int wcarma = (int)(10 + SizeCarmaWidth * (0.01 * Player.Carma));
+            int hptext = (int)(Player.Width * (Player.Blood/5000));
+            int color = (int)(200 * (0.01 * Player.Carma));
+            if (!Player.MouseItem.IsEmpty) Player.MouseItem.Render(_spriteBatch, MouseState.X + 16, MouseState.Y + 5);
+            _spriteBatch.Draw(Carma, new Rectangle(_graphics.PreferredBackBufferWidth - wcarma, _graphics.PreferredBackBufferHeight - SizeCarmaHeight, wcarma, SizeCarmaHeight), new Color(color * (color / 255), color * (color / 255), color, color));
+            _spriteBatch.DrawString(Font3, "Karma", new Vector2(_graphics.PreferredBackBufferWidth - wcarma, _graphics.PreferredBackBufferHeight - Font3.MeasureString("Karma").Y ), Color.White);
 
-            spriteBatch.Draw(carma, new Rectangle((int)(player.position.X)+player.width/2-hptext/2, (int)(player.position.Y)-SizeCarmaHeight/2, hptext, SizeCarmaHeight/2), Color.Red);
+            _spriteBatch.Draw(Carma, new Rectangle((int)Player.Position.X+Player.Width/2-hptext/2, (int)Player.Position.Y-SizeCarmaHeight/2, hptext, SizeCarmaHeight/2), Color.Red);
            // spriteBatch.DrawString(Font1, "Blood", new Vector2(graphics.PreferredBackBufferWidth / 2 - hptext / 2, Font1.MeasureString("Blood").Y/2), Color.White);
 
             //spriteBatch.Draw(carma, new Rectangle(graphics.PreferredBackBufferWidth - 16, 16, 16, 16 + (int)player.drought), Color.Blue);
-            spriteBatch.Draw(fullDrougt, new Rectangle(graphics.PreferredBackBufferWidth - 16, graphics.PreferredBackBufferHeight-SizeCarmaHeight-16, 16, 16),new Rectangle(0,0,fullDrougt.Width,(int)(player.drought/100*fullDrougt.Height)), Color.White);
-            spriteBatch.Draw(emptyDrougt, new Rectangle(graphics.PreferredBackBufferWidth - 16, graphics.PreferredBackBufferHeight - SizeCarmaHeight - 16, 16, 16), Color.White);
-            Vector2 sizeHunger = new Vector2(eatHunger.Width, eatHunger.Height*(player.hunger/100));
-            spriteBatch.Draw(eatHunger, new Vector2(graphics.PreferredBackBufferWidth - wcarma-sizeHunger.X, graphics.PreferredBackBufferHeight - SizeCarmaHeight),new Rectangle(eatHunger.Width-(int)sizeHunger.X,0,(int)sizeHunger.X,(int)sizeHunger.Y), Color.White);
+            _spriteBatch.Draw(FullDrougt, new Rectangle(_graphics.PreferredBackBufferWidth - 16, _graphics.PreferredBackBufferHeight-SizeCarmaHeight-16, 16, 16),new Rectangle(0,0,FullDrougt.Width,(int)(Player.Drought/100*FullDrougt.Height)), Color.White);
+            _spriteBatch.Draw(EmptyDrougt, new Rectangle(_graphics.PreferredBackBufferWidth - 16, _graphics.PreferredBackBufferHeight - SizeCarmaHeight - 16, 16, 16), Color.White);
+            Vector2 sizeHunger = new Vector2(EatHunger.Width * (Player.Hunger / 100.0f), EatHunger.Height);
+            _spriteBatch.Draw(EatHunger, new Vector2(_graphics.PreferredBackBufferWidth - wcarma-sizeHunger.X, _graphics.PreferredBackBufferHeight - SizeCarmaHeight),new Rectangle(EatHunger.Width-(int)sizeHunger.X,0,(int)sizeHunger.X,(int)sizeHunger.Y), Color.White);
 
-            foreach (Civilian npc in Program.game.dimension[Program.game.currentD].civil)
-            {
-                npc.renderDialog(spriteBatch);
-            }
+            foreach (Civilian npc in Program.Game.Dimension[Program.Game.CurrentDimension].Civil)
+                npc.RenderDialog(_spriteBatch);
+
             // string temperature = "Player Temperature:" + player.Temperature + "*c";
              // spriteBatch.DrawString(Font1, temperature, new Vector2(graphics.PreferredBackBufferWidth - (Font1.MeasureString(temperature).X) - 5, SizeCarmaHeight + 120), Color.White);
-            spriteBatch.End();
+            _spriteBatch.End();
             int y = 0;
-            for (int i = 0; i < player.Quests.Count; i++)
-            {
-                ((Quest)(player.Quests[i])).render(spriteBatch, new Vector2(graphics.PreferredBackBufferWidth - 10, 150 + y));
-                y += ((Quest)(player.Quests[i])).getQuestHeight();
-            } spriteBatch.Begin();
+            foreach ( Quest quest in Player.Quests ) {
+                quest.Render(_spriteBatch, new Vector2(_graphics.PreferredBackBufferWidth - 10, 150 + y));
+                y += quest.GetQuestHeight();
+            } _spriteBatch.Begin();
+            if ( !Console.Isactive ) return;
 
+            _spriteBatch.End();
+            Console.Draw(_spriteBatch);
+            _spriteBatch.Begin();
         }
 
-        private void drawBloodBody(int xBody, int yBody)
+        void DrawBloodBody(int xBody, int yBody)
         {
-            spriteBatch.Draw(bloodBody, new Vector2(xBody, yBody), Color.White);
+            _spriteBatch.Draw(BloodBody, new Vector2(xBody, yBody), Color.White);
             for (int i = 0; i < 4; i++)
-            {
-                if (player.bloods[i]) spriteBatch.Draw(bloodTexture[i], new Vector2(xBody, yBody), Color.Red);
-            }
+                if (Player.Bloods[i]) _spriteBatch.Draw(BloodTexture[i], new Vector2(xBody, yBody), Color.Red);
         }
 
-        private int drawSlotItem(int maxSlot)
+        void DrawSlotItem(int maxSlot)
         {
             int r = -1;
             int slotHover = -1;
-            int centerSlot = graphics.PreferredBackBufferWidth - (9*32);
+            int centerSlot = _graphics.PreferredBackBufferWidth - 9*32;
             for (int i = 0; i < maxSlot; i++)
             {
                 if (i % 9 == 0) r++;
-                int xslot = (i % 9) * 32;
+                int xslot = i % 9 * 32;
                 int yslot = 32 * r;
                 Color cl = Color.White;
-                if (i == player.selectedItem) cl = Color.Black;
-                spriteBatch.Draw(inv, new Rectangle(centerSlot+xslot,yslot , 32, 32), cl);
-                if (!player.slot[i].IsEmpty)
-                {
-                    player.slot[i].Render(spriteBatch,centerSlot+xslot + 16/2, 16/2 + yslot);
-                    spriteBatch.DrawString(Font3, player.slot[i].ammount.ToString(), new Vector2(centerSlot+(32 * ((i % 9) + 1) - 5 - Font3.MeasureString(player.slot[i].ammount.ToString()).X), 32 - Font3.MeasureString(player.slot[i].ammount.ToString()).Y + yslot), Color.Black);
+                if (i == Player.SelectedItem) cl = Color.Black;
+                _spriteBatch.Draw(Inv, new Rectangle(centerSlot+xslot,yslot , 32, 32), cl);
+                if ( Player.Slot[i].IsEmpty ) continue;
 
-                    if (new Rectangle(centerSlot+xslot, yslot, 32, 32).Contains(new Point(mouseState.X, mouseState.Y)))
-                    {
-                        slotHover = i;
-                    }
-                }
+                Player.Slot[i].Render(_spriteBatch,centerSlot+xslot + 16/2, 16/2 + yslot);
+                _spriteBatch.DrawString(Font3, Player.Slot[i].Ammount.ToString(CultureInfo.CurrentCulture), new Vector2(centerSlot+(32 * (i % 9 + 1) - 5 - Font3.MeasureString(Player.Slot[i].Ammount.ToString(CultureInfo.CurrentCulture)).X), 32 - Font3.MeasureString(Player.Slot[i].Ammount.ToString(CultureInfo.CurrentCulture)).Y + yslot), Color.Black);
+
+                if (new Rectangle(centerSlot+xslot, yslot, 32, 32).Contains(new Point(MouseState.X, MouseState.Y)))
+                    slotHover = i;
             }//одежда
             if (slotHover >= 1)
-                drawItemHelp(slotHover);
-            return r;
+                DrawItemHelp(slotHover);
         }
 
-        private void drawItemHelp(int i)
+        void DrawItemHelp(int i)
         {
-            spriteBatch.DrawString(font2, player.slot[i].GetName(), new Vector2(mouseState.X + 16,
-                mouseState.Y + 5),
-                player.slot[i].GetColor());
-            spriteBatch.DrawString(font2, "DPS:" + player.slot[i].Getdamage() +
-                "(" + player.slot[i].Getdamage() *
-                (player.slot[i].HP / 100) + ")",
-                new Vector2(mouseState.X + 16, mouseState.Y + 15),
-                player.slot[i].GetColor());
-            spriteBatch.DrawString(font2, "Power:" + player.slot[i].GetPower() +
-                "(" + player.slot[i].GetPower() *
-               (player.slot[i].HP / 100) + ")",
-                new Vector2(mouseState.X + 16, mouseState.Y + 25),
-                player.slot[i].GetColor());
+            _spriteBatch.DrawString(Font2, Player.Slot[i].GetName(), new Vector2(MouseState.X + 16,
+                MouseState.Y + 5),
+                Player.Slot[i].GetColor());
+            _spriteBatch.DrawString(Font2, "DPS:" + Player.Slot[i].GetDamage() +
+                "(" + Player.Slot[i].GetDamage() *
+                (Player.Slot[i].Hp / 100) + ")",
+                new Vector2(MouseState.X + 16, MouseState.Y + 15),
+                Player.Slot[i].GetColor());
+            _spriteBatch.DrawString(Font2, "Power:" + Player.Slot[i].GetPower() +
+                "(" + Player.Slot[i].GetPower() *
+               (Player.Slot[i].Hp / 100) + ")",
+                new Vector2(MouseState.X + 16, MouseState.Y + 25),
+                Player.Slot[i].GetColor());
         }
 
-        void drawdebug()
+        // ReSharper disable once UnusedMember.Local
+        void Drawdebug()
         {
-            int glint = (int)dimension[currentD].globallighting;
-            string text = "brightness world:" + (glint).ToString();
+            int glint = (int)Dimension[CurrentDimension].Globallighting;
+            string text = "brightness world:" + glint.ToString(CultureInfo.CurrentCulture);
 
-            string height = "height:" + (SizeGeneratior.WorldHeight - (int)(player.position.Y / ITile.TileMaxSize)).ToString();
-            spriteBatch.DrawString(Font1, text, new Vector2(graphics.PreferredBackBufferWidth - (text.Length * 7) - 5, SizeCarmaHeight + 20), Color.White);
-            spriteBatch.DrawString(Font1, "FPS:" + globalfps.ToString(), new Vector2(graphics.PreferredBackBufferWidth - 50, SizeCarmaHeight + 40), Color.White);
-            spriteBatch.DrawString(Font1, height, new Vector2(graphics.PreferredBackBufferWidth - (height.Length * 7) - 5, SizeCarmaHeight + 60), Color.White);
+            string height = "height:" + (SizeGeneratior.WorldHeight - (int)(Player.Position.Y / Tile.TileMaxSize)).ToString(CultureInfo.CurrentCulture);
+            _spriteBatch.DrawString(Font1, text, new Vector2(_graphics.PreferredBackBufferWidth - text.Length * 7 - 5, SizeCarmaHeight + 20), Color.White);
+            //_spriteBatch.DrawString(Font1, "FPS:" + GLOBAL_FPS.ToString(CultureInfo.CurrentCulture), new Vector2(_graphics.PreferredBackBufferWidth - 50, SizeCarmaHeight + 40), Color.White);
+            _spriteBatch.DrawString(Font1, height, new Vector2(_graphics.PreferredBackBufferWidth - height.Length * 7 - 5, SizeCarmaHeight + 60), Color.White);
             string dworld;
-            if (currentD == 0) dworld = "World : Normal World";
-            else if (currentD == 1) dworld = "World : Hell";
-            else if (currentD == 2) dworld = "World : Snow World";
-            else dworld = "World : ???";
-            spriteBatch.DrawString(Font1, dworld, new Vector2(graphics.PreferredBackBufferWidth - (dworld.Length * 7) - 5, SizeCarmaHeight + 80), Color.White);
-            string biotemp = "World Temperature:" + dimension[currentD].GetTemperature((int)player.position.X / ITile.TileMaxSize,
-                (int)player.position.Y / ITile.TileMaxSize) + "*c";
-            spriteBatch.DrawString(Font1, biotemp, new Vector2(graphics.PreferredBackBufferWidth - (biotemp.Length * 7) - 5, SizeCarmaHeight + 100), Color.White);
-            Vector2 vec = Util.getcube((int)player.position.X, (int)player.position.Y);
-            // glint = dimension[currentD].map[(int)vec.X,(int)vec.Y].light;
-            text = "brightness Block:" + glint.ToString();
-            spriteBatch.DrawString(Font1, text, new Vector2(graphics.PreferredBackBufferWidth - (text.Length * 7) - 5, SizeCarmaHeight + 140), Color.White);
+            switch ( CurrentDimension ) {
+                case 0:
+                    dworld = "World : Normal World";
+                    break;
+                case 1:
+                    dworld = "World : Hell";
+                    break;
+                case 2:
+                    dworld = "World : Snow World";
+                    break;
+                default:
+                    dworld = "World : ???";
+                    break;
+            }
+            _spriteBatch.DrawString(Font1, dworld, new Vector2(_graphics.PreferredBackBufferWidth - dworld.Length * 7 - 5, SizeCarmaHeight + 80), Color.White);
+            string biotemp = "World Temperature:" + Dimension[CurrentDimension].GetTemperature((int)Player.Position.X / Tile.TileMaxSize,
+                (int)Player.Position.Y / Tile.TileMaxSize) + "*c";
+            _spriteBatch.DrawString(Font1, biotemp, new Vector2(_graphics.PreferredBackBufferWidth - biotemp.Length * 7 - 5, SizeCarmaHeight + 100), Color.White);
+            Vector2 vec = Tools.GetTile((int)Player.Position.X, (int)Player.Position.Y);
+            glint = Dimension[CurrentDimension].MapTile[(int)vec.X,(int)vec.Y].Light;
+            text = "brightness Block:" + glint.ToString(CultureInfo.CurrentCulture);
+            _spriteBatch.DrawString(Font1, text, new Vector2(_graphics.PreferredBackBufferWidth - text.Length * 7 - 5, SizeCarmaHeight + 140), Color.White);
 
-            string position = "Player X:" + player.position.X + " position.y: " + player.position.Y;
-            spriteBatch.DrawString(Font1, position, new Vector2(graphics.PreferredBackBufferWidth - (position.Length * 7) - 5, SizeCarmaHeight + 160), Color.White);
-
+            string position = "Player X:" + Player.Position.X + " position.y: " + Player.Position.Y;
+            _spriteBatch.DrawString(Font1, position, new Vector2(_graphics.PreferredBackBufferWidth - position.Length * 7 - 5, SizeCarmaHeight + 160), Color.White);
         }
 
-        public void addGui(GUI.GUI gui)
+        public void AddGui(XnaLayout gui)
         {
-            guis.Add(gui);
+            Guis.Add(gui);
         }
 
-        public void RemoveGUI(GUI.GUI gui)
+        public void RemoveGui(XnaLayout gui)
         {
-            guiremove = gui;
+            _guiRemove = gui;
         }
 
-        public void adddrop(int x, int y, Item slot, float dirx = 0)
+        public void AddDrop(int x, int y, Item slot, float dirx = 0)
         {
-            drop.Add(new Drop(slot, x, y, dirx));
-           
+            Drops.Add(new Drop(slot, x, y, dirx));
         }
 
-        public Texture2D fullDrougt { get; set; }
+        public Texture2D FullDrougt { get; set; }
 
-        public Texture2D emptyDrougt { get; set; }
+        public Texture2D EmptyDrougt { get; set; }
 
-        public Texture2D eatHunger { get; set; }
-        Texture2D explosion;
+        public Texture2D EatHunger { get; set; }
+        Texture2D _explosion;
         public void AddExplosion(Vector2 pos) {
-            dimension[currentD].AddExplosion(pos, explosion);
+            Dimension[CurrentDimension].AddExplosion(pos, _explosion);
         }
 
         public SpriteFont Font3 { get; set; }
 
-        public Texture2D bloodBody { get; set; }
+        public Texture2D BloodBody { get; set; }
 
-        public Texture2D[] bloodTexture = new Texture2D[4];
+        public Texture2D[] BloodTexture = new Texture2D[4];
+        Texture2D _pigSkin;
 
-        public Texture2D hand { get; set; }
+        public Texture2D Hand { get; set; }
 
-        public Texture2D wolfskin { get; set; }
+        public Texture2D WolfSkin { get; set; }
 
-        public Effect postEffect { get; set; }
+        public Effect PostEffect { get; set; }
     }
 }

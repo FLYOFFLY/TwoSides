@@ -1,32 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace TwoSides.GUI
+namespace TwoSIdes.GUI
 {
-    public class GUIElement
+    public class GuiElement
     {
-        public Vector2 pos;
-        GUIElement patern;
-        public Vector2 getPos()
+        public Vector2 Pos;
+        GuiElement _patern;
+        public Vector2 GetPos()
         {
-            if (patern != null)
-                return pos + patern.getPos();
-            return pos;
+            if (_patern != null)
+                return Pos + _patern.GetPos();
+            return Pos;
         }
-        public void setPos(Vector2 pos)
-        {
-            this.pos = pos;
-        }
-        public void setPatern(GUIElement patern)
-        {
-            this.patern = patern;
-        }
+        public void SetPos(Vector2 pos) => Pos = pos;
+        public void SetPatern(GuiElement patern) => _patern = patern;
 
         public virtual void Update() { }
-        public virtual void Draw(SpriteBatch L_spriteBatch) { }
+        public virtual void Draw(SpriteBatch spriteBatch) { }
     }
 }

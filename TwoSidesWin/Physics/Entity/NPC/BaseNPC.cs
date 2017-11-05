@@ -1,290 +1,271 @@
-﻿
-        using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 
-using System;
-using System.Collections;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using TwoSides.World;
+
 using TwoSides.GameContent.GenerationResources;
+using TwoSides.World;
 using TwoSides.World.Tile;
-using System.IO;
+
 namespace TwoSides.Physics.Entity.NPC
 {
-    public class BaseNpc : CEntity
+    public class BaseNpc : DynamicEntity
     {
-        protected float to = 0;
-        protected  float maxRunSpeed = 0.5f;
-        protected  float runAcceleration = 0.08f;
-        protected  float runSlowdown = 0.2f;
-        protected  int jumpHeight = 15;
-        protected  float jumpSpeed = 5.01f;
-        public bool controlLeft;
-        public bool controlRight;
-        public bool controlUp;
-        public bool controlDown;
-        public bool controlJump;
-        public bool releaseJump;
-        public int width = 20;
-        public int height = 42;
-        public int direction = 1;
-        public int jump;
-        public int type = 0;
-        public float hp = 4;
-        public override void load(BinaryReader reader)
-        {
-            base.load(reader);
-            
-        }
-        public override void save(BinaryWriter writer)
-        {
-            base.save(writer);
-        }
-        public ArrayList drop = new ArrayList();
+        protected float WayPoint;
+        protected float MaxRunSpeed = 0.5f;
+        protected float RunAcceleration = 0.08f;
+        protected float RunSlowdown = 0.2f;
+        protected int JumpHeight = 15;
+        protected float JumpSpeed = 5.01f;
+        public bool ControlLeft;
+        public bool ControlRight;
+        public bool ControlUp;
+        public bool ControlDown;
+        public bool ControlJump;
+        public bool ReleaseJump;
+        public int Width = 20;
+        public int Height = 42;
+        public int Direction = 1;
+        public int Jump;
+        public int Type;
+        public float Hp = 4;
+       
+        public List<Item> Drop = new List<Item>();
 
-        public Rectangle rect;
-        protected Texture2D[] npcSkin;
+        public Rectangle Rect;
+        protected Texture2D[] NpcSkin;
 
         public BaseNpc()
         {
         }
 
-        public BaseNpc(Texture2D[] npcSkin)
-        {
-            this.npcSkin = npcSkin;
-        }
+        public BaseNpc(Texture2D[] npcSkin) => NpcSkin = npcSkin;
 
-        public BaseNpc(int blockx,Texture2D[] npcSkin)
+        public BaseNpc(int blockx, Texture2D[] npcSkin)
         {
-            position.X = blockx * ITile.TileMaxSize;
-            position.Y = Program.game.dimension[Program.game.currentD].mapHeight[blockx] * ITile.TileMaxSize - ITile.TileMaxSize * 3;
-            type = Program.game.rand.Next(2);
-            rect.Width = width;
+            if (blockx <= 0) blockx = 0;
+            else if (blockx > SizeGeneratior.WorldWidth) blockx = SizeGeneratior.WorldWidth - 1;
 
-            this.npcSkin = npcSkin;
-            to = position.X;
-            to += Program.game.rand.Next(-1, 1) * ITile.TileMaxSize;
-            rect.Height = height;
-            drop.Clear();
-            drop.Add(new Item(1,7));
-            this.npcSkin = npcSkin;
+            Position.X = blockx * Tile.TileMaxSize;
+            Position.Y = Program.Game.Dimension[Program.Game.CurrentDimension].MapHeight[blockx] * Tile.TileMaxSize - Tile.TileMaxSize * 3;
+            Type = Program.Game.Rand.Next(2);
+            Rect.Width = Width;
+
+            NpcSkin = npcSkin;
+            WayPoint = Position.X;
+            WayPoint += Program.Game.Rand.Next(-1, 1) * Tile.TileMaxSize;
+            Rect.Height = Height;
+            Drop.Clear();
+            Drop.Add(new Item(1, 7));
+            NpcSkin = npcSkin;
         }
 
         public BaseNpc(Vector2 positions, Texture2D[] npcSkin)
         {
-            position = positions;
-            to = position.X;
-            to += Program.game.rand.Next(-ITile.TileMaxSize, ITile.TileMaxSize);
-            rect.Width = width;
-            rect.Height = height;
-            drop.Clear();
-            drop.Add(new Item(1,7));
-            this.npcSkin = npcSkin;
+            Position = positions;
+            WayPoint = Position.X;
+            WayPoint += Program.Game.Rand.Next(-Tile.TileMaxSize, Tile.TileMaxSize);
+            Rect.Width = Width;
+            Rect.Height = Height;
+            Drop.Clear();
+            Drop.Add(new Item(1, 7));
+            NpcSkin = npcSkin;
         }
-
-        public BaseNpc(int blockx, Texture2D[] npcSkin, Color[] color)
-        {
-            position.X = blockx * ITile.TileMaxSize;
-            if (blockx <= 0) blockx = 0;
-            else if (blockx >= SizeGeneratior.WorldWidth) blockx = SizeGeneratior.WorldWidth - 2;
-            position.Y = Program.game.dimension[Program.game.currentD].mapHeight[blockx] * ITile.TileMaxSize - ITile.TileMaxSize * 3;
-            type = Program.game.rand.Next(2);
-            rect.Width = width;
-
-            to = position.X;
-            to += Program.game.rand.Next(-1, 1) * ITile.TileMaxSize;
-            rect.Height = height;
-            drop.Clear();
-            drop.Add(new Item(1, 7));
-            this.npcSkin = npcSkin;
-        }
-
-        public BaseNpc(Vector2 positions, Texture2D[] npcSkin, Color[] color)
-        {
-            position = positions;
-            to = position.X;
-            to += Program.game.rand.Next(-ITile.TileMaxSize, ITile.TileMaxSize);
-            rect.Width = width;
-            rect.Height = height;
-            drop.Clear();
-            drop.Add(new Item(1, 7));
-            this.npcSkin = npcSkin;
-        }
-
+        
         protected void DrawShadow(Texture2D shadow, SpriteBatch spriteBatch)
         {
-            int startnew = (int)position.Y / ITile.TileMaxSize;
+            int startnew = (int)Position.Y / Tile.TileMaxSize;
             startnew += 3;
             int endnew = startnew + 10;
             for (int j = startnew; j < endnew; j++)
             {
                 if (endnew >= SizeGeneratior.WorldHeight) continue;
-                if (Program.game.dimension[Program.game.currentD].map[(int)Math.Floor(position.X) / ITile.TileMaxSize, j].active)
-                {
-                    int del = j - startnew;
-                    //if (del == 0) del = 1;
-                    Rectangle rect = new Rectangle((int)Math.Floor(position.X) ,
-                    j * ITile.TileMaxSize, shadow.Width, (int)(shadow.Height - (del)));
+                if ( !Program.Game.Dimension[Program.Game.CurrentDimension]
+                             .MapTile[(int) Math.Floor(Position.X) / Tile.TileMaxSize , j].Active ) continue;
 
-                    spriteBatch.Draw(shadow, rect, Color.Black);
-                    break;
-                }
+                int del = j - startnew;
+                //if (del == 0) del = 1;
+                Rectangle rectShadow = new Rectangle((int)Math.Floor(Position.X),
+                                                     j * Tile.TileMaxSize, shadow.Width, shadow.Height - del);
+
+                spriteBatch.Draw(shadow, rectShadow, Color.Black);
+                break;
             }
         }
 
-        public virtual void DrawNPC(SpriteEffects effect, SpriteBatch spriteBatch, SpriteFont Font1,Texture2D shadow)
+        public virtual void RenderNpc(SpriteBatch spriteBatch, SpriteFont font, Texture2D shadow)
         {
-            effect = SpriteEffects.None;
-            if (direction < 0)
+
+            SpriteEffects effect = SpriteEffects.None;
+            if (Direction < 0)
                 effect = SpriteEffects.FlipHorizontally;
-            spriteBatch.DrawString(Font1, ((int)(hp)).ToString(), new Vector2((int)(position.X + (width - npcSkin[0].Width)), (int)(position.Y) - 30), Color.Black);
-            Rectangle rect = new Rectangle((int)(position.X + (width -npcSkin[0].Width)),
-                    (int)(position.Y), npcSkin[0].Width, npcSkin[0].Height);
-            Rectangle src = new Rectangle(0, 0, npcSkin[0].Width, npcSkin[0].Height);
-            for (int i = 0; i < npcSkin.Length; i++)
+            spriteBatch.DrawString(font, ((int)Hp).ToString(CultureInfo.CurrentCulture), new Vector2((int)(Position.X + (Width - NpcSkin[0].Width)), (int)Position.Y - 30), Color.Black);
+            Rect = new Rectangle((int)(Position.X + (Width - NpcSkin[0].Width)),
+                    (int)Position.Y, NpcSkin[0].Width, NpcSkin[0].Height);
+            Rectangle src = new Rectangle(0, 0, NpcSkin[0].Width, NpcSkin[0].Height);
+            foreach ( Texture2D skin in NpcSkin )
             {
-                spriteBatch.Draw(npcSkin[i], rect, src,Color.White,
-                        0, Vector2.Zero, effect, 0);
+                spriteBatch.Draw(skin, Rect, src, Color.White,
+                                 0, Vector2.Zero, effect, 0);
             }
             DrawShadow(shadow, spriteBatch);
         }
 
-        public void walkto(float x)
+        public void Move(float x)
         {
-            to = x;
+            WayPoint = x;
         }
 
-        public void kill()
+        public virtual void Kill()
         {
-            foreach (Item slots in drop)
+            foreach (Item slots in Drop)
             {
-                Program.game.adddrop((int)position.X, (int)position.Y, slots);
-                Program.game.console.addLog("NPC DROPin");
+                Program.Game.AddDrop((int)Position.X, (int)Position.Y, slots);
+                Program.Game.Console.AddLog("NPC DROPin");
             }
-            Program.game.console.addLog("NPC DROP:" + drop.Count);
+            Program.Game.Console.AddLog("NPC DROP:" + Drop.Count);
         }
 
-        protected virtual void aiupdate() { }
-
-        public override void update()
+        protected virtual void UpdateAi()
         {
-            this.controlLeft = false;
-            this.controlRight = false;
-            aiupdate();
-            if ((int)to / ITile.TileMaxSize == (int)position.X / ITile.TileMaxSize)
+            if ((int)WayPoint / Tile.TileMaxSize == (int)Position.X / Tile.TileMaxSize)
             {
-                to += Program.game.rand.Next(-ITile.TileMaxSize, ITile.TileMaxSize);
-                if (to < 5 * ITile.TileMaxSize) to = 5 * ITile.TileMaxSize;
+                WayPoint += Program.Game.Rand.Next(-Tile.TileMaxSize, Tile.TileMaxSize);
+                if (WayPoint < 5 * Tile.TileMaxSize) WayPoint = 5 * Tile.TileMaxSize;
             }
-            if (to > position.X)
+            if (WayPoint > Position.X)
+                ControlRight = true;
+            if (WayPoint < Position.X)
+                ControlLeft = true;
+        }
+
+        public override void Update()
+        {
+            if (Hp <= 0) return;
+            ControlLeft = false;
+            ControlRight = false;
+            UpdateAi();
+            HorisontalMove();
+            VerticalMove();
+            Move();
+        }
+
+        protected void Move()
+        {
+            ControlJump = false;
+            float a = Velocity.X;
+            Velocity = Colision.TileCollision(this, Position, Velocity, Width, Height, false);
+            Position += Velocity;
+            if (Position.X < 0)
             {
-                this.controlRight = true;
-                //   this.controlJump = true;
+                Position.X = 0;
             }
-            if (to < position.X)
+            if (Position.X > (SizeGeneratior.WorldWidth - 1) * Tile.TileMaxSize)
             {
-                this.controlLeft = true;
+                Position.X = (SizeGeneratior.WorldWidth - 1) * Tile.TileMaxSize;
             }
-            if (this.controlLeft && this.velocity.X > -maxRunSpeed)
+            if (Position.Y < 0)
             {
-                if (this.velocity.X > runSlowdown)
+                Position.Y = 0;
+            }
+            if (Position.Y > (SizeGeneratior.WorldHeight - 1) * Tile.TileMaxSize)
+            {
+                Position.Y = (SizeGeneratior.WorldHeight - 1) * Tile.TileMaxSize;
+            }
+            if (Math.Abs(a - Velocity.X) > float.Epsilon) ControlJump = true;
+            Rect.X = (int)Position.X;
+            Rect.Y = (int)Position.Y;
+        }
+
+        protected void HorisontalMove()
+        {
+
+            if (ControlLeft && Velocity.X > -MaxRunSpeed)
+            {
+                if (Velocity.X > RunSlowdown)
                 {
-                    this.velocity.X = this.velocity.X - runSlowdown;
+                    Velocity.X = Velocity.X - RunSlowdown;
                 }
-                this.velocity.X = this.velocity.X - runAcceleration;
-                 this.direction = -1;
+                Run(-1);
             }
-            else if (this.controlRight && this.velocity.X < maxRunSpeed)
+            else if (ControlRight && Velocity.X < MaxRunSpeed)
             {
-                if (this.velocity.X < -runSlowdown)
+                if (Velocity.X < -RunSlowdown)
                 {
-                    this.velocity.X = this.velocity.X + runSlowdown;
+                    Velocity.X = Velocity.X + RunSlowdown;
                 }
-                this.velocity.X = this.velocity.X + runAcceleration;
-                this.direction = 1;
+                Run(1);
             }
-            else if (this.velocity.Y == 0f)
+            else if (Math.Abs(Velocity.Y) < float.Epsilon)
             {
-                if (this.velocity.X > runSlowdown)
+                if (Velocity.X > RunSlowdown)
                 {
-                    this.velocity.X = this.velocity.X - runSlowdown;
+                    Velocity.X = Velocity.X - RunSlowdown;
                 }
-                else if (this.velocity.X < -runSlowdown)
+                else if (Velocity.X < -RunSlowdown)
                 {
-                    this.velocity.X = this.velocity.X + runSlowdown;
+                    Velocity.X = Velocity.X + RunSlowdown;
                 }
                 else
                 {
-                    this.velocity.X = 0f;
+                    Velocity.X = 0f;
                 }
             }
-            else if ((double)this.velocity.X > (double)runSlowdown * 0.5)
+            else if (Velocity.X > RunSlowdown * 0.5)
             {
-                this.velocity.X = this.velocity.X - runSlowdown * 0.5f;
+                Velocity.X = Velocity.X - RunSlowdown * 0.5f;
             }
-            else if ((double)this.velocity.X < (double)(-(double)runSlowdown) * 0.5)
+            else if (Velocity.X < -(double)RunSlowdown * 0.5)
             {
-                this.velocity.X = this.velocity.X + runSlowdown * 0.5f;
+                Velocity.X = Velocity.X + RunSlowdown * 0.5f;
             }
             else
             {
-                this.velocity.X = 0f;
+                Velocity.X = 0f;
             }
-            if (this.controlJump)
+        }
+
+        void Run(int direction)
+        {
+            Direction = direction;
+            Velocity.X = Velocity.X + RunAcceleration * direction;
+        }
+
+        protected void VerticalMove()
+        {
+            if (ControlJump)
             {
-                if (this.jump > 0)
+                if (Jump > 0)
                 {
-                    if (this.velocity.Y > -jumpSpeed + gravity * 2f)
+                    if (Velocity.Y > -JumpSpeed + Gravity * 2f)
                     {
-                        this.jump = 0;
+                        Jump = 0;
                     }
                     else
                     {
-                        this.velocity.Y = -jumpSpeed;
-                        this.jump--;
+                        Velocity.Y = -JumpSpeed;
+                        Jump--;
                     }
                 }
-                else if (this.velocity.Y == 0f && this.releaseJump)
+                else if (Math.Abs(Velocity.Y) < float.Epsilon && ReleaseJump)
                 {
-                    this.velocity.Y = -jumpSpeed;
-                    this.jump = jumpHeight;
+                    Velocity.Y = -JumpSpeed;
+                    Jump = JumpHeight;
                 }
             }
             else
             {
 
-                this.jump = 0;
-                this.releaseJump = true;
+                Jump = 0;
+                ReleaseJump = true;
             }
-            this.velocity.Y = this.velocity.Y + gravity;
-            if (this.velocity.Y > maxFallSpeed)
+            Velocity.Y = Velocity.Y + Gravity;
+            if (Velocity.Y > MaxFallSpeed)
             {
-                this.velocity.Y = maxFallSpeed;
+                Velocity.Y = MaxFallSpeed;
             }
-
-            controlJump = false;
-            float a = velocity.X;
-            this.velocity = Colision.TileCollision(this,this.position, this.velocity, this.width, this.height,false);
-            this.position += this.velocity;
-            if (position.X < 0)
-            {
-                position.X = 0;
-            }
-            if (position.X > (SizeGeneratior.WorldWidth - 1) * ITile.TileMaxSize)
-            {
-                position.X = (SizeGeneratior.WorldWidth - 1) * ITile.TileMaxSize;
-            }
-            if (position.Y < 0)
-            {
-                position.Y = 0;
-            }
-            if (position.Y > (SizeGeneratior.WorldHeight - 1) * ITile.TileMaxSize)
-            {
-                position.Y = (SizeGeneratior.WorldHeight - 1) * ITile.TileMaxSize;
-            }
-            if (a != velocity.X) this.controlJump = true;
-            rect.X = (int)position.X;
-            rect.Y = (int)position.Y;
         }
     }
 }

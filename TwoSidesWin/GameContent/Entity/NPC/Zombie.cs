@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.Physics.Entity.NPC;
-using TwoSides;
-using TwoSides.Physics.Entity;
-using TwoSides.World;
+using System.Globalization;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using TwoSides.World.Tile;
+
+using TwoSides.Physics.Entity.NPC;
 using TwoSides.Utils;
+using TwoSides.World;
+using TwoSides.World.Tile;
 
 namespace TwoSides.GameContent.Entity.NPC
 {
@@ -27,101 +26,96 @@ namespace TwoSides.GameContent.Entity.NPC
         {
         }
 
-        public Zombie(int blockx, Race race, Clothes[] clslot, Color[] color):base(blockx,race,clslot,color)
+        public Zombie(int blockx, Race race, IReadOnlyList<Clothes> clslot, Color[] color):base(blockx,race,clslot,color)
         {
         }
 
-        public Zombie(Vector2 positions, Race race, Clothes[] clslot, Color[] color) : base(positions,race,clslot,color) { }
-        public virtual void DrawNPC(SpriteEffects effect, SpriteBatch spriteBatch, SpriteFont Font1, Texture2D head, Texture2D head2,
-            Texture2D body, Texture2D legs, Texture2D blood, Texture2D eye, Texture2D shadow)
+        public Zombie(Vector2 positions, Race race, IReadOnlyList<Clothes> clslot, Color[] color) : base(positions,race,clslot,color) { }
+        public virtual void RenderNpc( SpriteBatch spriteBatch, SpriteFont font1, Texture2D head, Texture2D head2,
+            Texture2D body, Texture2D legs, Texture2D blood, Texture2D eye,Texture2D hand, Texture2D shadow)
         {
-            effect = SpriteEffects.None;
-            if (direction < 0)
+            SpriteEffects effect = SpriteEffects.None;
+            if (Direction < 0)
                 effect = SpriteEffects.FlipHorizontally;
-            spriteBatch.DrawString(Font1, ((int)(hp)).ToString(), new Vector2((int)(position.X + (width - head.Width)), (int)(position.Y) - 30), Color.Black);
-            int hairid = cl[0].getid();
-            int shirtid = cl[1].getid();
-            int pantsid = cl[2].getid();
-            int shoesid = cl[3].getid();
-            int beltid = cl[4].getid();
-            int glovesid = cl[5].getid();
-            Rectangle rect = new Rectangle((int)(position.X + (width - head.Width)),
-                    (int)(position.Y), head.Width, head.Height);
+            spriteBatch.DrawString(font1, ((int)Hp).ToString(CultureInfo.CurrentCulture), new Vector2((int)(Position.X + (Width - head.Width)), (int)Position.Y - 30), Color.Black);
+            Rect = new Rectangle((int)(Position.X + (Width - head.Width)),
+                    (int)Position.Y, head.Width, head.Height);
             Rectangle src = new Rectangle(0, 0, head.Width, head.Height);
-            spriteBatch.Draw(head, rect, src, race.getZombieColor(),
+
+            RenderLeft(hand, spriteBatch);
+            spriteBatch.Draw(head, Rect, src, Race.GetZombieColor(),
                     0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(eye, rect, src, Color.White,
+            spriteBatch.Draw(eye, Rect, src, Color.White,
                     0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(body, rect, src,
-                race.getZombieColor(), 0, Vector2.Zero, effect, 0);
+            spriteBatch.Draw(body, Rect, src,
+                Race.GetZombieColor(), 0, Vector2.Zero, effect, 0);
             spriteBatch.Draw(legs,
-               rect, src,
-                    race.getZombieColor(), 0, Vector2.Zero, effect, 0);
-            if (hairid != -1) spriteBatch.Draw(Clothes.hair[hairid], rect, src, Color.Black, 0, Vector2.Zero, effect, 0);
-            if (shirtid != -1) spriteBatch.Draw(Clothes.shirt[shirtid], rect, src, colors[0], 0, Vector2.Zero, effect, 0);
-            if (pantsid != -1) spriteBatch.Draw(Clothes.pants[pantsid], rect, src, colors[1], 0, Vector2.Zero, effect, 0);
-            if (shoesid != -1) spriteBatch.Draw(Clothes.shoes[shoesid], rect, src, colors[2], 0, Vector2.Zero, effect, 0);
-            if (beltid != -1) spriteBatch.Draw(Clothes.belt[beltid], rect, src, colors[3], 0, Vector2.Zero, effect, 0);
-            if (glovesid != -1) spriteBatch.Draw(Clothes.gloves[glovesid], rect, src, colors[4], 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(blood, rect, src,
+               Rect, src,
+                    Race.GetZombieColor(), 0, Vector2.Zero, effect, 0);
+            ClothesRender(effect,spriteBatch,Rect,src);
+            spriteBatch.Draw(blood, Rect, src,
                Color.White, 0, Vector2.Zero, effect, 0);
             DrawShadow(shadow, spriteBatch);
         }
 
-        protected override void aiupdate()
+        protected override void UpdateAi()
         {
-            if (Util.directional((int)Program.game.player.position.X / ITile.TileMaxSize, (int)position.X / ITile.TileMaxSize, 5) &&
-                Util.directional((int)Program.game.player.position.Y / ITile.TileMaxSize, (int)position.Y / ITile.TileMaxSize, 5))
+            if (Tools.Distance((int)Program.Game.Player.Position.X / Tile.TileMaxSize, (int)Position.X / Tile.TileMaxSize, 5) &&
+                Tools.Distance((int)Program.Game.Player.Position.Y / Tile.TileMaxSize, (int)Position.Y / Tile.TileMaxSize, 5))
             {
-                to = Program.game.player.position.X;
+                WayPoint = Program.Game.Player.Position.X;
             }
+            base.UpdateAi();
         }
 
-        protected void attackplayer()
+        protected void AttackPlayer()
         {
-            if (Program.game.player.rect.Intersects(rect))
-            {
-                if (Program.game.dimension[Program.game.currentD].rand.Next(0, 100) <= 1)
-                {
-                    if (!Program.game.player.slot[Player.slotmax].IsEmpty)
-                    {
-                        Program.game.player.slot[Player.slotmax].damageslot(Math.Max(1, 5 - Program.game.player.slot[Player.slotmax].getDef()) * Program.game.seconds);
-                        if (Program.game.player.slot[Player.slotmax].HP <= 2) Program.game.player.slot[Player.slotmax] = new Item();
-                    }
-                    if (Program.game.player.slot[Player.slotmax].IsEmpty)
-                    {
+            if ( !Program.Game.Player.Rect.Intersects(Rect) ) return;
 
-                        Program.game.player.typeKill = 0;
-                    }
-                }
-                else
+            if ( Program.Game.Dimension[Program.Game.CurrentDimension].Rand.Next(0 , 100) <= 1 )
+            {
+                if ( !Program.Game.Player.Slot[Player.Slotmax].IsEmpty )
                 {
-                    int b = Program.game.dimension[Program.game.currentD].rand.Next(0, 2);
-                    if (!Program.game.player.slot[Player.slotmax + 1].IsEmpty)
-                    {
-                        Program.game.player.slot[Player.slotmax + 1].damageslot(Math.Max(1, 5 - Program.game.player.slot[Player.slotmax + 1].getDef()) * Program.game.seconds);
-                        if (Program.game.player.slot[Player.slotmax + 1].HP < 2) Program.game.player.slot[Player.slotmax + 1] = new Item();
-                    }
-                    if (!Program.game.player.slot[Player.slotmax + 2].IsEmpty)
-                    {
-                        Program.game.player.slot[Player.slotmax + 2].damageslot(Math.Max(1, 5 - Program.game.player.slot[Player.slotmax + 2].getDef()) * Program.game.seconds);
-                        if (Program.game.player.slot[Player.slotmax + 2].HP < 2) Program.game.player.slot[Player.slotmax + 2] = new Item();
-                    }
-                    if (b == 0 && Program.game.player.slot[Player.slotmax + 1].IsEmpty)
-                    {
-                        if (Program.game.player.position.X > position.X) b = 3;
-                        else b = 2;
-                        Program.game.player.bloods[b] = true;
-                        Program.game.player.zombie = true;
-                    }
-                    else if (b == 1 && Program.game.player.slot[Player.slotmax + 2].IsEmpty)
-                    {
-                        if (Program.game.player.position.X > position.X) b = 0;
-                        else b = 1;
-                        Program.game.player.bloods[b] = true;
-                        Program.game.player.zombie = true;
-                    }
+                    Program.Game.Player.Slot[Player.Slotmax]
+                           .DamageSlot(Math.Max(1 , 5 - Program.Game.Player.Slot[Player.Slotmax].GetDef()) *
+                                       Program.Game.Seconds);
+                    if ( Program.Game.Player.Slot[Player.Slotmax].Hp <= 2 )
+                        Program.Game.Player.Slot[Player.Slotmax] = new Item();
                 }
+                if ( Program.Game.Player.Slot[Player.Slotmax].IsEmpty )
+                {
+
+                    Program.Game.Player.TypeKill = 0;
+                }
+            }
+            else
+            {
+                int b = Program.Game.Dimension[Program.Game.CurrentDimension].Rand.Next(0 , 2);
+                if ( !Program.Game.Player.Slot[Player.Slotmax + 1].IsEmpty )
+                {
+                    Program.Game.Player.Slot[Player.Slotmax + 1]
+                           .DamageSlot(Math.Max(1 , 5 - Program.Game.Player.Slot[Player.Slotmax + 1].GetDef()) *
+                                       Program.Game.Seconds);
+                    if ( Program.Game.Player.Slot[Player.Slotmax + 1].Hp < 2 )
+                        Program.Game.Player.Slot[Player.Slotmax + 1] = new Item();
+                }
+                if ( !Program.Game.Player.Slot[Player.Slotmax + 2].IsEmpty )
+                {
+                    Program.Game.Player.Slot[Player.Slotmax + 2]
+                           .DamageSlot(Math.Max(1 , 5 - Program.Game.Player.Slot[Player.Slotmax + 2].GetDef()) *
+                                       Program.Game.Seconds);
+                    if ( Program.Game.Player.Slot[Player.Slotmax + 2].Hp < 2 )
+                        Program.Game.Player.Slot[Player.Slotmax + 2] = new Item();
+                }
+
+                if ( b != 0 && b != 1 || !Program.Game.Player.Slot[Player.Slotmax + 1 + b].IsEmpty ) return;
+
+                if ( b == 0 )
+                    b = Program.Game.Player.Position.X > Position.X ? 3 : 2;
+                else
+                    b = Program.Game.Player.Position.X > Position.X ? 0 : 1;
+                Program.Game.Player.Bloods[b] = true;
+                Program.Game.Player.Zombie = true;
             }
         }
     }

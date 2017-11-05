@@ -1,174 +1,148 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Collections;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using TwoSides.World;
 
-namespace TwoSides.GUI
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
+using TwoSIdes.World;
+
+namespace TwoSIdes.GUI
 {
     [Serializable]
-    sealed public class Goals
+    public sealed class Goal
     {
         public bool IsComp;
-        public int type,iditem, ammout;
-        public string goalstext;
+        public int Type,IdItem, Ammout;
+        public string GoalsText;
 
-        public Goals(string goal, int iditem, int ammout, int type)
+        public Goal(string goal, int idItem, int ammout, int type)
         {
-            goalstext = goal;
-            this.iditem = iditem;
-            this.ammout = ammout;
-            this.type = type;
+            GoalsText = goal;
+            IdItem = idItem;
+            Ammout = ammout;
+            Type = type;
             IsComp = false;
         }
         
-        public Goals(string goal)
+        public Goal(string goal)
         {
-            this.goalstext = goal;
-            type = 1;
+            GoalsText = goal;
+            Type = 1;
             IsComp = false;
         }
         
-        public void removeitem()
+        public void RemoveItem()
         {
-            int slotids = Program.game.player.getslotitem(iditem, ammout);
-            
-            if (slotids != -1)
-            {
-                Program.game.player.slot[slotids].ammount -= ammout;
+            int slotIds = Program.Game.Player.GetSlotItem(IdItem, Ammout);
 
-                if (Program.game.player.slot[slotids].ammount <= 0)
-                {
-                    Program.game.player.slot[slotids] = new Item();
-                    Program.game.player.slot[slotids].IsEmpty = true;
-                }
+            if ( slotIds == -1 ) return;
+            if ( Program.Game.Player.Slot[slotIds].Ammount > Ammout ) return;
 
-            }
+            Program.Game.Player.Slot[slotIds].Ammount -= Ammout;
+            Program.Game.Player.Slot[slotIds] = new Item {IsEmpty = true};
         }
         
-        public void setComp()
+        public void SetComp()
         {
-            if (type == 1) IsComp = true;
+            if (Type == 1) IsComp = true;
         }
         
         public bool IsComplicte()
         {
-            if (type == 0)
-            {
-                return Program.game.player.getslotitem(iditem, ammout) != -1;
+            switch ( Type ) {
+                case 0:
+                    return Program.Game.Player.GetSlotItem(IdItem, Ammout) != -1;
+                case 2 when Program.Game.Player.GetSlotItem(IdItem, Ammout) != -1:
+                    IsComp = true;
+                    break;
             }
-            if (type == 2 && Program.game.player.getslotitem(iditem, ammout) != -1)
-                IsComp = true;
+
             return IsComp;
         }
     }
 
     [Serializable]
-    sealed public class Quest
+    public sealed class Quest
     {
-        public String name;
+        public string Name;
 
-        public ArrayList goals = new ArrayList();
+        public List<Goal> Goals;
 
-        public Item reward = new Item();
+        public Item Reward;
         [NonSerialized]
-        public SpriteFont font;
+        public SpriteFont Font;
 
-        public Quest(ArrayList goals, Item reward, String name, SpriteFont font)
+        public Quest(List<Goal> goals, Item reward, string name, SpriteFont font)
         {
-            this.goals = goals;
-            this.reward = reward;
-            this.name = name;
-            this.font = font;
+            Goals = goals;
+            Reward = reward;
+            Name = name;
+            Font = font;
         }
 
         public void SetCompliction(int id)
         {
-            ((Goals)goals[id]).setComp();
+            Goals[id].SetComp();
         }
 
-        public Item GetReward()
-        {
-            return reward;
-        }
+        public Item GetReward() => Reward;
 
         public void Passed()
         {
-            Program.game.player.setslot(GetReward());
-            for (int i = 0; i < goals.Count; i++)
+            Program.Game.Player.SetSlot(GetReward());
+            foreach (Goal goal in Goals )
             {
-                Goals goal = (Goals)goals[i];
-                if (goal.type == 0)
-                {
-                    goal.removeitem();
-                }
+                if ( goal.Type != 0 ) continue;
+                goal.RemoveItem();
             }
-            Program.game.player.AddLog("Quest Complete:\n" + name);
+            Program.Game.Player.AddLog("Quest Complete:\n" + Name);
         }
 
-        public bool isPassed()
+        public bool IsPassed()
         {
-            for (int i = 0; i < goals.Count; i++)
-            {
-                Goals goal = (Goals)goals[i];
-                if (!goal.IsComplicte()) return false;
-            }
-            return true;
+            return Goals.All(goal => goal.IsComplicte());
         }
 
-        public int getQuestHeight()
+        public int GetQuestHeight()
         {
-            int a = (int)font.MeasureString(name).Y;
-            for (int i = 0; i < goals.Count; i++)
-            {
-                Goals goal = (Goals)goals[i];
-                a += (int)font.MeasureString(goal.goalstext).Y;
-            }
-            return a + (int)font.MeasureString(getreward()).Y;
+            int a = (int) Font.MeasureString(Name).Y + Goals.Sum(goal => (int) Font.MeasureString(goal.GoalsText).Y);
+            return a + (int)Font.MeasureString(GetRewardText()).Y;
         }
 
-        public string getreward()
-        {
-            return "Reward:" + reward.GetName() + ", Count:" + reward.ammount;
-        }
+        public string GetRewardText() => "Reward:" + Reward.GetName() + ", Count:" + Reward.Ammount;
 
-        public string getmax()
+        public string GetMax()
         {
-            string a = name;
-            for (int i = 0; i < goals.Count; i++)
+            string a = Name;
+            foreach ( Goal goal in Goals )
             {
-                Goals goal = (Goals)goals[i];
-                if (a.Length < goal.goalstext.Length) a = goal.goalstext;
+                if (a.Length < goal.GoalsText.Length) a = goal.GoalsText;
             }
-            if (a.Length < getreward().Length) a = getreward();
+            if (a.Length < GetRewardText().Length) a = GetRewardText();
             return a;
         }
 
-        public void render(SpriteBatch spriteBatch, Vector2 pos)
+        public void Render(SpriteBatch spriteBatch, Vector2 pos)
         {
-            if (font == null) font = Program.game.Font1;
+            if (Font == null) Font = Program.Game.Font1;
             spriteBatch.Begin();
-            string max = getmax();
-            spriteBatch.Draw(Program.game.dialogtex, new Rectangle((int)pos.X - (int)font.MeasureString(max).X,
-                (int)pos.Y, (int)font.MeasureString(max).X, getQuestHeight()), Color.Blue);
+            string max = GetMax();
+            spriteBatch.Draw(Program.Game.Dialogtex, new Rectangle((int)pos.X - (int)Font.MeasureString(max).X,
+                (int)pos.Y, (int)Font.MeasureString(max).X, GetQuestHeight()), Color.Blue);
             Vector2 position = pos;
-            position.X = pos.X - (int)font.MeasureString(name).X;
-            spriteBatch.DrawString(font, name, position, Color.White);
-            position.Y += (int)font.MeasureString(name).Y;
-            for (int i = 0; i < goals.Count; i++)
-            {
-                Goals goal = (Goals)goals[i];
-                position.X = pos.X - (int)font.MeasureString(goal.goalstext).X;
+            position.X = pos.X - (int)Font.MeasureString(Name).X;
+            spriteBatch.DrawString(Font, Name, position, Color.White);
+            position.Y += (int)Font.MeasureString(Name).Y;
+            foreach ( Goal goal in Goals ) {
+                position.X = pos.X - (int)Font.MeasureString(goal.GoalsText).X;
                 Color cl = Color.Red;
                 if (goal.IsComplicte()) cl = Color.Green;
-                spriteBatch.DrawString(font, goal.goalstext, position, cl);
-                position.Y += (int)font.MeasureString(goal.goalstext).Y;
+                spriteBatch.DrawString(Font, goal.GoalsText, position, cl);
+                position.Y += (int)Font.MeasureString(goal.GoalsText).Y;
             }
-            position.X = pos.X - (int)font.MeasureString(getreward()).X;
-            spriteBatch.DrawString(font, getreward(), position, Color.Red);
+            position.X = pos.X - (int)Font.MeasureString(GetRewardText()).X;
+            spriteBatch.DrawString(Font, GetRewardText(), position, Color.Red);
             spriteBatch.End();
         }
     }

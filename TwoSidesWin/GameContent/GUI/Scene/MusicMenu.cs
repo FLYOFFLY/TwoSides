@@ -1,45 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
+
 using TwoSides.GUI;
 using TwoSides.GUI.Scene;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Media;
 
 namespace TwoSides.GameContent.GUI.Scene
 {
-    class MusicMenu: IScene
+    internal class MusicMenu: IScene
     {
-        public bool lastSceneRender { get; set; }
-        public bool lastSceneUpdate { get; set; }
-        Label lab { get; set; }
-        ControlScene scene;
-        RadioButton rbtn;
+        public bool LastSceneRender { get; set; }
+        public bool LastSceneUpdate { get; set; }
+        Label LableMusic { get; set; }
+        ControlScene _scene;
+        RadioButton _radioButtonMusicOn;
         public void Load(ControlScene scene)
         {
-            lab = new Label("Music on", new Vector2(Program.game.graphics.PreferredBackBufferWidth / 2, Program.game.graphics.PreferredBackBufferHeight / 2), Program.game.Font1);
+            LableMusic = new Label("Music on", new Vector2(Program.Game.Resolution.X,Program.Game.Resolution.Y)/2, Program.Game.Font1);
 
-            rbtn = new RadioButton(!MediaPlayer.IsMuted, Program.game.galka,
-                Program.game.ramka, Program.game.Font1,
-                new Rectangle(Program.game.graphics.PreferredBackBufferWidth / 2 + (int)Program.game.Font1.MeasureString("Music On").X + 16, Program.game.graphics.PreferredBackBufferHeight / 2 - 16, 32, 32));
-            this.scene = scene;
+            _radioButtonMusicOn = new RadioButton(!MediaPlayer.IsMuted, Program.Game.Galka,
+                Program.Game.Ramka, Program.Game.Font1,
+                new Rectangle(Program.Game.Resolution.X / 2 + (int)Program.Game.Font1.MeasureString("Music On").X + 16,
+                                Program.Game.Resolution.Y / 2 - 16, 32, 32));
+            _scene = scene;
         }
         public void Render(SpriteBatch spriteBatch)
         {
-            lab.Draw(spriteBatch);
-            rbtn.Draw(spriteBatch);
+            LableMusic.Draw(spriteBatch);
+            _radioButtonMusicOn.Draw(spriteBatch);
         }
         public void Update(GameTime gameTime)
         {
-            rbtn.Update();
-            MediaPlayer.IsMuted = !rbtn.Status;
+            _radioButtonMusicOn.Update();
+            MediaPlayer.IsMuted = !_radioButtonMusicOn.Status;
         }
-        public void tryExit()
-        {
-            scene.returnScene();
-        }
-
+        public void TryExit() => _scene.ReturnScene();
     }
 }

@@ -1,34 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.World.Tile;
+﻿using TwoSIdes.World.Tile;
 
-namespace TwoSides.GameContent.Tiles
+namespace TwoSIdes.GameContent.Tiles
 {
     public class LightBlock : BaseTile
     {
         
-        public LightBlock(float MaxHP,int id) : base(MaxHP,id)
+        public LightBlock(float maxHp,int id) : base(maxHp,id)
         {
         }
-        public override bool issolid()
-        {
-            return false;
-        }
-        public override bool isLightBlock()
-        {
-            return true;
-        }
+        public override bool IsSolId() => false;
 
-        public override int getAnimFrame()
-        {
-            return 2;
-        }
+        public override bool IsLightBlock() => true;
 
-        public override int getTickFrame()
-        {
-            return 5;
-        }
+        public override int GetAnimFrame() => 2;
+
+        public override int GetTickFrame() => 5;
     }
 }

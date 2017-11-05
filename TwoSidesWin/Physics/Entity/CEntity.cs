@@ -1,58 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
+
 using Microsoft.Xna.Framework;
-using System.IO;
 
 namespace TwoSides.Physics.Entity
 {
-    public class CEntity
+    public class DynamicEntity
     {
-        public Vector2 position;
-        public Vector2 velocity;
-        protected float gravity = 0.4f;
-        protected float maxFallSpeed = 10f;
-        public CEntity() { }
-        public CEntity(Vector2 pos)
+        public Vector2 Position;
+        public Vector2 Velocity;
+        protected float Gravity = 0.4f;
+        protected float MaxFallSpeed = 10f;
+        public DynamicEntity() { }
+        public DynamicEntity(Vector2 pos) => Position = pos;
+
+        public DynamicEntity(float x, float y)
         {
-            this.position = pos;
+            Position.X = x; 
+            Position.Y = y;
         }
-        public CEntity(float x, float y)
+        public void AddForce(Vector2 force, float mass)
         {
-            position.X = x; 
-            position.Y = y;
+            if (force.X >= 0)
+                Velocity.X += mass / 2;
+            else
+                Velocity.X -= mass / 2;
         }
-        public void fail()
+        public void Fail()
         {
-            velocity.Y += gravity;
-            if (this.velocity.Y > maxFallSpeed)
+            Velocity.Y += Gravity;
+            if (Velocity.Y > MaxFallSpeed)
             {
-                this.velocity.Y = maxFallSpeed;
+                Velocity.Y = MaxFallSpeed;
             }
-
-            float b = velocity.Y;
-            velocity = Colision.TileCollision(this,position, velocity, 16, 16,false);
-            position += velocity;
-        
+            Velocity = Colision.TileCollision(this, Position, Velocity, 16, 16, false);
+            Position += Velocity;
         }
-        public virtual void load(BinaryReader reader)
+        public virtual void Load(BinaryReader reader)
         {
-            position.X = (float)reader.ReadDouble();
-            position.Y = (float)reader.ReadDouble();
-            velocity.X = (float)reader.ReadDouble();
-            velocity.Y = (float)reader.ReadDouble();
+            Position.X = (float)reader.ReadDouble();
+            Position.Y = (float)reader.ReadDouble();
+            Velocity.X = (float)reader.ReadDouble();
+            Velocity.Y = (float)reader.ReadDouble();
 
         }
-        public virtual void save(BinaryWriter writer){
-            writer.Write((double)position.X);
-            writer.Write((double)position.Y);
-            writer.Write((double)velocity.X);
-            writer.Write((double)velocity.Y);
+        public virtual void Save(BinaryWriter writer){
+            writer.Write((double)Position.X);
+            writer.Write((double)Position.Y);
+            writer.Write((double)Velocity.X);
+            writer.Write((double)Velocity.Y);
         }
-        public virtual void update()
-        {
-            fail();
-        }
+        public virtual void Update() => Fail();
     }
 }

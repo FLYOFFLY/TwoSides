@@ -1,137 +1,167 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.GUI.Scene;
-using TwoSides.GUI;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using System.Threading;
-using TwoSides.Network;
+
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+
+using TwoSides.GUI;
+using TwoSides.GUI.Scene;
+using TwoSides.Utils;
+
+using static System.GC;
 
 namespace TwoSides.GameContent.GUI.Scene
 {
-    class CreationPerson : IScene
+    internal class CreationPerson : IScene,IDisposable
     {
-        public bool lastSceneRender { get; set; }
-        public bool lastSceneUpdate { get; set; }
-        Button btn;
-        TextField inp;
-        Label lab;
-        bool keydownup = false;
-        Label version { get; set; }
-        ControlScene scene { get; set; }
+        public bool LastSceneRender { get; set; }
+        public bool LastSceneUpdate { get; set; }
+        Button _buttonCreatePerson;
+        TextField _nameInput;
+        Label _nameLabel;
+        bool _keyDownVertical;
+        Label Version { get; set; }
+        ControlScene Scene { get; set; }
+        Image _image;
+        Texture2D _pallete;
         public void Load(ControlScene scene)
         {
+            _pallete = Program.Game.Content.Load<Texture2D>(Game1.ImageFolder + "pallete");
+            _image = new Image(_pallete,
+                new Rectangle(0,
+                   0,
+                    _pallete.Width,
+                    _pallete.Height));
 
-            lab = new Label("Input Name:",
-                new Vector2(150, (Program.game.heightmenu) + 35),
-                Program.game.Font1, Color.Black);
-            inp = new TextField(new Vector2(20, 0),
-                Program.game.Font1, Color.Black);
-            inp.setPatern(lab);
-            inp.setPos(new Vector2(0, 27));
+            _nameLabel = new Label("InputName",
+                new Vector2(150, Program.Game.HeightMenu + 35),
+                Program.Game.Font1, Color.Black);
+            _nameInput = new TextField(new Vector2(20, 0),
+                Program.Game.Font1, Color.Black);
+            _nameInput.SetPatern(_nameLabel);
+            _nameInput.SetPos(new Vector2(0, 27));
 
-            btn = new Button(Program.game.button, Program.game.Font1, new Rectangle(0, 0, 100, 30), "null");
-            btn.setPatern(inp);
-            btn.SetRect(new Rectangle(0, 35, 100, 30));
-            btn.Text = "Start";
+            _buttonCreatePerson = new Button(Program.Game.Button, Program.Game.Font1, new Rectangle(0, 0, 100, 30), "null");
+            _buttonCreatePerson.SetPatern(_nameInput);
+            _buttonCreatePerson.Text = "Start";
+            _buttonCreatePerson.SetRect(new Rectangle(0, 35, (int)Program.Game.Font1.MeasureString(_buttonCreatePerson.Text).X+30, 30));
+            _image.SetPatern(_nameInput);
+            _image.SetPos(new Vector2((int)Program.Game.Font1.MeasureString(_buttonCreatePerson.Text).X +60, 0));
 
+            Scene = scene;
+            Program.Game.LoadSlots();
+            Program.Game.Player.Position.X = 100;
+            Program.Game.Player.Position.Y = 255;
+            Version = new Label(Program.Game.GetVersion(), new Vector2(0, Program.Game.Resolution.Y - (int)Program.Game.Font1.MeasureString(Program.Game.GetVersion()).Y), Program.Game.Font1, Color.Black);
 
-            this.scene = scene;
-            Program.game.loadSlots();
-            Program.game.player.position.X = 100;
-            Program.game.player.position.Y = 255;
-            version = new Label(Program.game.getVersion(), new Vector2(0, Program.game.graphics.PreferredBackBufferHeight - (int)Program.game.Font1.MeasureString(Program.game.getVersion()).Y), Program.game.Font1, Color.Black);
+            void CreateWorld(object o , EventArgs args)
+            {
+                Program.Game.Player.Name = _nameInput.GetText() ?? "Player";
+                ThreadPool.QueueUserWorkItem(state => Program.Game.NewGeneration());
+            }
 
+            _buttonCreatePerson.OnClicked += CreateWorld;
         }
-        int currentslot = 0;
-        private bool isdownleft;
+
+        int _currentSlot;
+        bool _keyDownHorizontal;
         public void Render(SpriteBatch spriteBatch)
         {
-            version.Draw(spriteBatch);
-            inp.Draw(spriteBatch);
-            lab.Draw(spriteBatch);
-            btn.Draw(spriteBatch);
+            Version.Draw(spriteBatch);
+            _nameInput.Draw(spriteBatch);
+            _nameLabel.Draw(spriteBatch);
+            _buttonCreatePerson.Draw(spriteBatch);
             spriteBatch.Begin();
-            spriteBatch.DrawString(Program.game.Font1, "Up,Down-Select Type Clothes", new Vector2(150, 180), Color.Black);
-            spriteBatch.DrawString(Program.game.Font1, "Left,Right - Select clothes", new Vector2(150, 200), Color.Black);
-            Program.game.PlayerRender(2);
-            Program.game.PlayerRenderTexture(Program.game.slots[currentslot],2);
+            spriteBatch.DrawString(Program.Game.Font1, Localisation.GetName("tip0"), new Vector2(150, 180), Color.Black);
+            spriteBatch.DrawString(Program.Game.Font1, Localisation.GetName("tip1"), new Vector2(150, 200), Color.Black);
+            Program.Game.PlayerRender(2);
+            Program.Game.PlayerRenderTexture(Program.Game.Slots[_currentSlot],2);
             
            spriteBatch.End();
+            _image.Draw(spriteBatch);
         }
-        public void tryExit()
-        {
-            scene.returnScene();
-        }
+        public void TryExit() => Scene.ReturnScene();
         public void Update(GameTime gameTime)
         {
            KeyboardState keyState = Keyboard.GetState();
-            inp.updateKey();
+            _nameInput.UpdateKey();
 
-            //  inp.rightsort(); 
-            if (keyState.IsKeyDown(Keys.Down) && !keydownup)
+            //  NameInput.rightsort(); 
+            if (keyState.IsKeyDown(Keys.Down) && !_keyDownVertical && _currentSlot < 5)
             {
-                if (currentslot < 5) { currentslot++; keydownup = true; }
+                _currentSlot++; _keyDownVertical = true;
             }
-
-
-            if (keyState.IsKeyDown(Keys.Up) && !keydownup)
+            else if (keyState.IsKeyDown(Keys.Up) && !_keyDownVertical && _currentSlot > 0)
             {
-                if (currentslot > 0) { currentslot--; keydownup = true; }
+                _currentSlot--; _keyDownVertical = true;
             }
-            if (keyState.IsKeyUp(Keys.Up) && keyState.IsKeyUp(Keys.Down)) keydownup = false;
+            else if (keyState.IsKeyUp(Keys.Up) && keyState.IsKeyUp(Keys.Down)) _keyDownVertical = false;
             //
 
-            if (keyState.IsKeyDown(Keys.Right) && !isdownleft)
+            if (keyState.IsKeyDown(Keys.Right) && !_keyDownHorizontal)
             {
                 bool type = false;
-                int currentitem = Program.game.player.clslot[currentslot].getid();
-                if (currentslot == 0 && currentitem + 1 < Clothes.maxHair) type = true;
-                else if (currentslot == 1 && currentitem + 1 < Clothes.maxShirt + Clothes.shirtMods.Count) type = true;
-                else if (currentslot == 2 && currentitem + 1 < Clothes.maxPants + Clothes.pantsMods.Count) type = true;
-                else if (currentslot == 3 && currentitem + 1 < Clothes.maxShoes) type = true;
-                else if (currentslot == 4 && currentitem + 1 < Clothes.maxBelt + Clothes.beltMods.Count) type = true;
-                else if (currentslot == 5 && currentitem + 1 < Clothes.maxGlove) type = true;
+                int currentClothesSlot = TryChange(ref type);
                 if (type)
                 {
-                    isdownleft = true;
-                    Program.game.player.clslot[currentslot] = new Clothes(currentitem + 1);
+                    _keyDownHorizontal = true;
+                    Program.Game.Player.Clslot[_currentSlot] = new Clothes(currentClothesSlot + 1);
                 }
             }
-            if (keyState.IsKeyDown(Keys.Left) && !isdownleft)
+            if (keyState.IsKeyDown(Keys.Left) && !_keyDownHorizontal)
             {
-
-                bool type = false;
-                int currentitem = Program.game.player.clslot[currentslot].getid();
-                if (currentitem > 0) type = true;
-                isdownleft = true;
-                if (type)
-                {
-                    Program.game.player.clslot[currentslot] = new Clothes(currentitem - 1);
-                }
-                else
-                {
-                    Program.game.player.clslot[currentslot] = new Clothes();
-                }
+                int currentitem = Program.Game.Player.Clslot[_currentSlot].GetId();
+                if ( currentitem > 0 ) Program.Game.Player.Clslot[_currentSlot] = new Clothes(currentitem - 1);
+                else Program.Game.Player.Clslot[_currentSlot] = new Clothes();
+                _keyDownHorizontal = true;
             }
-            if (keyState.IsKeyUp(Keys.Right) && keyState.IsKeyUp(Keys.Left)) isdownleft = false;
+            if (keyState.IsKeyUp(Keys.Right) && keyState.IsKeyUp(Keys.Left)) _keyDownHorizontal = false;
             //
-            btn.Update();
-            if (btn.IsClicked())
-            {
-                if (inp.getText() != null)
-                    Program.game.player.Name = inp.getText();
-                else Program.game.player.Name = "Player";
-                if (NetPlay.typeNet != 2)
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(Program.game.newGeneration));
-                else
-                {
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(Program.game.loadClient));
-                }
-            }
+            _buttonCreatePerson.Update();
+            MouseState ms = Mouse.GetState();
+            if ( !_image.InHover(ms) || ms.LeftButton != ButtonState.Pressed || _currentSlot < 1 ) return;
+
+            Vector2 pos = ms.Position.ToVector2()-_image.GetPos();
+            Program.Game.Player.Colors[_currentSlot-1] = _image[(int)pos.X, (int)pos.Y];
         }
+
+        int TryChange(ref bool type)
+        {
+            int currentitem = Program.Game.Player.Clslot[_currentSlot].GetId();
+            switch ( _currentSlot ) {
+                case 0 when currentitem + 1 < Clothes.MaxHair:
+                case 1 when currentitem + 1 < Clothes.MaxShirt:
+                case 2 when currentitem + 1 < Clothes.MaxPants:
+                case 3 when currentitem + 1 < Clothes.MaxShoes:
+                case 4 when currentitem + 1 < Clothes.MaxBelt:
+                case 5 when currentitem + 1 < Clothes.MaxGlove:
+                    type = true;
+                    break;
+            }
+            return currentitem;
+        }
+
+        #region IDisposable Support
+
+        bool _disposedValue; 
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if ( _disposedValue ) return;
+
+            if (disposing)
+            {
+                _pallete.Dispose();
+            }
+            _disposedValue = true;
+        }
+        
+        public void Dispose()
+        {
+            Dispose(true);
+            SuppressFinalize(this);
+        }
+        #endregion
     }
 }

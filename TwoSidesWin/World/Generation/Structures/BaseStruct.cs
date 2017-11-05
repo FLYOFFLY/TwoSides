@@ -1,24 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.World.Generation;
 
-namespace TwoSides.World.Structures
+namespace TwoSides.World.Generation.Structures
 {
     public class BaseStruct
     {
         [NonSerialized]
-        public bool isplaying;
+        public bool Isplaying;
 
         [NonSerialized]
-        public int x, y;
+        public int X, Y;
         public BaseStruct(int x, int y)
         {
-            this.x = x;
-            this.y = y;
-            isplaying = false;
+            X = x;
+            Y = y;
+            Isplaying = false;
         }
-        public virtual void spawn(BaseDimension dimension) { }
+        public virtual void Spawn(BaseDimension dimension) { }
     }
 }

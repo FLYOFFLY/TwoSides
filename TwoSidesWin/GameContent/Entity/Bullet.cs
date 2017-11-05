@@ -1,178 +1,177 @@
 ﻿using System;
+using System.Linq;
+
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using TwoSides.Physics.Entity.NPC;
-using TwoSides.World;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+
 using TwoSides.GameContent.Entity.NPC;
 using TwoSides.Physics;
 using TwoSides.Physics.Entity;
-using TwoSides.World.Tile;
+using TwoSides.Physics.Entity.NPC;
 using TwoSides.Utils;
-using TwoSides.GameContent.Tiles;
+using TwoSides.World.Generation;
+using TwoSides.World.Tile;
+
 namespace TwoSides.GameContent.Entity
 {
-    public class Bullet : CEntity
+    public class Bullet : DynamicEntity
     {
 
-        public const float maxtime = 1;
+        public const float MaxTime = 1;
         public const int BulletSizeX = 12;
         public const int BulletSizeY = 5;
 
-        float dirx = 1;
-        int countrotate = 0;
-        float ase = 1;
-        float diry = 1;
-        float time = 0;
-        static float mass = 3.4f;
-        public int type = 1;
+        float _dirX;
+        int _countRotate;
+        const float ASE = 1;
+        float _dirY;
+        float _time;
+        const float MASS = 3.4f;
 
-        public Vector2 oldposition;
+        public Vector2 OldPosition;
 
-
-        public static Texture2D BulletTexture;
-        public static void LoadBullet(ContentManager Content)
+        public static void LoadBullet(ContentManager content)
         {
-            BulletTexture = Content.Load<Texture2D>(Game1.ImageFolder + "Bullet");
         }
 
         public Bullet(Vector2 position, Vector2 angle)
         {
             
-            this.position = position;
-            this.position.Y += 16;
+            Position = position;
+            Position.Y += 16;
             if(angle != Vector2.Zero) angle.Normalize();
-           // float angles = (float)Cordionats.angletomouse((int)position.X, (int)position.Y);
-            dirx = angle.X;
-            diry = angle.Y;
-            this.oldposition = position;
-            this.velocity.X +=((32) * (float)dirx);
-            this.velocity.Y += this.velocity.Y + ((32) * (float)diry);
-            this.velocity = Colision.TileCollision(this,position, velocity, BulletSizeX, BulletSizeY,true);
-            this.position += this.velocity;
-            time = 0;
-            this.velocity = Vector2.Zero;
-            this.velocity.Y = diry * 1;
-            this.velocity.X = dirx * 1;
-            type = 1;
-            par = new Particle(Program.game.carma , position, velocity, 90, 0,Color.White.ToVector4(), 1024, 500, 0, 0);
-        }
-        public Particle par;
-        public void destory()
-        {
-            if(type == 1)Program.game.dimension[Program.game.currentD].settexture((
-                int)Math.Floor(oldposition.X / ITile.TileMaxSize), 
-                (int)Math.Floor(oldposition.Y / ITile.TileMaxSize), 1);
+           // float angles = (float)Cordionats.AngleMouse((int)position.X, (int)position.Y);
+            _dirX = angle.X;
+            _dirY = angle.Y;
+            Velocity.X +=32 * _dirX;
+            Velocity.Y += Velocity.Y + 32 * _dirY;
+            Velocity = Colision.TileCollision(this,position, Velocity, BulletSizeX, BulletSizeY,true);
+            Position += Velocity;
+            _time = 0;
+            Velocity = Vector2.Zero;
+            Velocity.Y = _dirY * 1;
+            Velocity.X = _dirX * 1;
+            TypeBullet = 1;
+            SoundPulse();
         }
 
-        public bool move()
+        public int TypeBullet { get; }
+
+        public void Destory(BaseDimension dimension)
         {
-            par.update();
-            this.oldposition = position;
-            time += Program.game.seconds;
-           // float velrev = (mass * 9.8f) - (ase);
-            if (this.velocity.X <= 10 && this.velocity.X >= -10)
+            Program.Game.AddExplosion(Position);
+            if (TypeBullet == 1)
             {
-                this.velocity.X +=((ase * Program.game.seconds) * (float)dirx);
+                dimension.SetTexture((
+                                         int)Math.Floor(OldPosition.X / Tile.TileMaxSize), 
+                                     (int)Math.Floor(OldPosition.Y / Tile.TileMaxSize), 1);
+            }
+        }
+
+        public bool Move()
+        {
+            OldPosition = Position;
+            _time += Program.Game.Seconds;
+            // float velrev = (mass * 9.8f) - (ase);
+            if (Velocity.X <= 10 && Velocity.X >= -10)
+            {
+                Velocity.X += ASE * Program.Game.Seconds * _dirX;
                 //this.velocity.X += ((velrev * Program.game.seconds) * (float)dirx );
             }
-          // diry -= (float)((9.8f*mass) * Program.game.seconds);
-            velocity.Y += 0.2f;
-            this.velocity = Colision.TileCollision(this,position, velocity, BulletSizeX, BulletSizeY,true);
-            this.position += this.velocity;
-            Program.game.AddExplosion(position);
-            if (velocity.X == 0)
+            // _dirY -= (float)((9.8f*mass) * Program.game.seconds);
+            Velocity.Y += 0.2f;
+            Velocity = Colision.TileCollision(this, Position, Velocity, BulletSizeX, BulletSizeY, true);
+            Position += Velocity;
+            if (Math.Abs(Velocity.X) <
+            float.Epsilon)//Y равен
             {
-                 countrotate++;
-                dirx *= -1;
+                _countRotate++;
+                _dirX *= -1;
             }
-            if (velocity.Y == 0 && diry != 0)
+            if (Math.Abs(Velocity.Y) <
+            float.Epsilon && Math.Abs(_dirY) >
+            float.Epsilon)
             {
-                countrotate++;
-                diry *= -1;
+                _countRotate++;
+                _dirY *= -1;
             }
-            foreach (Zombie npcs in Program.game.dimension[Program.game.currentD].Zombies)
+            if ( Program.Game.Dimension[Program.Game.CurrentDimension].Zombies.Any(TryDmg) )
             {
-                if (Util.directional((int)Program.game.player.position.X / ITile.TileMaxSize, (int)npcs.position.X / ITile.TileMaxSize, 20) &&
-                  Util.directional((int)Program.game.player.position.Y / ITile.TileMaxSize, (int)npcs.position.Y / ITile.TileMaxSize, 20))
-                {
-                    npcs.walkto(Program.game.player.position.X);
-                }
-            }
-            foreach (Zombie npcs in  Program.game.dimension[Program.game.currentD].Zombies
-               )
-            {
-
-                if (Util.InCube(new Rectangle((int)position.X, (int)position.Y, BulletSizeX, BulletSizeY),
-                    new Rectangle( (int)npcs.position.X, (int)npcs.position.Y, npcs.width, 18) ) )
-                {
-                    npcs.hp -= 1;
-                    if (this.velocity.X >=0)
-                        npcs.velocity.X += mass/2;
-                    else
-                        npcs.velocity.X -= mass/2;
-                    if ((int)npcs.hp <= 0)
-                    {
-                        if (npcs.type == 5) ((Boss)(npcs)).kill();
-                        else npcs.kill();
-                        Program.game.dimension[Program.game.currentD].Zombies.Remove(npcs);
-
-                    } return false;
-                }
-            }
-            if (Util.InCube(new Rectangle((int)position.X, (int)position.Y, BulletSizeX, BulletSizeY),
-                    new Rectangle((int)Program.game.player.position.X, (int)(int)Program.game.player.position.Y
-                        , (int)Program.game.player.width, 18))) //head
-            {
-                if (!Program.game.player.slot[Player.slotmax].IsEmpty)
-                {
-                    Program.game.player.slot[Player.slotmax].damageslot((float)Math.Max(1.0, 10 - Program.game.player.slot[Player.slotmax].getDef()));
-                    if (Program.game.player.slot[Player.slotmax].HP <= 2) Program.game.player.slot[Player.slotmax] = new Item();
-                  
-                }
-                else Program.game.player.typeKill = 0;
                 return false;
             }
-            if (Util.InCube(new Rectangle((int)position.X, (int)position.Y, BulletSizeX, BulletSizeY),
-                    new Rectangle((int)Program.game.player.position.X, (int)(int)Program.game.player.position.Y+18
-                        , (int)Program.game.player.width, 20)))//body
+            if (Tools.InCube(new Rectangle((int)Position.X, (int)Position.Y, BulletSizeX, BulletSizeY),
+                    new Rectangle((int)Program.Game.Player.Position.X, (int)Program.Game.Player.Position.Y
+                        , Program.Game.Player.Width, 18))) //head
             {
-                if (!Program.game.player.slot[Player.slotmax + 1].IsEmpty)
-                {
-                    Program.game.player.slot[Player.slotmax + 1].damageslot(Math.Max(1, 10 - Program.game.player.slot[Player.slotmax + 1].getDef()));
-                    if (Program.game.player.slot[Player.slotmax + 1].HP < 2) Program.game.player.slot[Player.slotmax + 1] = new Item();
-                    if (this.velocity.X >= 0)
-                        Program.game.player.velocity.X += mass / 2;
-                    else
-                        Program.game.player.velocity.X -= mass / 2;
-                }
-                else 
-                {
-                    if (velocity.X <= 0) Program.game.player.bloods[3] = true;
-                    else Program.game.player.bloods[2] = true;
-                }
+                Program.Game.Player.DamageHead();
                 return false;
             }
-            if (Util.InCube(new Rectangle((int)position.X, (int)position.Y, BulletSizeX, BulletSizeY),
-                    new Rectangle((int)Program.game.player.position.X, (int)(int)Program.game.player.position.Y + 18+20
-                        , (int)Program.game.player.width, 24)))//legs
+            if (Tools.InCube(new Rectangle((int)Position.X, (int)Position.Y, BulletSizeX, BulletSizeY),
+                    new Rectangle((int)Program.Game.Player.Position.X, (int)Program.Game.Player.Position.Y + 18
+                        , Program.Game.Player.Width, 20)))//body
             {
-                if (!Program.game.player.slot[Player.slotmax + 2].IsEmpty)
+                if (!Program.Game.Player.Slot[Player.Slotmax + 1].IsEmpty)
                 {
-                    Program.game.player.slot[Player.slotmax + 2].damageslot(Math.Max(1, 10 - Program.game.player.slot[Player.slotmax + 2].getDef()));
-                    if (Program.game.player.slot[Player.slotmax + 2].HP < 2) Program.game.player.slot[Player.slotmax + 2] = new Item();
+                    Program.Game.Player.DamageArmor(1);
+                    Program.Game.Player.AddForce(Velocity, MASS);
                 }
                 else
                 {
-                    if (velocity.X <= 0) Program.game.player.bloods[0] = true;
-                    else Program.game.player.bloods[1] = true;
+                    if (Velocity.X <= 0) Program.Game.Player.Bloods[3] = true;
+                    else Program.Game.Player.Bloods[2] = true;
                 }
                 return false;
             }
-            if (type == 0)
-                return time < maxtime;
-            else return countrotate < 1;
+            if (Tools.InCube(new Rectangle((int)Position.X, (int)Position.Y, BulletSizeX, BulletSizeY),
+                    new Rectangle((int)Program.Game.Player.Position.X, (int)Program.Game.Player.Position.Y + 18 + 20
+                        , Program.Game.Player.Width, 24)))//legs
+            {
+                if (!Program.Game.Player.Slot[Player.Slotmax + 2].IsEmpty)
+                {
+                    Program.Game.Player.DamageArmor(2);
+                }
+                else
+                {
+                    if (Velocity.X <= 0) Program.Game.Player.Bloods[0] = true;
+                    else Program.Game.Player.Bloods[1] = true;
+                }
+                return false;
+            }
+            if (TypeBullet == 0)
+                return _time < MaxTime;
+
+            return _countRotate < 1;
+        }
+
+        bool TryDmg(BaseNpc npcs)
+        {
+            if ( !Tools.InCube(new Rectangle((int) Position.X , (int) Position.Y , BulletSizeX , BulletSizeY) ,
+                               new Rectangle((int) npcs.Position.X , (int) npcs.Position.Y , npcs.Width , 18)) )
+                return false;
+
+            npcs.Hp -= 1;
+            if (Velocity.X >= 0)
+                npcs.Velocity.X += MASS / 2;
+            else
+                npcs.Velocity.X -= MASS / 2;
+
+            if ( (int) npcs.Hp > 0 ) return true;
+
+            if (npcs.Type == 5) ((Boss)npcs).Kill();
+            else npcs.Kill();
+            return true;
+        }
+
+        void SoundPulse()
+        {
+            foreach (Zombie npcs in Program.Game.Dimension[Program.Game.CurrentDimension].Zombies)
+            {
+                if (Tools.Distance((int)Position.X , (int)npcs.Position.X, 320) &&
+                  Tools.Distance((int)Position.Y, (int)npcs.Position.Y, 320))
+                {
+                    npcs.Move(Position.X);
+                }
+            }
         }
     }
 }

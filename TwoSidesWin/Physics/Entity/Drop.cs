@@ -1,45 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+
 using Microsoft.Xna.Framework.Graphics;
+
 using TwoSides.World;
 
 namespace TwoSides.Physics.Entity
 {
     [Serializable]
-    sealed public class Drop : CEntity
+    public sealed class Drop : DynamicEntity
     {
-        float dirx;
+        readonly float _dirX;
 
-        Item slot;
+        readonly Item _slot;
         public Drop() { }
 
-        public Drop(Item slot, int x, int y, float dirx = 0) : base(x,y)
+        public Drop(Item slot, int x, int y, float dirX = 0) : base(x,y)
         {
-            this.slot = slot;
-            this.dirx = dirx; ;
-            this.velocity.Y = -2;
-            this.velocity.X = -dirx * 7;
+            _slot = slot;
+            _dirX = dirX;
+            Velocity.Y = -2;
+            Velocity.X = -dirX * 7;
         }
 
-        public override void update()
+        public override void Update()
         {
-            if (dirx < 0 && velocity.X > 0) velocity.X -= 0.2f;
-            else if (dirx > 0 && velocity.X < 0) velocity.X += 0.2f;
-            else velocity.X = 0;
-            fail();
+            if (_dirX < 0 && Velocity.X > 0) Velocity.X -= 0.2f;
+            else if (_dirX > 0 && Velocity.X < 0) Velocity.X += 0.2f;
+            else Velocity.X = 0;
+            Fail();
         }
-        public Item getslot()
-        {
-            return slot;
-        }
+        public Item GetSlot() => _slot;
 
-
-        public void render(SpriteBatch spriteBatch,int x,int y)
-        {
-            slot.Render(spriteBatch, x, y);
-        }
+        public void Render(SpriteBatch spriteBatch,int x,int y) => _slot.Render(spriteBatch, x, y);
     }
 }

@@ -32,7 +32,7 @@ with.
     <UseKerning>true</UseKerning>
 
     <!--
-    Style controls the style of the font. Valid entries are "Regular", "Bold", "Italic",
+    Style controls the style of the font. ValId entries are "Regular", "Bold", "Italic",
     and "Bold, Italic", and are case sensitive.
     -->
     <Style>Bold</Style>

@@ -1,35 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework.Graphics;
+
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace TwoSides.GUI
 {
-    sealed public class Image : GUIElement
+    public sealed class Image : GuiElement
     {
 
-        Rectangle rect_IMGRECT;
+        Rectangle _rect;
 
         [NonSerialized]
-        Texture2D tex2D_IMG;
+        Texture2D _image;
 
-        public Image(Texture2D L_img, Rectangle L_rect)
+        public Image(Texture2D image, Rectangle rect)
         {
-            this.tex2D_IMG = L_img;
-            this.rect_IMGRECT = L_rect;
-            setPos(new Vector2(rect_IMGRECT.X, rect_IMGRECT.Y));
+            _image = image;
+            _rect = rect;
+            SetPos(new Vector2(_rect.X, _rect.Y));
         }
 
-        public override void  Draw(SpriteBatch L_spriteBatch)
+        public override void  Draw(SpriteBatch spriteBatch)
         {
-            this.rect_IMGRECT.X = (int)getPos().X;
-            this.rect_IMGRECT.Y = (int)getPos().Y;
-            if (this.tex2D_IMG == null) this.tex2D_IMG = Program.game.dialogtex;
-            L_spriteBatch.Begin();
-            L_spriteBatch.Draw(this.tex2D_IMG, this.rect_IMGRECT, Color.White);
-            L_spriteBatch.End();
+            _rect.X = (int)GetPos().X;
+            _rect.Y = (int)GetPos().Y;
+            if (_image == null) _image = Program.Game.Dialogtex;
+            spriteBatch.Begin();
+            spriteBatch.Draw(_image, _rect, Color.White);
+            spriteBatch.End();
         }
+        public bool InHover(MouseState ms) => _rect.Contains(new Point(ms.X, ms.Y));
+        public Color this[int x , int y]
+        {
+            get
+            {
+                Color[] color = new Color[_image.Width * _image.Height];
+                _image.GetData(color);
+                return color[x + y * _image.Width];
+            }
+            set
+            {
+                Color[] color = new Color[_image.Width * _image.Height];
+                color[x + y * _image.Width] = value;
+                _image.SetData(color);
+            }
+        }
+        
     }
 }

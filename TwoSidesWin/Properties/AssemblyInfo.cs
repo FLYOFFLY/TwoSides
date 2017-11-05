@@ -1,12 +1,11 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Two Sides")]
-[assembly: AssemblyProduct("TwoSides")]
+[assembly: AssemblyTitle("Two SIdes")]
+[assembly: AssemblyProduct("TwoSIdes")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("Conveyor Ideas")]
 [assembly: AssemblyCopyright("Copyright Conveyor Ideas©  2017")]
@@ -20,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // On Windows, the following GUID is for the ID of the typelib if this
-// project is exposed to COM. On other platforms, it unique identifies the
+// project is exposed to COM. On other platforms, it unique Identifies the
 // title storage container when deploying this assembly to the device.
 [assembly: Guid("d8650370-c839-429c-9738-c0ef502047b4")]
 

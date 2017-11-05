@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using TwoSides.World;
 using TwoSides.World.Tile;
-using TwoSides.World;
 
 namespace TwoSides.GameContent.Tiles
 {
@@ -13,10 +9,6 @@ namespace TwoSides.GameContent.Tiles
             : base(hpMax, id)
         {
         }
-        public override bool isNeadTool(Item item)
-        {
-            if (item.getTypeItem() == (int)Item.Type.PICKAXE) return true;
-            return false;
-        }
+        public override bool IsNeadTool(Item item) => item.GetTypeItem() == (int)Item.Type.PICKAXE;
     }
 }

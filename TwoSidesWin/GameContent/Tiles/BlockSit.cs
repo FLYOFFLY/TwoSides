@@ -1,46 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.World.Tile;
+﻿using System.Collections.Generic;
+
 using Microsoft.Xna.Framework;
-using TwoSides.World;
+
 using TwoSides.Physics.Entity;
+using TwoSides.World;
 using TwoSides.World.Generation;
+using TwoSides.World.Tile;
 
 namespace TwoSides.GameContent.Tiles
 {
     public class BlockSit : BaseTile
     {
-        public BlockSit(int id,float MaxHP):base(MaxHP,id)
+        public BlockSit(int id,float maxHp):base(maxHp,id)
         {
         }
-        public override Rectangle getBoxRect(int x, int y, ITile title)
-        {
-            if (id == 17) return base.getBoxRect(x,y,title);
-            else return new Rectangle(0,0,6,16);
-        }
-        public override bool issolid()
-        {
-            return true;
-        }
-        public override bool hasShadow()
-        {
-            return false;
-        }
+        public override Rectangle GetBoxRect(int x, int y, Tile title) => title.IdSubTexture == 0 ? base.GetBoxRect(x,y,title) : new Rectangle(0,0,6,16);
 
-        public override List<Item> destory(int x,int y, BaseDimension dimension, CEntity entity)
+        public override bool IsSolid() => true;
+
+        public override bool HasShadow() => false;
+
+        public override List<Item> Destory(int x,int y, BaseDimension dimension, DynamicEntity entity)
         {
-            if (id == 17) dimension.Reset(x, y-1);
+            if (dimension.MapTile[x, y].IdSubTexture == 0) dimension.Reset(x, y-1);
             else dimension.Reset(x, y+1);
-            List<Item> drop = new List<Item>();
-            drop.Add(new Item(1, 27));
+            List<Item> drop = new List<Item> {new Item(1 , 27)};
             return drop;
         }
-        public override bool blockuse(int x,int y,BaseDimension dimension,CEntity entity)
+        public override bool UseBlock(int x,int y,BaseDimension dimension,DynamicEntity entity) => true;
+
+        public override bool BlockAdded(BaseDimension dimension, int x, int y)
         {
-            Program.game.AddExplosion(new Vector2(x * 16, y * 16));
-            return true;
+            if (dimension.MapTile[x, y - 1].Active) return false;
+            dimension.SetTexture(x, y -1, Id,1); return true;
         }
     }
 }

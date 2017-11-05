@@ -1,59 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using TwoSides.GameContent.GenerationResources;
-using TwoSides.World;
-using TwoSides.World.Tile;
-using TwoSides.World.Generation;
 using TwoSides.GUI;
+using TwoSides.World.Generation;
 
 namespace TwoSides.GameContent.Dimensions
 {
     [Serializable]
     public class Hell : BaseDimension
     {
-        protected override void GenerationBiomes(ProgressBar bar)
+        protected override void GenerationBiomes(ProgressBar progressBar)
         {
             for (int i = 0; i < SizeGeneratior.WorldWidth; i++)
             {
-                mapB[i] = ArrayResource.hell;
+                MapBiomes[i] = ArrayResource.Hell;
             }
         }
-        protected override void GenerationTerrain(ProgressBar bar )
+        protected override void GenerationTerrain(ProgressBar progressBar )
         {
-            bar.Reset();
-            bar.setText("Generation Terrain");
+            progressBar.Reset();
+            progressBar.SetText("Generation Terrain");
             for (int i = 0; i < SizeGeneratior.WorldWidth; i++)
             {
-                if (mapHeight[i] > 0)
+                if (MapHeight[i] > 0)
                 {
-                    for (int j = 0; j < mapHeight[i]; j++)
+                    for (int j = 0; j < MapHeight[i]; j++)
                     {
-                        settexture(i, j + (SizeGeneratior.WorldHeight - SizeGeneratior.WorldHeight / 2) + 400, 10);
+                        SetTexture(i, j + (SizeGeneratior.WorldHeight - SizeGeneratior.WorldHeight / 2) + 400, 10);
                     }
                 }
-                else settexture(i, SizeGeneratior.WorldHeight - 5, 10);
-                for (int j = mapHeight[i] + (SizeGeneratior.WorldHeight - SizeGeneratior.WorldHeight / 2) + 400; j < SizeGeneratior.WorldHeight; j++)
+                else SetTexture(i, SizeGeneratior.WorldHeight - 5, 10);
+                for (int j = MapHeight[i] + (SizeGeneratior.WorldHeight - SizeGeneratior.WorldHeight / 2) + 400; j < SizeGeneratior.WorldHeight; j++)
                 {
-                    settexture(i, j, 11);
+                    SetTexture(i, j, 11);
                 }
-                maxy(i);
-                bar.Add(1);
+                UpdateMaxY(i);
+                progressBar.Add(1);
             }
         }
 
-        protected override void GeneratorHeight(ProgressBar bar)
+        protected override void GeneratorHeight(ProgressBar progressBar)
         {
-            int maxSize = 1;
+            const int MAX_SIZE = 1;
             bool blocks = true;
-            for (int i = 0; i < SizeGeneratior.WorldWidth; i+=maxSize)
+            for (int i = 0; i < SizeGeneratior.WorldWidth; i+=MAX_SIZE)
             {
-                for (int x = i; x < i + maxSize;x++ ) {
+                for (int x = i; x < i + MAX_SIZE;x++ ) {
                     if (x >= SizeGeneratior.WorldWidth) break;
-                    mapHeight[x] = blocks ? 1:0;
+                    MapHeight[x] = blocks ? 1:0;
                 } 
-                if (i >= SizeGeneratior.WorldWidth) break;
                 blocks = !blocks;    
             }
         }

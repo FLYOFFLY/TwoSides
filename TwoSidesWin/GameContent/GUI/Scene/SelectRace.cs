@@ -1,55 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.GUI.Scene;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using TwoSides.GUI;
+using TwoSides.GUI.Scene;
+
+using static TwoSides.Race;
 
 namespace TwoSides.GameContent.GUI.Scene
 {
     public class SelectRace : IScene
     {
-        public bool lastSceneRender { get; set; }
-        public bool lastSceneUpdate { get; set; }
-        ControlScene scene { get; set; }
+        public bool LastSceneRender { get; set; }
+        public bool LastSceneUpdate { get; set; }
+        ControlScene Scene { get; set; }
         public void Load(ControlScene scene)
         {
-            this.scene = scene;
-            version = new Label(Program.game.getVersion(), new Vector2(0, Program.game.graphics.PreferredBackBufferHeight - (int)Program.game.Font1.MeasureString(Program.game.getVersion()).Y), Program.game.Font1, Color.Black);
+            Scene = scene;
+            Version = new Label(Program.Game.GetVersion(), new Vector2(0, Program.Game.Resolution.Y - (int)Program.Game.Font1.MeasureString(Program.Game.GetVersion()).Y), Program.Game.Font1, Color.Black);
 
         }
         public void Render(SpriteBatch spriteBatch)
         {
-            for (int i = 0; i < Race.racelist.Count; i++)
-            {
-                Race race = (Race)Race.racelist[i];
+            foreach ( Race race in Racelist ) {
                 // spriteBatch.DrawString(Font1, (i+1)+"-"+race.getName(), new Vector2(120, 120+10*i), Color.White);
-                race.getButton().Draw(spriteBatch);
+                race.GetButton().Draw(spriteBatch);
             }
-            version.Draw(spriteBatch);
+
+            Version.Draw(spriteBatch);
         }
         public void Update(GameTime gameTime)
         {
-            for (int i = 0; i < Race.racelist.Count; i++)
+            for (int i = 0; i < Racelist.Count; i++)
             {
+                // ReSharper disable once ExceptionNotDocumentedOptional
+                Racelist[i].GetButton().Update();
+                // ReSharper disable once ExceptionNotDocumentedOptional
+                // ReSharper disable once ExceptionNotDocumentedOptional
+                if ( !Racelist[i].GetButton().IsClicked() ) continue;
 
-                Race race = (Race)Race.racelist[i];
-                race.getButton().Update();
-                if (race.getButton().IsClicked())
-                {
-                    Program.game.player.setCR(i + 1);
-                    Program.game.player.clearclothes();
-                    scene.changeScene(new CreationPerson());
-                }
+                Program.Game.Player.SetColorRace((RaceType)(i + 1));
+                Program.Game.Player.ClearClothes();
+                Scene.ChangeScene(new CreationPerson());
             }
         }
-        public void tryExit()
-        {
-            scene.returnScene();
-        }
+        public void TryExit() => Scene.ReturnScene();
 
-        Label version { get; set; }
+        Label Version { get; set; }
     }
 }

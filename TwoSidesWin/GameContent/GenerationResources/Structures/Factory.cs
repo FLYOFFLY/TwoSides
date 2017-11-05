@@ -1,82 +1,73 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using Microsoft.Xna.Framework;
-using TwoSides.Physics.Entity.NPC;
-using TwoSides.GameContent.GenerationResources;
+
 using TwoSides.GameContent.Entity.NPC;
-using TwoSides.World.Tile;
 using TwoSides.Utils;
 using TwoSides.World.Generation;
-namespace TwoSides.World.Structures
+using TwoSides.World.Generation.Structures;
+using TwoSides.World.Tile;
+
+namespace TwoSides.GameContent.GenerationResources.Structures
 {
-    sealed public class Factory : BaseStruct
+    public sealed class Factory : BaseStruct
     {
         [NonSerialized]
-        const int sizex = 25;
+        const int SIZEX = 25;
 
         [NonSerialized]
-        const int sizey = 25;
+        const int SIZEY = 25;
 
-        public Factory(int x, int y) : base(x,y + sizey + 5)
+        public Factory(int x, int y) : base(x,y + SIZEY + 5)
         {
         }
 
-        public override void spawn(BaseDimension dimension)
+        public override void Spawn(BaseDimension dimension)
         {
-            for (int i = 0; i < sizex; i++)
+            for (int i = 0; i < SIZEX; i++)
             {
-                for (int j = 0; j < sizey; j++)
+                if (X + i + 1 >= SizeGeneratior.WorldWidth) continue;
+                for (int j = 0; j < SIZEY; j++)
                 {
-                    if (x + i + 1 < SizeGeneratior.WorldWidth)
-                    {
-                        if (j != 0 || (Math.Abs((y - j) - dimension.mapHeight[x + i + 1]) < 1))
-                            dimension.Reset(x + i, y - j);
-                    }
+
+                    if (j != 0 || Math.Abs(Y - j - dimension.MapHeight[X + i + 1]) < 1)
+                        dimension.Reset(X + i, Y - j);
                 }
             }
             for (int i = -5; i < 5; i++)
             {
                 for (int j = -5; j < 5; j++)
                 {
-                    if (Util.inradious(x + 5 + i, y + 5 + j, x + 5, y + 5, 5 - 1, true))
+                    if (Tools.InRadious(X + 5 + i, Y + 5 + j, X + 5, Y + 5, 5 - 1, true))
                     {
-                        dimension.settexture(x + 5 + i, y - 5 + j, 12);
+                        dimension.SetTexture(X + 5 + i, Y - 5 + j, 12);
                     }
                 }
             }
-            dimension.map[x + sizex / 2, y - sizey / 2].posterid = 0;
-            for (int i = 0; i < sizex - 1; i++)
+            dimension.MapTile[X + SIZEX / 2, Y - SIZEY / 2].IdPoster = 0;
+            for (int i = 0; i < SIZEX - 1; i++)
             {
-                for (int j = 1; j < sizey - 1; j++)
+                for (int j = 1; j < SIZEY - 1; j++)
                 {
-                    dimension.map[x + i, y - j].wallid = 9;
+                    dimension.MapTile[X + i, Y - j].IdWall = 9;
                 }
             }
-            for (int i = 0; i < sizex; i++)
+            for (int i = 0; i < SIZEX; i++)
             {
-                dimension.settexture(x + i, y, 9);
+                dimension.SetTexture(X + i, Y, 9);
+               dimension.SetTexture(X + i, Y - (SIZEY - 1), 9);
             }
-            for (int i = 0; i < sizex; i++)
+            for (int j = 4; j < SIZEY; j++)
             {
-               //dimension.settexture(x + i, y - (sizey - 1), 9);
+                dimension.SetTexture(X, Y - j, 9);
+                dimension.SetTexture(X + (SIZEX - 1), Y - j, 9);
             }
-            for (int j = 4; j < sizey; j++)
+            if (!Isplaying)
             {
-                dimension.settexture(x, y - j, 9);
+                dimension.Zombies.Add(new Boss(new Vector2((X + 2) * Tile.TileMaxSize, (Y - 10) * Tile.TileMaxSize)));
             }
-            for (int j = 4; j < sizey; j++)
-            {
-                dimension.settexture(x + (sizex - 1), y - j, 9);
-            }
-            if (!isplaying)
-            {
-                dimension.Zombies.Add(new Boss(new Vector2((x + 2) * ITile.TileMaxSize, (y - 10) * ITile.TileMaxSize)));
-            }
-            dimension.settexture(x + 1, y - (sizey - 2), 6);
-            dimension.settexture(x + (sizex - 2), y - (sizey - 2), 6);
+            dimension.SetTexture(X + 1, Y - (SIZEY - 2), 6);
+            dimension.SetTexture(X + (SIZEX - 2), Y - (SIZEY - 2), 6);
         }
     }
 }

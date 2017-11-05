@@ -1,76 +1,64 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using TwoSides.GameContent.GenerationResources;
 using System.IO;
-using TwoSides.Utils;
-using Lidgren.Network;
 
-namespace TwoSides.World.Generation
+using Microsoft.Xna.Framework;
+
+using TwoSIdes.GameContent.GenerationResources;
+using TwoSIdes.Utils;
+
+namespace TwoSIdes.World.Generation
 {
     [Serializable]
-    sealed public class Biome
+    public sealed class Biome
     {
-        public Color color{ get;  private set; }
+        public Color Color{ get;  private set; }
 
         public int Temperature { get; private set; }
-        public int id { get; private set; }
+        public int Id { get; private set; }
 
-        public int maxHeight { get; set; }
-        public int minHeight { get; set; }
+        public int MaxHeight { get; set; }
+        public int MinHeight { get; set; }
 
-        public int stoneBlock { get; set; }
+        public int StoneBlock { get; set; }
         public int TopBlock { get; set; }
 
         public Biome()
         {
             // TODO: Complete member initialization
         }
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj) => Equals(obj as Biome);
+
+        public bool Equals(Biome obj) => Id == obj?.Id;
+
+        public override int GetHashCode() => Id.GetHashCode();
+
+        public Biome(int temperature,int id,int minHeight, int maxHeight,int topBlock,int stoneBlock,Color color)
         {
-            return Equals(obj as Biome);
+            Temperature = temperature;
+            Id = id;
+            MaxHeight = maxHeight;
+            MinHeight = minHeight;
+            TopBlock = topBlock;
+            StoneBlock = stoneBlock;
+            Color = color;
         }
-        public bool Equals(Biome obj)
+        public void Place(int x, BaseDimension dimension, int wIdth, int[] mapHeight)
         {
-            if (obj == null)
-                return false;
-            return id == obj.id;
-        }
-        public override int GetHashCode()
-        {
-            return id.GetHashCode();
-        }
-        public Biome(int t,int id,int minHeight, int MaxHeight,int TopBlock,int stoneBlock,Color color)
-        {
-            Temperature = t;
-            this.id = id;
-            this.maxHeight = MaxHeight;
-            this.minHeight = minHeight;
-            this.TopBlock = TopBlock;
-            this.stoneBlock = stoneBlock;
-            this.color = color;
-        }
-        public void Place(int x, BaseDimension dimension, int width, int[] mapHeight)
-        {
-            for (int i = x; i < width+x; i++)
+            for (int i = x; i < wIdth+x; i++)
             {
                 for (int j = mapHeight[i]; j < SizeGeneratior.WorldHeight; j++)
                 {
-                    if (!dimension.map[i, j].active)
-                    {
-                        if (j < SizeGeneratior.rockLayer) dimension.settexture(i, j, this.TopBlock);
-                        else dimension.settexture(i, j, this.stoneBlock);
-                    }
+                    if ( dimension.MapTile[i , j].Active ) continue;
+
+                    dimension.SetTexture(i , j , j < SizeGeneratior.RockLayer ? TopBlock : StoneBlock);
                 }
-                dimension.mapB[i] = this;
+                dimension.MapBiomes[i] = this;
             }
         }
 
 
 
-        public void read(BinaryReader reader)
+        public void Read(BinaryReader reader)
         {
             /*
                 public bool active = false;
@@ -78,49 +66,28 @@ namespace TwoSides.World.Generation
                 public int light = 0;
                 public int blockheight = 1;
                 public float HP { get; set; }
-                public short idtexture;
-                public short wallid;
-                public short posterid; 
+                public short Idtexture;
+                public short IdWall;
+                public short IdPoster; 
              */
-            color = Util.readColor(reader);
+            Color = Tools.ReadColor(reader);
             Temperature = reader.ReadInt32();
-            id = reader.ReadInt32();
-            minHeight = reader.ReadInt32();
-            maxHeight = reader.ReadInt32();
+            Id = reader.ReadInt32();
+            MinHeight = reader.ReadInt32();
+            MaxHeight = reader.ReadInt32();
             TopBlock = reader.ReadInt32();
-            stoneBlock = reader.ReadInt32();
+            StoneBlock = reader.ReadInt32();
         }
 
-        public void save(BinaryWriter writer)
+        public void Save(BinaryWriter writer)
         {
-            Util.SaveColor(color, writer);
+            Tools.SaveColor(Color, writer);
             writer.Write(Temperature);
-            writer.Write(id);
-            writer.Write(minHeight);
-            writer.Write(maxHeight);
+            writer.Write(Id);
+            writer.Write(MinHeight);
+            writer.Write(MaxHeight);
             writer.Write(TopBlock);
-            writer.Write(stoneBlock);
-        }
-
-        public void send(NetOutgoingMessage sendMsg)
-        {
-
-            sendMsg.Write(Temperature);
-            sendMsg.Write(id);
-            sendMsg.Write(minHeight);
-            sendMsg.Write(maxHeight);
-            sendMsg.Write(TopBlock);
-            sendMsg.Write(stoneBlock);
-        }
-
-        public void read(NetIncomingMessage msg)
-        {
-            Temperature = msg.ReadInt32();
-            id = msg.ReadInt32();
-            minHeight = msg.ReadInt32();
-            maxHeight = msg.ReadInt32();
-            TopBlock = msg.ReadInt32();
-            stoneBlock = msg.ReadInt32();
+            writer.Write(StoneBlock);
         }
     }
 }

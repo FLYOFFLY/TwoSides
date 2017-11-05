@@ -1,103 +1,95 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.Physics.Entity.NPC;
-using Microsoft.Xna.Framework.Graphics;
-using TwoSides.World.Tile;
+using System.Globalization;
+
 using Microsoft.Xna.Framework;
-using TwoSides.Physics.Entity;
+using Microsoft.Xna.Framework.Graphics;
+
+using TwoSides.Physics.Entity.NPC;
 using TwoSides.World;
+using TwoSides.World.Tile;
 
 namespace TwoSides.GameContent.Entity.NPC
 {
     public class Wolf : BaseNpc
     {
 
-        float frame = 0;
+        float _frame;
        // int frame;
-        public Wolf(Texture2D npcSkin) : base(new Texture2D[]{npcSkin})
+        public Wolf(Texture2D npcSkin) : base(new[]{npcSkin})
         {
-            width = 42;
-            height = 20;
+            Width = 42;
+            Height = 20;
         }
 
         public Wolf(int blockx, Texture2D npcSkin)
-            : base(blockx, new Texture2D[] { npcSkin })
+            : base(blockx, new[] { npcSkin })
         {
-            to = position.X;
-            to = Program.game.player.position.X * ITile.TileMaxSize;
-            width = 42;
-            height = 20;
+            WayPoint = Program.Game.Player.Position.X * Tile.TileMaxSize;
+            Width = 42;
+            Height = 20;
         }
-        public override void update()
+        public override void Update()
         {
-            base.update();
-            if ((int)frame < 4) frame += 1 / 24.0f;
-            else frame = 0;
+            base.Update();
+            if ((int)_frame < 4) _frame += 1 / 24.0f;
+            else _frame = 0;
         }
-        public override void DrawNPC(SpriteEffects effect, SpriteBatch spriteBatch, SpriteFont Font1, Texture2D shadow)
+        public override void RenderNpc( SpriteBatch spriteBatch, SpriteFont font, Texture2D shadow)
         {
 
-            effect = SpriteEffects.None;
-            if (direction < 0)
+            SpriteEffects effect = SpriteEffects.None;
+            if (Direction < 0)
                 effect = SpriteEffects.FlipHorizontally;
-            spriteBatch.DrawString(Font1, ((int)(hp)).ToString(), new Vector2((int)(position.X + (width - npcSkin[0].Width)), (int)(position.Y) - 30), Color.Black);
+            spriteBatch.DrawString(font, ((int)Hp).ToString(CultureInfo.CurrentCulture), new Vector2((int)(Position.X + (Width - NpcSkin[0].Width)), (int)Position.Y - 30), Color.Black);
 
-            Rectangle src = new Rectangle(0, 0, npcSkin[0].Width, npcSkin[0].Height / 9);
-            src.Y += (int)frame * src.Height;
-            Rectangle rect = new Rectangle((int)(position.X + (width - npcSkin[0].Width)),
-                    (int)(position.Y), src.Width, src.Height);
-            for (int i = 0; i < npcSkin.Length; i++)
+            Rectangle src = new Rectangle(0, 0, NpcSkin[0].Width, NpcSkin[0].Height / 9);
+            src.Y += (int)_frame * src.Height;
+            Rect = new Rectangle((int)(Position.X + (Width - NpcSkin[0].Width)),
+                    (int)Position.Y, src.Width, src.Height);
+            foreach ( Texture2D skin in NpcSkin )
             {
-                spriteBatch.Draw(npcSkin[i], rect, src, Color.White,
-                        0, Vector2.Zero, effect, 0);
+                spriteBatch.Draw(skin, Rect, src, Color.White,
+                                 0, Vector2.Zero, effect, 0);
             }
             DrawShadow(shadow, spriteBatch);
         }
-        protected void attackplayer()
+        protected void AttackPlayer()
         {
-            if (Program.game.player.rect.Intersects(rect))
-            {
-                if (Program.game.dimension[Program.game.currentD].rand.Next(0, 100) <= 1)
-                {
-                    if (!Program.game.player.slot[Player.slotmax].IsEmpty)
-                    {
-                        Program.game.player.slot[Player.slotmax].damageslot(Math.Max(1, 5 - Program.game.player.slot[Player.slotmax].getDef()) * Program.game.seconds);
-                        if (Program.game.player.slot[Player.slotmax].HP <= 2) Program.game.player.slot[Player.slotmax] = new Item();
-                    }
-                    if (Program.game.player.slot[Player.slotmax].IsEmpty)
-                    {
+            if ( !Program.Game.Player.Rect.Intersects(Rect) ) return;
 
-                        Program.game.player.typeKill = 0;
-                    }
-                }
-                else
+            if (Program.Game.Dimension[Program.Game.CurrentDimension].Rand.Next(0, 100) <= 1)
+            {
+                if (!Program.Game.Player.Slot[Player.Slotmax].IsEmpty)
                 {
-                    int b = Program.game.dimension[Program.game.currentD].rand.Next(0, 2);
-                    if (!Program.game.player.slot[Player.slotmax + 1].IsEmpty)
-                    {
-                        Program.game.player.slot[Player.slotmax + 1].damageslot(Math.Max(1, 5 - Program.game.player.slot[Player.slotmax + 1].getDef()) * Program.game.seconds);
-                        if (Program.game.player.slot[Player.slotmax + 1].HP < 2) Program.game.player.slot[Player.slotmax + 1] = new Item();
-                    }
-                    if (!Program.game.player.slot[Player.slotmax + 2].IsEmpty)
-                    {
-                        Program.game.player.slot[Player.slotmax + 2].damageslot(Math.Max(1, 5 - Program.game.player.slot[Player.slotmax + 2].getDef()) * Program.game.seconds);
-                        if (Program.game.player.slot[Player.slotmax + 2].HP < 2) Program.game.player.slot[Player.slotmax + 2] = new Item();
-                    }
-                    if (b == 0 && Program.game.player.slot[Player.slotmax + 1].IsEmpty)
-                    {
-                        if (Program.game.player.position.X > position.X) b = 3;
-                        else b = 2;
-                        Program.game.player.bloods[b] = true;
-                    }
-                    else if (b == 1 && Program.game.player.slot[Player.slotmax + 2].IsEmpty)
-                    {
-                        if (Program.game.player.position.X > position.X) b = 0;
-                        else b = 1;
-                        Program.game.player.bloods[b] = true;
-                    }
+                    Program.Game.Player.Slot[Player.Slotmax].DamageSlot(Math.Max(1, 5 - Program.Game.Player.Slot[Player.Slotmax].GetDef()) * Program.Game.Seconds);
+                    if (Program.Game.Player.Slot[Player.Slotmax].Hp <= 2) Program.Game.Player.Slot[Player.Slotmax] = new Item();
                 }
+                if (Program.Game.Player.Slot[Player.Slotmax].IsEmpty)
+                {
+
+                    Program.Game.Player.TypeKill = 0;
+                }
+            }
+            else
+            {
+                int b = Program.Game.Dimension[Program.Game.CurrentDimension].Rand.Next(0, 2);
+                if (!Program.Game.Player.Slot[Player.Slotmax + 1].IsEmpty)
+                {
+                    Program.Game.Player.Slot[Player.Slotmax + 1].DamageSlot(Math.Max(1, 5 - Program.Game.Player.Slot[Player.Slotmax + 1].GetDef()) * Program.Game.Seconds);
+                    if (Program.Game.Player.Slot[Player.Slotmax + 1].Hp < 2) Program.Game.Player.Slot[Player.Slotmax + 1] = new Item();
+                }
+                if (!Program.Game.Player.Slot[Player.Slotmax + 2].IsEmpty)
+                {
+                    Program.Game.Player.Slot[Player.Slotmax + 2].DamageSlot(Math.Max(1, 5 - Program.Game.Player.Slot[Player.Slotmax + 2].GetDef()) * Program.Game.Seconds);
+                    if (Program.Game.Player.Slot[Player.Slotmax + 2].Hp < 2) Program.Game.Player.Slot[Player.Slotmax + 2] = new Item();
+                }
+                if ( b != 0 && b != 1 || !Program.Game.Player.Slot[Player.Slotmax + 1 + b].IsEmpty ) return;
+
+                if (b == 0)
+                    b = Program.Game.Player.Position.X > Position.X ? 3 : 2;
+                else
+                    b = Program.Game.Player.Position.X > Position.X ? 0 : 1;
+                Program.Game.Player.Bloods[b] = true;
             }
         }
     }

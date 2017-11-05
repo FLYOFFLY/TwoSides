@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TwoSides.Physics.Entity;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+
 using TwoSides.GameContent.GenerationResources;
+using TwoSides.Physics.Entity;
 
 namespace TwoSides.Physics
 {
-    public class Cloud : CEntity
+    public class Cloud : DynamicEntity
     {
-        public Cloud(Vector2 pos) : base(pos) {
-            velocity.X = -3;
-        }
-        public override void update()
+        public Cloud(Vector2 pos) : base(pos) => Velocity.X = -3;
+
+        public override void Update()
         {
-            position.X += velocity.X;
-            if (position.X <= 0) position.X =SizeGeneratior.WorldWidth-5;
-            base.update();
+            Position.X += Velocity.X;
+            if (Position.X <= 0) Position.X =SizeGeneratior.WorldWidth-5;
+            base.Update();
         }
     }
 }

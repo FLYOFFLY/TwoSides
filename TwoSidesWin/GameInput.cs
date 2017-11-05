@@ -1,39 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+
 using Microsoft.Xna.Framework.Input;
 
 namespace TwoSides
 {
-    public class GameInput
+    public static class GameInput
     {
         public static int MoveLeft, MoveRight, Jump, ActiveIventory, Drop;
-        static bool[] mIsDown = new bool[2];
-        static bool[] moldIsDown = new bool[2];
+        static readonly bool[] MouseIsDown = new bool[2];
+        static bool[] _mouseOldIsDown = new bool[2];
         public static List<Bind> BindKey = new List<Bind>();
-        public static void updateMouse(MouseState mstate)
+        public static void UpdateMouse(MouseState mstate)
         {
-            moldIsDown = mIsDown;
-            mIsDown[0]  = mstate.LeftButton == ButtonState.Pressed;
-            mIsDown[1] = mstate.RightButton == ButtonState.Pressed;
+            _mouseOldIsDown = MouseIsDown;
+            MouseIsDown[0]  = mstate.LeftButton == ButtonState.Pressed;
+            MouseIsDown[1] = mstate.RightButton == ButtonState.Pressed;
         }
         public enum MouseButton
         {
-            LeftButton = 0,
-            RightButton = 1,
-        };
-        public static bool MouseButtonIsPressed(int mouse)
-        {
-            return mIsDown[mouse] && moldIsDown[mouse];
+            LEFT_BUTTON = 0,
+            RIGHT_BUTTON = 1
         }
-        public static bool MouseButtonIsDown(int mouse)
-        {
-            return mIsDown[mouse] && !moldIsDown[mouse];
-        }
-        public static bool MouseButtonIsReleased(int mouse)
-        {
-            return !mIsDown[mouse] && moldIsDown[mouse];
-        }
+
+        public static bool MouseButtonIsPressed(int mouse) => MouseIsDown[mouse] && _mouseOldIsDown[mouse];
+
+        public static bool MouseButtonIsDown(int mouse) => MouseIsDown[mouse] && !_mouseOldIsDown[mouse];
+
+        public static bool MouseButtonIsReleased(int mouse) => !MouseIsDown[mouse] && _mouseOldIsDown[mouse];
     }
 }

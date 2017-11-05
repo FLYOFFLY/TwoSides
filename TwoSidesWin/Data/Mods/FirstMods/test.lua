@@ -10,7 +10,7 @@ function myName(this)
     player:activespecial(0)
 end
 
-function useItem(id)
+function useItem(Id)
     player:AddLog("Using User Item")
     return true
 end

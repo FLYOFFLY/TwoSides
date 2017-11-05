@@ -1,87 +1,86 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
+
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
 using TwoSides.GUI;
 using TwoSides.GUI.Scene;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+
+using Console = System.Console;
 
 namespace TwoSides.GameContent.GUI.Scene
 {
     public class GraphicsMenu : IScene
     {
-        public bool lastSceneRender { get; set; }
-        public bool lastSceneUpdate { get; set; }
-        ControlScene scene;
-        Label lab;
-        RadioButton rb;
+        public bool LastSceneRender { get; set; }
+        public bool LastSceneUpdate { get; set; }
+        ControlScene _scene;
+        Label _labelFullScreen;
+        RadioButton _activeFullScreen;
 
-        DisplayModeCollection colection;
-        List<Button> displayMode = new List<Button>();
-        List<DisplayMode> disp = new List<DisplayMode>();
+        DisplayModeCollection _colection;
+        readonly List<Button> _displayMode;
+        List<DisplayMode> _disp;
+        public GraphicsMenu()
+        {
+            _displayMode = new List<Button>();
+            _disp = new List<DisplayMode>();
+        }
+
         public void Load(ControlScene scene)
         {
+           _labelFullScreen = new Label("Full screen",new Vector2(Program.Game.Resolution.X/ 2.0f, Program.Game.Resolution.Y / 2.0f),
+               Program.Game.Font1);
 
-           lab = new Label("Full screen",new Vector2(Program.game.graphics.PreferredBackBufferWidth/2,Program.game.graphics.PreferredBackBufferHeight/2),Program.game.Font1);
-           
-            rb = new RadioButton(Program.game.graphics.IsFullScreen,Program.game.galka,
-                Program.game.ramka,Program.game.Font1,
-                new Rectangle(Program.game.graphics.PreferredBackBufferWidth/2+(int)Program.game.Font1.MeasureString("Full screen").X+16,Program.game.graphics.PreferredBackBufferHeight/2-16,32,32));
-            this.scene = scene;
-            colection = Program.game.GraphicsDevice.Adapter.SupportedDisplayModes;
-            disp = colection.ToList<DisplayMode>();
-            System.Console.WriteLine(colection.Count());
-            displayMode.Clear();
-            while (disp[0].Width != 800 || disp[0].Height != 600)
+            _activeFullScreen = new RadioButton(Program.Game.IsFullScreen,Program.Game.Galka,Program.Game.Ramka,Program.Game.Font1,
+                    new Rectangle(Program.Game.Resolution.X/2+(int)Program.Game.Font1.MeasureString("Full screen").X+16,
+                                    Program.Game.Resolution.Y/2-16,32,32));
+            _scene = scene;
+            _colection = Program.Game.GraphicsDevice.Adapter.SupportedDisplayModes;
+            _disp = _colection.ToList();
+            _displayMode.Clear();
+            while (_disp[0].Width != 800 || _disp[0].Height != 600)
             {
-                disp.RemoveAt(0);
+                _disp.RemoveAt(0);
             }
-            System.Console.WriteLine(disp.Count());
-            for (int i = 0; i < disp.Count(); i++)
+            for (int i = 0; i < _disp.Count; i++)
             {
-                string a = disp[i].Width.ToString() + "x" + disp[i].Height;
-                Button but = new Button(Program.game.button, Program.game.Font1, new Rectangle(200, Program.game.graphics.PreferredBackBufferHeight / 2 + 20 * i, 200, 20), a);
-                displayMode.Add(but);
+                string a = _disp[i].Width.ToString(CultureInfo.CurrentCulture) + "x" + _disp[i].Height;
+                Button but = new Button(Program.Game.Button, Program.Game.Font1, new Rectangle(200, Program.Game.Resolution.Y / 2 + 20 * i, 200, 20), a);
+                _displayMode.Add(but);
             }
-            
         }
         public void Render(SpriteBatch spriteBatch)
         {
-            lab.Draw(spriteBatch);
-            rb.Draw(spriteBatch);
-            for (int i = 0; i < displayMode.Count(); i++)
-            {
-                displayMode[i].Draw(spriteBatch);   
-            }
-        }
-        void SettingMenu_e_onClicked()
-        {
+            _labelFullScreen.Draw(spriteBatch);
+            _activeFullScreen.Draw(spriteBatch);
+            foreach ( Button button in _displayMode )
+                button.Draw(spriteBatch);
         }
         public void Update(GameTime gameTime)
         {
-            lab.Update();
-            rb.Update();
-            if(Program.game.graphics.IsFullScreen != rb.Status)
-            Program.game.graphics.ToggleFullScreen();
+            _labelFullScreen.Update();
+            _activeFullScreen.Update();
+            if ( Program.Game.IsFullScreen != _activeFullScreen.Status )
+                Program.Game.IsFullScreen = !Program.Game.IsFullScreen;
 
-            for (int i = 0; i < displayMode.Count(); i++)
+            for (int i = 0; i < _displayMode.Count; i++)
             {
-                displayMode[i].Update();
-                if (displayMode[i].IsClicked())
-                {
-                    System.Console.WriteLine(displayMode[i].Text);
-                    System.Console.WriteLine(disp[i].ToString());
-                    Program.game.changeDisplayMode(disp[i]);
-                    Load(scene);
-                    break;
-                }
+                _displayMode[i].Update();
+                if ( !_displayMode[i].IsClicked() ) continue;
+
+                Console.WriteLine(_displayMode[i].Text);
+                Console.WriteLine(_disp[i].ToString());
+                Program.Game.DisplayMode =_disp[i];
+                Load(_scene);
+                break;
             }
         }
-        public void tryExit()
+        public void TryExit()
         {
-            scene.returnScene();
+            _scene.ReturnScene();
         }
-
     }
 }

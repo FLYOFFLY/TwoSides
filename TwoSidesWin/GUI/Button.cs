@@ -1,113 +1,107 @@
 ﻿using System;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
+using TwoSides.Utils;
+
 namespace TwoSides.GUI
 {
-    public class Button : GUIElement
+    public class Button : GuiElement
     {
         //Переменные
-        bool b_IsClicked = false;
-        string str_Text;
+        bool _isClicked;
+        string _text;
 
         //Объекты
-        protected SpriteFont font_Font;
-        protected Vector2 v2D_TextLocation;
+        protected SpriteFont Font;
+        protected Vector2 TextLocation;
 
         //Объекты NS
         [NonSerialized]
-        protected MouseState ms_NewMouse;
+        protected MouseState MouseStateNew;
         [NonSerialized]
-        MouseState ms_OldMouse;
+        MouseState _mouseStateOld;
         [NonSerialized]
-        protected Rectangle rect_Location;
+        protected Rectangle Area;
 
         //Делегаты
-        public delegate void onClicked(Object sender, EventArgs e);
 
         //События
-        public event onClicked e_onClicked;
+        public event EventHandler<EventArgs> OnClicked;
 
         //Текстуры NS
         [NonSerialized]
-        protected Texture2D tex2D_Image;
-
-        public Button(Texture2D L_texture, SpriteFont L_font, Rectangle L_rect, string L_text)
+        protected Texture2D Image;
+        public Button(Texture2D image, SpriteFont font, Rectangle area, string text)
         {
-            this.tex2D_Image = L_texture;
-            this.font_Font = L_font;
-            this.rect_Location = L_rect;
-            setPos(new Vector2(this.rect_Location.X, (int)this.rect_Location.Y));
-            this.Text = L_text;
+            Image = image;
+            Font = font;
+            Area = area;
+            SetPos(new Vector2(Area.X, Area.Y));
+            Text = Localisation.GetName(text);
         }
 
-        public bool IsClicked()
-        {
-            return b_IsClicked;
-        }
+        public bool IsClicked() => _isClicked;
 
         public string Text
         {
-            get { return this.str_Text; }
+            get => _text;
             set
             {
-                this.str_Text = value;
-                Vector2 size = font_Font.MeasureString(str_Text);
-                this.v2D_TextLocation = new Vector2();
-                this.v2D_TextLocation.Y = getPos().Y + ((rect_Location.Height / 2) - (size.Y / 2));
-                this.v2D_TextLocation.X = getPos().X + ((rect_Location.Width / 2) - (size.X / 2));
+                _text = Localisation.GetName(value);
+                Vector2 size = Font.MeasureString(_text);
+                TextLocation = new Vector2(GetPos().X + (Area.Width / 2.0f - size.X / 2.0f) ,
+                                           GetPos().Y + (Area.Height / 2.0f - size.Y / 2.0f));
             }
         }
 
-        public void SetRect(Rectangle L_rect){
-            this.rect_Location = L_rect;
-            setPos(new Vector2(this.rect_Location.X, this.rect_Location.Y));
-            this.Text = str_Text;
+        public void SetRect(Rectangle area){
+            Area = area;
+            SetPos(new Vector2(Area.X, Area.Y));
+            Text = _text;
         }
 
 
         public override void Update()
         {
-            this.rect_Location.X = (int)getPos().X;
-            this.rect_Location.Y = (int)getPos().Y;
-            this.ms_NewMouse = Mouse.GetState();
-            if (this.b_IsClicked = true && this.ms_OldMouse.LeftButton == ButtonState.Released)
+            Area.X = (int)GetPos().X;
+            Area.Y = (int)GetPos().Y;
+            MouseStateNew = Mouse.GetState();
+            if (_isClicked && _mouseStateOld.LeftButton == ButtonState.Released)
+                _isClicked = false;
+            if ( MouseStateNew.LeftButton == ButtonState.Released && _mouseStateOld.LeftButton == ButtonState.Pressed &&
+                 Area.Contains(new Point(MouseStateNew.X , MouseStateNew.Y)) )
             {
-                this.b_IsClicked = false;
-            }
-            if (this.ms_NewMouse.LeftButton == ButtonState.Released && this.ms_OldMouse.LeftButton == ButtonState.Pressed)
-            {
-                if (this.rect_Location.Contains(new Point(this.ms_NewMouse.X, this.ms_NewMouse.Y)))
-                {
-                    this.b_IsClicked = true;
-                    if (this.e_onClicked != null) this.e_onClicked(this,null);
-                }
+                _isClicked = true;
+                OnClicked?.Invoke(this , null);
             }
 
-            this.ms_OldMouse = this.ms_NewMouse;
+            _mouseStateOld = MouseStateNew;
         }
 
-        public override void Draw(SpriteBatch L_spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
-            if (this.tex2D_Image == null) this.tex2D_Image = Program.game.button;
-            if (this.font_Font == null) this.font_Font = Program.game.Font1;
-            L_spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            if (Image == null) Image = Program.Game.Button;
+            if (Font == null) Font = Program.Game.Font1;
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             Rectangle button = 
-                    new Rectangle(0,0,tex2D_Image.Width,tex2D_Image.Height/2);
-            if (this.rect_Location.Contains(new Point(this.ms_NewMouse.X, this.ms_NewMouse.Y)))
+                    new Rectangle(0,0,Image.Width,Image.Height/2);
+            if (Area.Contains(new Point(MouseStateNew.X, MouseStateNew.Y)))
             {
                 button.Y += button.Height;
             }
 
-            L_spriteBatch.Draw(this.tex2D_Image,
-                this.rect_Location, button, Color.White);
-            L_spriteBatch.DrawString(this.font_Font,
-                this.str_Text,
-                this.v2D_TextLocation,
+            spriteBatch.Draw(Image,
+                Area, button, Color.White);
+            spriteBatch.DrawString(Font,
+                _text,
+                TextLocation,
                 Color.Black);
 
 
-            L_spriteBatch.End();
+            spriteBatch.End();
         }
 
 
