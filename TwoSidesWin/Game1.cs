@@ -881,7 +881,7 @@ namespace TwoSides
             Vector2 sizeHunger = new Vector2(EatHunger.Width * (Player.Hunger / 100.0f), EatHunger.Height);
             _spriteBatch.Draw(EatHunger, new Vector2(_graphics.PreferredBackBufferWidth - wcarma-sizeHunger.X, _graphics.PreferredBackBufferHeight - SizeCarmaHeight),new Rectangle(EatHunger.Width-(int)sizeHunger.X,0,(int)sizeHunger.X,(int)sizeHunger.Y), Color.White);
 
-            foreach (Civilian npc in Program.Game.Dimension[Program.Game.CurrentDimension].Civil)
+            foreach (Civilian npc in Dimension[CurrentDimension].Civil)
                 npc.RenderDialog(_spriteBatch);
 
             // string temperature = "Player Temperature:" + player.Temperature + "*c";
@@ -921,7 +921,7 @@ namespace TwoSides
                 _spriteBatch.Draw(Inv, new Rectangle(centerSlot+xslot,yslot , 32, 32), cl);
                 if ( Player.Slot[i].IsEmpty ) continue;
 
-                Player.Slot[i].Render(_spriteBatch,centerSlot+xslot + 16/2, 16/2 + yslot);
+                Player.Slot[i]. Render(_spriteBatch,centerSlot+xslot + 16/2, 16/2 + yslot);
                 _spriteBatch.DrawString(Font3, Player.Slot[i].Ammount.ToString(CultureInfo.CurrentCulture), new Vector2(centerSlot+(32 * (i % 9 + 1) - 5 - Font3.MeasureString(Player.Slot[i].Ammount.ToString(CultureInfo.CurrentCulture)).X), 32 - Font3.MeasureString(Player.Slot[i].Ammount.ToString(CultureInfo.CurrentCulture)).Y + yslot), Color.Black);
 
                 if (new Rectangle(centerSlot+xslot, yslot, 32, 32).Contains(new Point(MouseState.X, MouseState.Y)))
@@ -982,7 +982,7 @@ namespace TwoSides
             text = "brightness Block:" + glint.ToString(CultureInfo.CurrentCulture);
             _spriteBatch.DrawString(Font1, text, new Vector2(_graphics.PreferredBackBufferWidth - text.Length * 7 - 5, SizeCarmaHeight + 140), Color.White);
 
-            string position = "Player X:" + Player.Position.X + " position.y: " + Player.Position.Y;
+            string position =  "Player X:" + Player.Position.X + " position.y: " + Player.Position.Y;
             _spriteBatch.DrawString(Font1, position, new Vector2(_graphics.PreferredBackBufferWidth - position.Length * 7 - 5, SizeCarmaHeight + 160), Color.White);
         }
 

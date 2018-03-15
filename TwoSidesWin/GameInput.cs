@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework.Input;
 
@@ -16,7 +17,7 @@ namespace TwoSides
             MouseIsDown[0]  = mstate.LeftButton == ButtonState.Pressed;
             MouseIsDown[1] = mstate.RightButton == ButtonState.Pressed;
         }
-        public enum MouseButton
+        public enum MouseButton : int
         {
             LEFT_BUTTON = 0,
             RIGHT_BUTTON = 1
@@ -27,5 +28,10 @@ namespace TwoSides
         public static bool MouseButtonIsDown(int mouse) => MouseIsDown[mouse] && !_mouseOldIsDown[mouse];
 
         public static bool MouseButtonIsReleased(int mouse) => !MouseIsDown[mouse] && _mouseOldIsDown[mouse];
+
+        public static bool MouseButtonIsDown(MouseButton mouseButton)
+        {
+            return MouseButtonIsDown((int)mouseButton);
+        }
     }
 }

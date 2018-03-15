@@ -47,9 +47,18 @@ namespace TwoSides.GameContent.GUI.Scene
             }
             for (int i = 0; i < _disp.Count; i++)
             {
+                int j = i;
                 string a = _disp[i].Width.ToString(CultureInfo.CurrentCulture) + "x" + _disp[i].Height;
                 Button but = new Button(Program.Game.Button, Program.Game.Font1, new Rectangle(200, Program.Game.Resolution.Y / 2 + 20 * i, 200, 20), a);
+                but.OnClicked += (_, _a) =>
+                {
+                    Console.WriteLine(_displayMode[j].Text);
+                    Console.WriteLine(_disp[j].ToString());
+                    Program.Game.DisplayMode = _disp[j];
+                    Load(_scene);
+                };
                 _displayMode.Add(but);
+                
             }
         }
         public void Render(SpriteBatch spriteBatch)
@@ -69,13 +78,6 @@ namespace TwoSides.GameContent.GUI.Scene
             for (int i = 0; i < _displayMode.Count; i++)
             {
                 _displayMode[i].Update();
-                if ( !_displayMode[i].IsClicked() ) continue;
-
-                Console.WriteLine(_displayMode[i].Text);
-                Console.WriteLine(_disp[i].ToString());
-                Program.Game.DisplayMode =_disp[i];
-                Load(_scene);
-                break;
             }
         }
         public void TryExit()

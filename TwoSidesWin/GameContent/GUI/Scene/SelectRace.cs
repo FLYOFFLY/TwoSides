@@ -18,6 +18,18 @@ namespace TwoSides.GameContent.GUI.Scene
             Scene = scene;
             Version = new Label(Program.Game.GetVersion(), new Vector2(0, Program.Game.Resolution.Y - (int)Program.Game.Font1.MeasureString(Program.Game.GetVersion()).Y), Program.Game.Font1, Color.Black);
 
+            for (int i = 0; i < Racelist.Count; i++)
+            {
+                int j = i;
+                // ReSharper disable once ExceptionNotDocumentedOptional
+                Racelist[i].GetButton().OnClicked += (_, _a) =>
+                {
+
+                    Program.Game.Player.SetColorRace((RaceType)(j + 1));
+                    Program.Game.Player.ClearClothes();
+                    Scene.ChangeScene(new CreationPerson());
+                };
+            }
         }
         public void Render(SpriteBatch spriteBatch)
         {
@@ -34,13 +46,6 @@ namespace TwoSides.GameContent.GUI.Scene
             {
                 // ReSharper disable once ExceptionNotDocumentedOptional
                 Racelist[i].GetButton().Update();
-                // ReSharper disable once ExceptionNotDocumentedOptional
-                // ReSharper disable once ExceptionNotDocumentedOptional
-                if ( !Racelist[i].GetButton().IsClicked() ) continue;
-
-                Program.Game.Player.SetColorRace((RaceType)(i + 1));
-                Program.Game.Player.ClearClothes();
-                Scene.ChangeScene(new CreationPerson());
             }
         }
         public void TryExit() => Scene.ReturnScene();

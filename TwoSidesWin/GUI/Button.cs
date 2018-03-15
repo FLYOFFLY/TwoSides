@@ -45,7 +45,7 @@ namespace TwoSides.GUI
             Text = Localisation.GetName(text);
         }
 
-        public bool IsClicked() => _isClicked;
+        private bool IsClicked() => _isClicked;
 
         public string Text
         {

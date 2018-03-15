@@ -103,9 +103,6 @@ namespace TwoSides.GameContent.Entity.NPC
         {
             if ( Dialog[Activedialog].IsVisible(btn)!=newChange) Dialog[Activedialog].ChangeVisible(btn, newChange);
         }
-
-        public bool IsClicked(int btnid) => _enabled && Dialog != null && Dialog[Activedialog].IsBtnClicked(btnid);
-
         public override void Update()
         {
             if (_enabled)

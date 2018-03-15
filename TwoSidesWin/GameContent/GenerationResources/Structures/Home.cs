@@ -78,7 +78,9 @@ namespace TwoSides.GameContent.GenerationResources.Structures
             }
             else if ( Program.Game.CurrentDimension == 0 )
             {
-                InitDialog();
+
+               /* Program.Game.Dimension[0].Civil.Add(new Civilian(new Vector2(X + 4, Y + 4),
+                InitDialog()));*/
             }
         }
 
@@ -139,12 +141,11 @@ namespace TwoSides.GameContent.GenerationResources.Structures
             }
         }
 
-        static void InitDialog()
+        static List<Dialog> InitDialog()
         {
             List<Recipe> recip = new List<Recipe> {new Recipe(new Item(1 , 0) , 100)};
             recip[0].AddIngridents(1 , 1);
 
-            // ReSharper disable once UnusedVariable
             List<Dialog> dialogs = new List<Dialog>
                                    {
                                        new Dialog(new Rectangle(2 , 200 , 800 , 200) ,
@@ -246,6 +247,7 @@ namespace TwoSides.GameContent.GenerationResources.Structures
                                                   "Hero,Create our world, no create task, он he is lazy!" ,
                                                   Program.Game.Button , Program.Game.Font1 , Program.Game.Dialogtex)
                                    };
+            return dialogs;
         }
 
         void SpawnPyr(BaseDimension dimension)

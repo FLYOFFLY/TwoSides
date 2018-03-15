@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwoSides", "TwoSidesWin\TwoSides.csproj", "{9AFD19BE-4D2B-41C1-82CE-5A843E654E2E}"
 EndProject
@@ -14,6 +14,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9AFD19BE-4D2B-41C1-82CE-5A843E654E2E}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{9AFD19BE-4D2B-41C1-82CE-5A843E654E2E}.Debug|Any CPU.Build.0 = Debug|x86
 		{9AFD19BE-4D2B-41C1-82CE-5A843E654E2E}.Debug|x86.ActiveCfg = Debug|x86
 		{9AFD19BE-4D2B-41C1-82CE-5A843E654E2E}.Debug|x86.Build.0 = Debug|x86
 		{9AFD19BE-4D2B-41C1-82CE-5A843E654E2E}.Release|Any CPU.ActiveCfg = Release|x86

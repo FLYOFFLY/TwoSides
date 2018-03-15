@@ -29,6 +29,19 @@ namespace TwoSides.GameContent.GUI.Scene
             Buttons[2].Text = "Load Game";
             Buttons[3].Text = "Save Game";
             Buttons[4].Text = "Exit";
+            Buttons[0].OnClicked += (_, _a) => { _scene.ReturnScene(); };
+            Buttons[1].OnClicked += (_, _a) => {
+                _scene.ChangeScene(new MainMenu());
+            };
+            Buttons[2].OnClicked += (_, _a) => {
+                _scene.ChangeScene(Progress.Instance);
+                Program.Game.LoadMap();
+            };
+            Buttons[3].OnClicked += (_, _a) => {
+                _scene.ChangeScene(Progress.Instance);
+                Program.Game.SaveMap();
+            };
+            Buttons[4].OnClicked += (_, _a) => { Program.Game.Exit(); };
         }
         public void Render(SpriteBatch spriteBatch)
         {
@@ -45,22 +58,6 @@ namespace TwoSides.GameContent.GUI.Scene
             foreach ( Button button in Buttons )
                 button.Update();
 
-            if (Buttons[0].IsClicked()) _scene.ReturnScene();
-            else if (Buttons[1].IsClicked())
-            {
-                _scene.ChangeScene(new MainMenu());
-            }
-            else if (Buttons[2].IsClicked())
-            {
-                _scene.ChangeScene(Progress.Instance); 
-                Program.Game.LoadMap();
-            }
-            else if (Buttons[3].IsClicked())
-            {
-                _scene.ChangeScene(Progress.Instance); 
-                Program.Game.SaveMap();
-            }
-            else if (Buttons[4].IsClicked()) Program.Game.Exit();
         }
         public void TryExit() => _scene.ReturnScene();
     }

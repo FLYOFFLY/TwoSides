@@ -18,8 +18,6 @@ namespace TwoSides.GUI
 
         [NonSerialized] readonly List<Image> _images = new List<Image>();
         
-        public bool IsButtonClicked(int buttonId) => _buttons[buttonId].IsClicked();
-
         public int AddButon(Button button)
         {
             _buttons.Add(button);

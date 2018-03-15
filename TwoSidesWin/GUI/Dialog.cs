@@ -39,7 +39,7 @@ namespace TwoSides.GUI
 
         [NonSerialized]
         public SpriteFont Font;
-
+        
         public Dialog(Rectangle area, string positiveGood, string possitiveBad, string negativeGood, string negativeBad, 
             string normalText, string badText, string goodText,
             Texture2D imageButton, SpriteFont font, Texture2D background)
@@ -69,6 +69,7 @@ namespace TwoSides.GUI
             {
                 if (Buttons[i].Text.Length > 0) IsBtnVisible[i] = true;
                 else IsBtnVisible[i] = false;
+                int j = i;
             }
             Type = 0;
         }
@@ -133,9 +134,7 @@ namespace TwoSides.GUI
         }
 
         public bool IsVisible(int idButton) => IsBtnVisible[idButton];
-
-        public bool IsBtnClicked(int idButton) => IsBtnVisible[idButton] && Buttons[idButton] != null && Buttons[idButton].IsClicked();
-
+        
         public void RemoveRecipes(int id)
         {
             Recipe recipe = Recipes[id];

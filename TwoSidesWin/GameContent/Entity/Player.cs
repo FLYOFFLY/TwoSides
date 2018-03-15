@@ -380,52 +380,12 @@ namespace TwoSides.GameContent.Entity
 
         void MissionHelloWorld(Civilian civ,int ActiveDialog)
         {
-            switch (civ.Activedialog)
-            {
-                case 0:
-                    JobDialog(civ,_quest,1);
-                    break;
-                case 1:
-                {
-                    int questId = Quests.IndexOf(_quest);
-                    if(_zombiekill) Quests[questId].SetCompliction(0);
-                    PassedQuestDialog(civ,questId,2,Quests[questId]);
-                    break;
-                }
-            }
         }
-        void MissionQuest2(Civilian civ,int ActiveDialog)
+        void MissionQuest2(Civilian civ, int ActiveDialog)
         {
-            switch(civ.Activedialog)
-            {
-                case 2:
-                    JobDialog(civ,Quest2,3);
-                    break;
-                case 3:
-                {
-                    int questId = Quests.IndexOf(Quest2);
-
-                    PassedQuestDialog(civ,questId,4,Quests[questId]);
-                    break;
-                }
-            }
         }
         void MissionQuest3(Civilian civ)
         {
-            switch(civ.Activedialog)
-            {
-                case 4:
-                    JobDialog(civ,Quest3,5);
-                    break;
-                case 5:
-                {
-                    int questId = Quests.IndexOf(Quest3);
-                    if(_stats.Getstats(Stats.StatsType.ITEM_COUNT,19) >= 2) Quests[questId].SetCompliction(0);
-                    if(_stats.Getstats(Stats.StatsType.KILL_BOSS,8) >= 1) Quests[questId].SetCompliction(1);
-                    PassedQuestDialog(civ,questId,6,Quests[questId]);
-                    break;
-                }
-            }
         }
         void Dialog()
         {
@@ -434,43 +394,37 @@ namespace TwoSides.GameContent.Entity
             // ReSharper disable once SwitchStatementMissingSomeCases
             switch (civ.Activedialog)
             {
-                case 0:
                 case 1:
-                    MissionHelloWorld(civ , civ.Activedialog);
+                    int questId1 = Quests.IndexOf(_quest);
+                    if (_zombiekill) Quests[questId1].SetCompliction(0);
                     break;
-                case 2:
                 case 3:
-                    MissionQuest2(civ ,civ.Activedialog);
+                    int questId3 = Quests.IndexOf(Quest2);
+
+                    PassedQuestDialog(civ, questId3, 4, Quests[questId3]);
                     break;
-                case 4:
                 case 5:
-                    MissionQuest3(civ);
+                    int questId5 = Quests.IndexOf(Quest3);
+                    if (_stats.Getstats(Stats.StatsType.ITEM_COUNT, 19) >= 2) Quests[questId5].SetCompliction(0);
+                    if (_stats.Getstats(Stats.StatsType.KILL_BOSS, 8) >= 1) Quests[questId5].SetCompliction(1);
+                    PassedQuestDialog(civ, questId5, 6, Quests[questId5]);
                     break;
                 case 6:
                     JobDialog(civ, Quest4, 7);
                     break;
                 case 7:
                     {
-                        int questId = Quests.IndexOf(Quest4);
-                        if (_stats.Getstats(0, 22) >= 1) Quests[questId].SetCompliction(1);
-                        if (_stats.Getstats(0, 23) >= 1) Quests[questId].SetCompliction(2);
-                        if (_stats.Getstats(0, 24) >= 1) Quests[questId].SetCompliction(3);
-                        PassedQuestDialog(civ, questId, 8,Quests[questId]);
+                        int questId7 = Quests.IndexOf(Quest4);
+                        if (_stats.Getstats(0, 22) >= 1) Quests[questId7].SetCompliction(1);
+                        if (_stats.Getstats(0, 23) >= 1) Quests[questId7].SetCompliction(2);
+                        if (_stats.Getstats(0, 24) >= 1) Quests[questId7].SetCompliction(3);
+                        PassedQuestDialog(civ, questId7, 8,Quests[questId7]);
                         break;
                     }
                 case 8:
                     JobDialog(civ, Quest5, 9);
                     break;
                 case 9:
-                    if (civ.IsClicked(1) || civ.IsClicked(3))
-                    {
-                        civ.ToggleEnabled();
-                    }
-                    else if (civ.IsClicked(0) || civ.IsClicked(2))
-                    {
-                        if (civ.IsClicked(0)) Carma = Math.Max(Carma - 2, 0);
-                        civ.ToggleEnabled();
-                    }
                     break;
             }
         }
@@ -487,34 +441,33 @@ namespace TwoSides.GameContent.Entity
                 civ.ToggleVisible(1, false);
                 civ.ToggleVisible(3, false);
             }
-            if (civ.IsClicked(1) || civ.IsClicked(3))
-            {
-                if (civ.IsClicked(1)) Carma = Math.Max(Carma - 1, 0);
-                _quest.Passed();
-                Quests.RemoveAt(questId);
-                civ.Activedialog = newDialog;
-            }
-            else if (civ.IsClicked(0) || civ.IsClicked(2))
-            {
-                if (civ.IsClicked(0)) Carma = Math.Max(Carma - 2, 0);
-                civ.ToggleEnabled();
-            }
+        }
+
+        private void PassedQuestNo(Civilian civ,bool isCarma)
+        {
+            if (isCarma) Carma = Math.Max(Carma - 2, 0);
+            civ.ToggleEnabled();
+        }
+
+        private void PassedQuestYes(Civilian civ, int questId, int newDialog,bool isCarma)
+        {
+            if(isCarma) Carma = Math.Max(Carma - 1, 0);
+            _quest.Passed();
+            Quests.RemoveAt(questId);
+           if(newDialog>=0) civ.Activedialog = newDialog;
+
         }
 
         void JobDialog(Civilian civ, Quest questGive, int newDialog)
         {
 
-            if (civ.IsClicked(1) || civ.IsClicked(3))
-            {
-                if (civ.IsClicked(1)) Carma = Math.Max(Carma - 1, 0);
-                civ.Activedialog = newDialog;
-                Quests.Add(questGive);
-            }
-            else if (civ.IsClicked(0) || civ.IsClicked(2))
-            {
-                if (civ.IsClicked(0)) Carma = Math.Max(Carma - 2, 0);
-                civ.ToggleEnabled();
-            }
+           
+        }
+
+        private void AccesQuest(Civilian civ,int questID,Quest questAcces)
+        {
+            civ.Activedialog = questID;
+            Quests.Add(questAcces);
         }
 
         public void QuestUpdate()
@@ -535,6 +488,8 @@ namespace TwoSides.GameContent.Entity
         }
         public void Spawn()
         {
+
+
             //  stats.Clear();
             ItemAnimation = 0;
             Quests.Clear();
@@ -560,6 +515,22 @@ namespace TwoSides.GameContent.Entity
             Quest3 = new Quest(gl3, new Item(1, 10), "Master", Program.Game.Font1);
             Quest4 = new Quest(gl4, new Item(2, 14), "Preparation", Program.Game.Font1);
             Quest5 = new Quest(gl5, new Item(2, 11), "First Win", Program.Game.Font1);
+            if (Program.Game.Dimension[Program.Game.CurrentDimension].Civil.Count >= 1)
+            {
+                Civilian civs = Program.Game.Dimension[Program.Game.CurrentDimension].Civil[0];
+                AddQuestDialog(civs, 0, 1, _quest);
+                AddQuestDialog(civs, 2, 3, Quest2);
+                AddQuestDialog(civs, 4, 5, Quest3);
+                AddQuestDialog(civs, 6, 7, Quest4);
+                AddQuestDialog(civs, 8, 9, Quest5);
+                AddQuestDialog(civs, 9);
+
+                AddQuestDialog(civs, 1, 2);
+                AddQuestDialog(civs, 3, 4);
+                AddQuestDialog(civs, 5, 6);
+                AddQuestDialog(civs, 7, 8);
+            }
+
             IsOpen = false;
             MouseItem = new Item();
             Zombie = false;
@@ -606,6 +577,30 @@ namespace TwoSides.GameContent.Entity
             // slot[slotmax+1] = new Item(1, 32);
             //slot[slotmax+2] = new Item(1, 33);
             _deltaAnimation = 0;
+        }
+
+        private void AddQuestDialog(Civilian civs, int idStartQuest, int idNextDialog, Quest quest)
+        {
+            Program.Game.Dimension[0].Civil[0].Dialog[idStartQuest].Buttons[0].OnClicked += (_, _a) => { Carma = Math.Max(Carma - 2, 0); civs.ToggleEnabled(); };
+            Program.Game.Dimension[0].Civil[0].Dialog[idStartQuest].Buttons[1].OnClicked += (_, _a) => { Carma = Math.Max(Carma + 2, 0); AccesQuest(civs, idNextDialog, quest); };
+            Program.Game.Dimension[0].Civil[0].Dialog[idStartQuest].Buttons[3].OnClicked += (_, _a) => { AccesQuest(civs, idNextDialog, quest); };
+            Program.Game.Dimension[0].Civil[0].Dialog[idStartQuest].Buttons[2].OnClicked += (_, _a) => { civs.ToggleEnabled(); };
+        }
+
+        private void AddQuestDialog(Civilian civs, int i)
+        {
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[0].OnClicked += (_, _a) => { Carma = Math.Max(Carma - 2, 0); civs.ToggleEnabled(); };
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[1].OnClicked += (_, _a) => civs.ToggleEnabled();
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[3].OnClicked += (_, _a) => civs.ToggleEnabled();
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[2].OnClicked += (_, _a) => civs.ToggleEnabled();
+        }
+
+        private void AddQuestDialog(Civilian civs, int i, int questIDNew)
+        {
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[0].OnClicked += (_, _a) => PassedQuestNo(civs, true);
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[1].OnClicked += (_, _a) => PassedQuestYes(civs, Quests.IndexOf(_quest), questIDNew, true);
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[3].OnClicked += (_, _a) => PassedQuestYes(civs, Quests.IndexOf(_quest), questIDNew, false);
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[2].OnClicked += (_, _a) => PassedQuestNo(civs, false);
         }
 
         public int GetSlotFull()
@@ -1179,7 +1174,7 @@ namespace TwoSides.GameContent.Entity
             if (_timeSlotUse > 0) _timeSlotUse -= 1;
             if (Tools.MouseInCube(0, 0, Program.Game.Resolution.X, Program.Game.Resolution.Y))
             {
-                if (GameInput.MouseButtonIsDown((int)GameInput.MouseButton.LEFT_BUTTON))
+                if (GameInput.MouseButtonIsDown(GameInput.MouseButton.LEFT_BUTTON))
                 {
                     int r = -1;
                     if (_itemframe >= 1) _itemto = true;
@@ -1483,9 +1478,8 @@ namespace TwoSides.GameContent.Entity
         
         void AddBlock()
         {
-            if ( Program.Game.Dimension[Program.Game.CurrentDimension].MapTile[TileTargetX , TileTargetY].Active || !Program
-                         .Game.Dimension[Program.Game.CurrentDimension].MapTile[TileTargetX , TileTargetY]
-                         .AddedBlock(Slot[SelectedItem].GetBlockId() , TileTargetX , TileTargetY) ) return;
+            if ( Program.Game.Dimension[Program.Game.CurrentDimension].MapTile[TileTargetX , TileTargetY].Active 
+                || !Program.Game.Dimension[Program.Game.CurrentDimension].MapTile[TileTargetX , TileTargetY].AddedBlock(Slot[SelectedItem].GetBlockId() , TileTargetX , TileTargetY) ) return;
 
             //if (Block.isLightBlock(slot[selectedItem].Idblock)) type = ITile.TYPE.NO_SOILD_BLOCK; //TODO
             if (Slot[SelectedItem].GetTypeItem() == (int)Item.Type.VERTICALBLOCKICON)
@@ -1603,7 +1597,6 @@ namespace TwoSides.GameContent.Entity
                 dir.Normalize();
                 npc.AddForce(dir, hpdamage * 10);
 
-                // ReSharper disable once InvertIf
                 if ((int)npc.Hp <= 1)
                 {
                     if (Program.Game.Dimension[Program.Game.CurrentDimension].Civil.Count >= 1)
