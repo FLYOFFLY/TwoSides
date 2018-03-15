@@ -409,9 +409,6 @@ namespace TwoSides.GameContent.Entity
                     if (_stats.Getstats(Stats.StatsType.KILL_BOSS, 8) >= 1) Quests[questId5].SetCompliction(1);
                     PassedQuestDialog(civ, questId5, 6, Quests[questId5]);
                     break;
-                case 6:
-                    JobDialog(civ, Quest4, 7);
-                    break;
                 case 7:
                     {
                         int questId7 = Quests.IndexOf(Quest4);
@@ -421,10 +418,7 @@ namespace TwoSides.GameContent.Entity
                         PassedQuestDialog(civ, questId7, 8,Quests[questId7]);
                         break;
                     }
-                case 8:
-                    JobDialog(civ, Quest5, 9);
-                    break;
-                case 9:
+                default:
                     break;
             }
         }
@@ -456,12 +450,6 @@ namespace TwoSides.GameContent.Entity
             Quests.RemoveAt(questId);
            if(newDialog>=0) civ.Activedialog = newDialog;
 
-        }
-
-        void JobDialog(Civilian civ, Quest questGive, int newDialog)
-        {
-
-           
         }
 
         private void AccesQuest(Civilian civ,int questID,Quest questAcces)
@@ -1445,10 +1433,10 @@ namespace TwoSides.GameContent.Entity
                                                     Program.Game.Resolution.Y - 100 - Program.Game.Guis.Count * 60), Program.Game.Font1);
             Image image = new Image(Program.Game.Achivement, new Rectangle(Program.Game.Resolution.X / 2 - 500 / 2,
                                                                            Program.Game.Resolution.Y - 100 - Program.Game.Guis.Count * 60, 500, 60));
-            newgui.AddButon(button);
-            newgui.AddLabel(lab);
-            newgui.AddImage(image);
-            newgui.AddClicked((sender , e) => Program.Game.RemoveGui(newgui), 0);
+            button.OnClicked += (sender, e) =>  Program.Game.RemoveGui(newgui);
+            newgui.AddElement(image);
+            newgui.AddElement(lab);
+            newgui.AddElement(button);
             Program.Game.AddGui(newgui);
         }
         

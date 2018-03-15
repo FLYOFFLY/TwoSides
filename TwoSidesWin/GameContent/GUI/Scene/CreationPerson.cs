@@ -85,7 +85,7 @@ namespace TwoSides.GameContent.GUI.Scene
         public void Update(GameTime gameTime)
         {
            KeyboardState keyState = Keyboard.GetState();
-            _nameInput.UpdateKey();
+            _nameInput.Update();
 
             //  NameInput.rightsort(); 
             if (keyState.IsKeyDown(Keys.Down) && !_keyDownVertical && _currentSlot < 5)

@@ -57,8 +57,12 @@ namespace TwoSides.GUI
                     ), _color);
             spriteBatch.End();
         }
-
-        public void UpdateKey()
+        public override void Update()
+        {
+            UpdateKey();
+            base.Update();
+        }
+       void UpdateKey()
         {
             bool leftshift = false;
             KeyboardState oldKeyboardState = _keystateCurrentKeyboardState;

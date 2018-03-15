@@ -19,24 +19,25 @@ namespace TwoSides.GUI.HUD
         public bool Isactive;
         readonly XnaLayout _gui;
         readonly Log _consoleLog = new Log("console");
+        private int labelID = 0;
         public Console(SpriteFont font)
         {
             _gui = new XnaLayout();
             TextField inp = new TextField(new Vector2(100, 100), font);
             inp.OnEnter += UpdateCheat;
-            _gui.AddInput(inp);
             Label lab = new Label("", new Vector2(100, 80), font);
-            _gui.AddLabel(lab);
+            labelID = _gui.AddElement(lab);
+            _gui.AddElement(inp);
             _consoleLog.HasData = true;
         }
 
         public void AddLog(string log)
         {
             string newline = DateTime.Now.ToString("[yyyy:dd:hh:mm:ss]", CultureInfo.InvariantCulture) + log;
-            string a = _gui.GetLabel(0).GetText() + "\n" + newline;
+            string a = _gui.GetElement<Label>(labelID).GetText() + "\n" + newline;
             _consoleLog.WriteLog(log);
-            _gui.GetLabel(0).SetText(a);
-            _gui.GetLabel(0).Up(14);
+            _gui.GetElement<Label>(labelID).SetText(a);
+            _gui.GetElement<Label>(labelID).Up(14);
         }
 
         static void AddItem(int blockId)

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TwoSides.GUI
 {
-    public class GuiElement
+    public abstract class GuiElement
     {
         public Vector2 Pos;
         GuiElement _patern;
