@@ -10,7 +10,7 @@ namespace TwoSides.GameContent.Dimensions
     {
         protected override void GenerationBiomes(ProgressBar bar)
         {
-            for (int i = 0; i < MapBiomes.Length; i++)
+            for (var i = 0; i < MapBiomes.Length; i++)
             {
                 MapBiomes[i] = ArrayResource.WorldShow;
             }

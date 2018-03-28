@@ -19,7 +19,7 @@ namespace TwoSides.GUI.HUD
         public bool Isactive;
         readonly XnaLayout _gui;
         readonly Log _consoleLog = new Log("console");
-        private int labelID = 0;
+        int labelID = 0;
         public Console(SpriteFont font)
         {
             _gui = new XnaLayout();
@@ -33,8 +33,8 @@ namespace TwoSides.GUI.HUD
 
         public void AddLog(string log)
         {
-            string newline = DateTime.Now.ToString("[yyyy:dd:hh:mm:ss]", CultureInfo.InvariantCulture) + log;
-            string a = _gui.GetElement<Label>(labelID).GetText() + "\n" + newline;
+            var newline = DateTime.Now.ToString("[yyyy:dd:hh:mm:ss]", CultureInfo.InvariantCulture) + log;
+            var a = _gui.GetElement<Label>(labelID).GetText() + "\n" + newline;
             _consoleLog.WriteLog(log);
             _gui.GetElement<Label>(labelID).SetText(a);
             _gui.GetElement<Label>(labelID).Up(14);
@@ -92,8 +92,8 @@ namespace TwoSides.GUI.HUD
             if (fs[0] == "Bind".ToUpper(CultureInfo.CurrentCulture) && fs.Count > 2)
             {
 
-                string command = "";
-                for (int i = 2; i < fs.Count; i++)
+                var command = "";
+                for (var i = 2; i < fs.Count; i++)
                 {
                     command += fs[i];
                 }
@@ -110,9 +110,9 @@ namespace TwoSides.GUI.HUD
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(Render render)
         {
-            _gui.Draw(spriteBatch);
+            _gui.Draw(render);
         }
     }
     public class Command

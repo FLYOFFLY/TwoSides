@@ -45,7 +45,7 @@ namespace TwoSides.GUI
             Text = Localisation.GetName(text);
         }
 
-        private bool IsClicked() => _isClicked;
+        bool IsClicked() => _isClicked;
 
         public string Text
         {
@@ -83,11 +83,11 @@ namespace TwoSides.GUI
             _mouseStateOld = MouseStateNew;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(Render render)
         {
             if (Image == null) Image = Program.Game.Button;
             if (Font == null) Font = Program.Game.Font1;
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            render.Start(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             Rectangle button = 
                     new Rectangle(0,0,Image.Width,Image.Height/2);
             if (Area.Contains(new Point(MouseStateNew.X, MouseStateNew.Y)))
@@ -95,15 +95,15 @@ namespace TwoSides.GUI
                 button.Y += button.Height;
             }
 
-            spriteBatch.Draw(Image,
+            render.Draw(Image,
                 Area, button, Color.White);
-            spriteBatch.DrawString(Font,
+            render.DrawString(Font,
                 _text,
                 TextLocation,
                 Color.Black);
 
 
-            spriteBatch.End();
+            render.End();
         }
 
 

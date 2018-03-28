@@ -34,7 +34,7 @@ namespace TwoSides.GUI
         
         public void RemoveItem()
         {
-            int slotIds = Program.Game.Player.GetSlotItem(IdItem, Ammout);
+            var slotIds = Program.Game.Player.GetSlotItem(IdItem, Ammout);
 
             if ( slotIds == -1 ) return;
             if ( Program.Game.Player.Slot[slotIds].Ammount > Ammout ) return;
@@ -106,7 +106,7 @@ namespace TwoSides.GUI
 
         public int GetQuestHeight()
         {
-            int a = (int) Font.MeasureString(Name).Y + Goals.Sum(goal => (int) Font.MeasureString(goal.GoalsText).Y);
+            var a = (int) Font.MeasureString(Name).Y + Goals.Sum(goal => (int) Font.MeasureString(goal.GoalsText).Y);
             return a + (int)Font.MeasureString(GetRewardText()).Y;
         }
 
@@ -114,7 +114,7 @@ namespace TwoSides.GUI
 
         public string GetMax()
         {
-            string a = Name;
+            var a = Name;
             foreach ( Goal goal in Goals )
             {
                 if (a.Length < goal.GoalsText.Length) a = goal.GoalsText;
@@ -123,27 +123,27 @@ namespace TwoSides.GUI
             return a;
         }
 
-        public void Render(SpriteBatch spriteBatch, Vector2 pos)
+        public void Render(Render render, Vector2 pos)
         {
             if (Font == null) Font = Program.Game.Font1;
-            spriteBatch.Begin();
-            string max = GetMax();
-            spriteBatch.Draw(Program.Game.Dialogtex, new Rectangle((int)pos.X - (int)Font.MeasureString(max).X,
+            render.Start();
+            var max = GetMax();
+            render.Draw(Program.Game.Dialogtex, new Rectangle((int)pos.X - (int)Font.MeasureString(max).X,
                 (int)pos.Y, (int)Font.MeasureString(max).X, GetQuestHeight()), Color.Blue);
             Vector2 position = pos;
             position.X = pos.X - (int)Font.MeasureString(Name).X;
-            spriteBatch.DrawString(Font, Name, position, Color.White);
+            render.DrawString(Font, Name, position, Color.White);
             position.Y += (int)Font.MeasureString(Name).Y;
             foreach ( Goal goal in Goals ) {
                 position.X = pos.X - (int)Font.MeasureString(goal.GoalsText).X;
                 Color cl = Color.Red;
                 if (goal.IsComplicte()) cl = Color.Green;
-                spriteBatch.DrawString(Font, goal.GoalsText, position, cl);
+                render.DrawString(Font, goal.GoalsText, position, cl);
                 position.Y += (int)Font.MeasureString(goal.GoalsText).Y;
             }
             position.X = pos.X - (int)Font.MeasureString(GetRewardText()).X;
-            spriteBatch.DrawString(Font, GetRewardText(), position, Color.Red);
-            spriteBatch.End();
+            render.DrawString(Font, GetRewardText(), position, Color.Red);
+            render.End();
         }
     }
 }

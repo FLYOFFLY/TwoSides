@@ -34,7 +34,7 @@ namespace TwoSides.GameContent.Entity.NPC
             Position = positions;
             WayPoint = Position.X;
 
-            WayPoint += Program.Game.Rand.Next(-Tile.TileMaxSize, Tile.TileMaxSize);
+            WayPoint += Program.Game.Rand.Next(-Tile.TILE_MAX_SIZE, Tile.TILE_MAX_SIZE);
             Rect.Width = Width;
             Rect.Height = Height;
             Drop.Clear();
@@ -48,7 +48,7 @@ namespace TwoSides.GameContent.Entity.NPC
             Position = positions;
             WayPoint = Position.X;
 
-            WayPoint += Program.Game.Rand.Next(-Tile.TileMaxSize, Tile.TileMaxSize);
+            WayPoint += Program.Game.Rand.Next(-Tile.TILE_MAX_SIZE, Tile.TILE_MAX_SIZE);
             Rect.Width = Width;
             Rect.Height = Height;
             Drop.Clear();
@@ -66,33 +66,34 @@ namespace TwoSides.GameContent.Entity.NPC
             _enabled = false;
         }
 
-        public void RenderNpc(SpriteBatch spriteBatch, SpriteFont font1, Texture2D head, Texture2D body,
+        public void RenderNpc(Render render, SpriteFont font1, Texture2D head, Texture2D body,
             Texture2D legs, Texture2D hand, Texture2D shadow)
         {
 
             SpriteEffects effect = SpriteEffects.None;
             if (Direction < 0)
                 effect = SpriteEffects.FlipHorizontally;
-           if(Activedialog ==0) spriteBatch.DrawString(font1, "Press RKM on NPC", new Vector2((int)(Position.X + (Width - head.Width)), (int)Position.Y - 30), Color.White);
-            spriteBatch.Draw(hand, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75), 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(Clothes.ShirtLeft[1], new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), Color.Red, 0, Vector2.Zero, effect, 0);
+           if(Activedialog ==0)
+               render.DrawString(font1, "Press RKM on NPC", new Vector2((int)(Position.X + (Width - head.Width)), (int)Position.Y - 30));
+            render.Draw(hand, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75), effect);
+            render.Draw(Clothes.ShirtLeft[1], new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), Color.Red, effect);
 
-            spriteBatch.Draw(head, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75), 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(body, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75), 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(legs, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75), 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(Clothes.Shirt[1], new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), Color.Red, 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(Clothes.Pants[0], new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), Color.Red, 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(Clothes.Shoes[0], new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), Color.Red, 0, Vector2.Zero, effect, 0);
-            DrawShadow(shadow, spriteBatch);
+            render.Draw(head, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75), effect);
+            render.Draw(body, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75), effect);
+            render.Draw(legs, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75), effect);
+            render.Draw(Clothes.Shirt[1], new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), Color.Red, effect);
+            render.Draw(Clothes.Pants[0], new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), Color.Red, effect);
+            render.Draw(Clothes.Shoes[0], new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), Color.Red, effect);
+            DrawShadow(shadow, render);
         }
 
-        public void RenderDialog(SpriteBatch spriteBatch)
+        public void RenderDialog(Render render)
         {
             if ( !_enabled || Dialog == null ) return;
 
-            spriteBatch.End();
-            Dialog[Activedialog].Render(spriteBatch);
-            spriteBatch.Begin();
+            render.End();
+            Dialog[Activedialog].Render(render);
+            render.Start();
         }
         public void ToggleVisible(int btn)
         {

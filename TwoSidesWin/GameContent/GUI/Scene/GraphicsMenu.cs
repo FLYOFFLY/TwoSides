@@ -45,10 +45,10 @@ namespace TwoSides.GameContent.GUI.Scene
             {
                 _disp.RemoveAt(0);
             }
-            for (int i = 0; i < _disp.Count; i++)
+            for (var i = 0; i < _disp.Count; i++)
             {
-                int j = i;
-                string a = _disp[i].Width.ToString(CultureInfo.CurrentCulture) + "x" + _disp[i].Height;
+                var j = i;
+                var a = _disp[i].Width.ToString(CultureInfo.CurrentCulture) + "x" + _disp[i].Height;
                 Button but = new Button(Program.Game.Button, Program.Game.Font1, new Rectangle(200, Program.Game.Resolution.Y / 2 + 20 * i, 200, 20), a);
                 but.OnClicked += (_, _a) =>
                 {
@@ -61,12 +61,12 @@ namespace TwoSides.GameContent.GUI.Scene
                 
             }
         }
-        public void Render(SpriteBatch spriteBatch)
+        public void Render(Render render)
         {
-            _labelFullScreen.Draw(spriteBatch);
-            _activeFullScreen.Draw(spriteBatch);
+            _labelFullScreen.Draw(render);
+            _activeFullScreen.Draw(render);
             foreach ( Button button in _displayMode )
-                button.Draw(spriteBatch);
+                button.Draw(render);
         }
         public void Update(GameTime gameTime)
         {
@@ -75,7 +75,7 @@ namespace TwoSides.GameContent.GUI.Scene
             if ( Program.Game.IsFullScreen != _activeFullScreen.Status )
                 Program.Game.IsFullScreen = !Program.Game.IsFullScreen;
 
-            for (int i = 0; i < _displayMode.Count; i++)
+            for (var i = 0; i < _displayMode.Count; i++)
             {
                 _displayMode[i].Update();
             }

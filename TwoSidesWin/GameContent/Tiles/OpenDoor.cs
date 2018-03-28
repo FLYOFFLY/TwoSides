@@ -19,20 +19,20 @@ namespace TwoSides.GameContent.Tiles
         }
         public override bool IsSolid() => false;
 
-        public override void Render(ITileDatecs tileDate, SpriteBatch spriteBatch, Texture2D texture, BaseDimension dimension, Vector2 pos, int x, int y, int frame, int subTexture, Color color)
+        public override void Render(ITileDatecs tileDate, Render render, Texture2D texture, BaseDimension dimension, Vector2 pos, int x, int y, int frame, int subTexture, Color color)
         {
             if (dimension.MapTile[x, y].IdTexture == dimension.MapTile[x - 1, y].IdTexture) frame += 1;
-            base.Render(tileDate,spriteBatch, texture, dimension, pos, x, y, frame, subTexture, color);
+            base.Render(tileDate,render, texture, dimension, pos, x, y, frame, subTexture, color);
         }
         public override bool UseBlock(int x, int y, BaseDimension dimension, DynamicEntity entity)
         {
-            int xDoor = x;
-            int yDoor = y+(2-dimension.MapTile[x,y].IdSubTexture);
+            var xDoor = x;
+            var yDoor = y+(2-dimension.MapTile[x,y].IdSubTexture);
             int iddoor = dimension.MapTile[xDoor, yDoor].IdTexture;
             if (dimension.MapTile[xDoor, yDoor].IdTexture == dimension.MapTile[xDoor - 1,yDoor].IdTexture) xDoor -= 1;
-            for (int i = 0; i < 2; i++)
+            for (var i = 0; i < 2; i++)
             {
-                for (int j = 0; j < 3; j++)
+                for (var j = 0; j < 3; j++)
                 {
                     dimension.Reset(xDoor+i, yDoor-j);
                 }
@@ -42,7 +42,7 @@ namespace TwoSides.GameContent.Tiles
         }
         public override List<Item> Destory(int x, int y, BaseDimension dimension, DynamicEntity entity)
         {
-            int yDoor = y;
+            var yDoor = y;
             yDoor -= dimension.MapTile[x, y].IdSubTexture;
             if (dimension.MapTile[x, y].IdTexture != dimension.MapTile[x - 1, y].IdTexture) DestorySIde(dimension, x + 1, yDoor);
             else DestorySIde(dimension, x - 1, yDoor);

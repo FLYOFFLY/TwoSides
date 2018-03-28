@@ -44,7 +44,7 @@ namespace TwoSides.GameContent.Entity
             _dirX = angle.X;
             _dirY = angle.Y;
             Velocity.X +=32 * _dirX;
-            Velocity.Y += Velocity.Y + 32 * _dirY;
+            Velocity.Y = Velocity.Y + 32 * _dirY;
             Velocity = Colision.TileCollision(this,position, Velocity, BulletSizeX, BulletSizeY,true);
             Position += Velocity;
             _time = 0;
@@ -63,8 +63,8 @@ namespace TwoSides.GameContent.Entity
             if (TypeBullet == 1)
             {
                 dimension.SetTexture((
-                                         int)Math.Floor(OldPosition.X / Tile.TileMaxSize), 
-                                     (int)Math.Floor(OldPosition.Y / Tile.TileMaxSize), 1);
+                                         int)Math.Floor(OldPosition.X / Tile.TILE_MAX_SIZE), 
+                                     (int)Math.Floor(OldPosition.Y / Tile.TILE_MAX_SIZE), 1);
             }
         }
 
@@ -110,7 +110,7 @@ namespace TwoSides.GameContent.Entity
                     new Rectangle((int)Program.Game.Player.Position.X, (int)Program.Game.Player.Position.Y + 18
                         , Program.Game.Player.Width, 20)))//body
             {
-                if (!Program.Game.Player.Slot[Player.Slotmax + 1].IsEmpty)
+                if (!Program.Game.Player.Slot[Player.SLOTMAX + 1].IsEmpty)
                 {
                     Program.Game.Player.DamageArmor(1);
                     Program.Game.Player.AddForce(Velocity, MASS);
@@ -126,7 +126,7 @@ namespace TwoSides.GameContent.Entity
                     new Rectangle((int)Program.Game.Player.Position.X, (int)Program.Game.Player.Position.Y + 18 + 20
                         , Program.Game.Player.Width, 24)))//legs
             {
-                if (!Program.Game.Player.Slot[Player.Slotmax + 2].IsEmpty)
+                if (!Program.Game.Player.Slot[Player.SLOTMAX + 2].IsEmpty)
                 {
                     Program.Game.Player.DamageArmor(2);
                 }

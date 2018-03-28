@@ -15,14 +15,14 @@ namespace TwoSides.Physics
             Vector2 vector = velocity;
             Vector2 finalPos = position + velocity;
             Vector2 startPos = position;
-           int startX = (int)(position.X / Tile.TileMaxSize) - 1;
-            int endX = (int)((position.X + widthEntity) / Tile.TileMaxSize) + 2;
-            int startY = (int)(position.Y / Tile.TileMaxSize) - 1;
-            int endY = (int)((position.Y + heightEntity) / Tile.TileMaxSize) + 2;
-            int leftTileX = -1;
-            int leftTileY = -1;
-            int rightTileX = -1;
-            int righTileY = -1;
+           var startX = (int)(position.X / Tile.TILE_MAX_SIZE) - 1;
+            var endX = (int)((position.X + widthEntity) / Tile.TILE_MAX_SIZE) + 2;
+            var startY = (int)(position.Y / Tile.TILE_MAX_SIZE) - 1;
+            var endY = (int)((position.Y + heightEntity) / Tile.TILE_MAX_SIZE) + 2;
+            var leftTileX = -1;
+            var leftTileY = -1;
+            var rightTileX = -1;
+            var righTileY = -1;
             if (startX < 0)
             {
                 startX = 0;
@@ -39,9 +39,9 @@ namespace TwoSides.Physics
             {
                 endY = SizeGeneratior.WorldHeight;
             }
-            for (int tileX = startX; tileX < endX; tileX++)
+            for (var tileX = startX; tileX < endX; tileX++)
             {
-                for (int tileY = startY; tileY < endY; tileY++)
+                for (var tileY = startY; tileY < endY; tileY++)
                 {
                     if ( !Program.Game.Dimension[Program.Game.CurrentDimension].MapTile[tileX , tileY].Active )
                         continue;
@@ -56,7 +56,7 @@ namespace TwoSides.Physics
 
                     if (Program.Game.Dimension[Program.Game.CurrentDimension].MapTile[tileX, tileY].IsSolid())
                     {
-                        int soildType = Program.Game.Dimension[Program.Game.CurrentDimension].MapTile[tileX, tileY].GetSoildType() ;
+                        var soildType = Program.Game.Dimension[Program.Game.CurrentDimension].MapTile[tileX, tileY].GetSoildType() ;
                         switch ( soildType ) {
                             case 1:
                                 ColSquare(aabb, widthEntity, heightEntity, ref result, ref vector, ref startPos,

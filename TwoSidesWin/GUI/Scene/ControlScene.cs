@@ -11,11 +11,12 @@ namespace TwoSides.GUI.Scene
         IScene _sceneNew;
         readonly Stack<IScene> _sceneBack = new Stack< IScene >();
 
-        public void Render(SpriteBatch spriteBatch)
+        public void Render(Render render)
         {
+
             if (_sceneCurrent.LastSceneRender && _sceneBack.Count>=1)
-                _sceneBack.Peek().Render(spriteBatch);
-            _sceneCurrent.Render(spriteBatch);
+                _sceneBack.Peek().Render(render);
+            _sceneCurrent.Render(render);
         }
         public void Update(GameTime gameTime)
         {

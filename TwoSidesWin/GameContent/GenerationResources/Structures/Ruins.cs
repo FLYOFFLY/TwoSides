@@ -10,9 +10,9 @@ namespace TwoSides.GameContent.GenerationResources.Structures
         }
         public override void Spawn(BaseDimension dimension)
         {
-            for (int i = 0; i < 2; i++)
+            for (var i = 0; i < 2; i++)
             {
-                for (int j = 0; j < 2; j++)
+                for (var j = 0; j < 2; j++)
                     dimension.SetTexture(X + i, j + Y, 35);
             }
         }

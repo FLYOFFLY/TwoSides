@@ -14,21 +14,21 @@ namespace TwoSides.GUI
             Status = on;
         }
 
-        void RenderButton(SpriteBatch spriteBatch,Color color)
+        void RenderButton(Render render,Color color)
         {
-            spriteBatch.Draw(Status ? Image : _offTexture ,
+            render.Draw(Status ? Image : _offTexture ,
                                Area ,
                                color);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(Render render)
         {
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            render.Start(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
-            RenderButton(spriteBatch ,
+            RenderButton(render ,
                          Area.Contains(new Point(MouseStateNew.X , MouseStateNew.Y)) ? Color.Silver : Color.White);
 
-            spriteBatch.End();
+            render.End();
         }
         public bool Status { get; set; }
     }

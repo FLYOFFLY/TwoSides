@@ -34,13 +34,13 @@ namespace TwoSides.GameContent.Entity.NPC
             if ((int)_frame < 3) _frame += 1 / 24.0f;
             else _frame = 0;
         }
-        public override void RenderNpc( SpriteBatch spriteBatch, SpriteFont font, Texture2D shadow)
+        public override void RenderNpc( Render render, SpriteFont font, Texture2D shadow)
         {
 
             SpriteEffects effect = SpriteEffects.None;
             if (Direction < 0)
                 effect = SpriteEffects.FlipHorizontally;
-            spriteBatch.DrawString(font, ((int)Hp).ToString(CultureInfo.CurrentCulture), new Vector2((int)(Position.X + (Width - NpcSkin[0].Width)), (int)Position.Y - 30), Color.Black);
+            render.DrawString(font, ((int)Hp).ToString(CultureInfo.CurrentCulture), new Vector2((int)(Position.X + (Width - NpcSkin[0].Width)), (int)Position.Y - 30), Color.Black);
 
             Rectangle src = new Rectangle(0, 0, Width,Height);
             src.Y += (int)_frame * src.Height;
@@ -48,10 +48,9 @@ namespace TwoSides.GameContent.Entity.NPC
                     (int)Position.Y, src.Width, src.Height);
             foreach ( Texture2D skin in NpcSkin )
             {
-                spriteBatch.Draw(skin, Rect, src, Color.White,
-                                 0, Vector2.Zero, effect, 0);
+                render.Draw(skin, Rect, src, Color.White, effect);
             }
-            DrawShadow(shadow, spriteBatch);
+            DrawShadow(shadow, render);
         }
         
     }

@@ -17,6 +17,6 @@ namespace TwoSides.GUI
         public void SetPatern(GuiElement patern) => _patern = patern;
 
         public virtual void Update() { }
-        public virtual void Draw(SpriteBatch spriteBatch) { }
+        public virtual void Draw(Render render) { }
     }
 }

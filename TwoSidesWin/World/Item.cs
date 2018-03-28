@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-
 using TwoSides.Utils;
 
 namespace TwoSides.World
@@ -36,8 +34,8 @@ namespace TwoSides.World
         }
 
 
-        public  const int ItemMax = 55;
-        static readonly Texture2D[] Items = new Texture2D[ItemMax + Clothes.MaxArmor];
+        public  const int ITEM_MAX = 55;
+        static readonly Texture2D[] Items = new Texture2D[ITEM_MAX + Clothes.MaxArmor];
         public void Save(BinaryWriter writer)
         {
             writer.Write(IsEmpty);
@@ -56,30 +54,29 @@ namespace TwoSides.World
         {
             if ( IsPickaxe )
                 return (int) Type.PICKAXE;
-            else if ( IsHammer )
+            if ( IsHammer )
                 return (int) Type.HAMMER;
-            else if ( IsSword )
+            if ( IsSword )
                 return (int) Type.SWORD;
-            else if ( IsCraftitem )
+            if ( IsCraftitem )
                 return (int) Type.CRAFTITEM;
-            else if ( IsHeadArmor )
+            if ( IsHeadArmor )
                 return (int) Type.HEAD;
-            else if ( IsBodyArmor )
+            if ( IsBodyArmor )
                 return (int) Type.BODY;
-            else if ( IsLegsArmor )
+            if ( IsLegsArmor )
                 return (int) Type.LEGS;
-            else if (IsGun)
+            if (IsGun)
                 return (int) Type.WEAPONGUN;
-            else if ( Id == 26 )
+            if ( Id == 26 )
                 return (int) Type.VERTICALBLOCKICON;
-            else if ( IsWater )
+            if ( IsWater )
                 return (int) Type.WATER;
-            else if ( IsEat)
+            if ( IsEat)
                 return (int) Type.EAT;
-            else if ( Id == 14 )
+            if ( Id == 14 )
                 return (int) Type.BANDAGE;
-            else
-                return (int) Type.BLOCKICON;
+            return (int) Type.BLOCKICON;
         }
 
         bool IsEat => Id == 55 || Id == 53 ||  Id == 11;
@@ -246,7 +243,7 @@ namespace TwoSides.World
                            };
                 Ammount = 1;
                 DamageSlot(dmg);
-                int a = Program.Game.Player.GetSlotItem(Id, num.Hp, false);
+                var a = Program.Game.Player.GetSlotItem(Id, num.Hp, false);
                 if (a == -1)
                 {
                     Program.Game.Player.Slot[Program.Game.Player.GetSlotFull()] = num;
@@ -288,9 +285,9 @@ namespace TwoSides.World
         }
         public string GetName()
         {
-            if ( Id < 0 || Id >= ItemMax ) return "???";
+            if ( Id < 0 || Id >= ITEM_MAX ) return "???";
 
-            string name = $"Item_{Id}";
+            var name = $"Item_{Id}";
             return Localisation.GetName(name);
         }
         
@@ -418,48 +415,45 @@ namespace TwoSides.World
                     return Color.Black;
             }
         }
-        public static void Render(SpriteBatch spriteBatch, int id, Rectangle desc, SpriteEffects effect, float angle, Vector2 center)
+        public static void Render(Render render, int id, Rectangle desc, SpriteEffects effect, float angle, Vector2 center)
         {
             Texture2D texture = GetTexture(id);
             center.X *= texture.Width;
             center.Y *= texture.Height;
-            spriteBatch.Draw(texture,
-                           desc,
-                           new Rectangle(0, 0, texture.Width, texture.Height),
-                           Color.White, angle, center, effect, 0);
+            render.Draw(texture,desc,effect,angle,center);
         }
-        public static void Render(SpriteBatch spriteBatch,int Id,int x,int y,SpriteEffects effect,float angle,Vector2 center)
+        public static void Render(Render render, int id,int x,int y,SpriteEffects effect,float angle,Vector2 center)
         {
-            Render(spriteBatch, Id, new Rectangle(x, y, 16, 16), effect, angle, center);
+            Render(render, id, new Rectangle(x, y, 16, 16), effect, angle, center);
         }
-        public static void Render(SpriteBatch spriteBatch, int Id, int x,int y)
+        public static void Render(Render render, int id, int x,int y)
         {
-            Render(spriteBatch, Id, new Rectangle(x, y, 16, 16));
+            Render(render, id, new Rectangle(x, y, 16, 16));
         }
 
         static Texture2D GetTexture(int id) => Items[id];
 
-        public static void Render(SpriteBatch spriteBatch,int Id,Rectangle dest)
+        public static void Render(Render render,int id,Rectangle dest)
         {
-            Render(spriteBatch, Id, dest, SpriteEffects.None, 0, Vector2.Zero);
+            Render(render, id, dest, SpriteEffects.None, 0, Vector2.Zero);
         }
-        public void Render(SpriteBatch spriteBatch, int x, int y)
+        public void Render(Render render, int x, int y)
         {
-            Render(spriteBatch, Id, x, y);
+            Render(render, Id, x, y);
 
         }
-        public void Render(SpriteBatch spriteBatch, Rectangle dest)
+        public void Render(Render render, Rectangle dest)
         {
-            Render(spriteBatch, Id, dest);
+            Render(render, Id, dest);
 
         }
         public static void LoadedItems(ContentManager content)
         {
 
             Program.StartSw();
-            for (int i = 0; i < ItemMax + Clothes.MaxArmor; i++)
+            for (var i = 0; i < ITEM_MAX + Clothes.MaxArmor; i++)
             {
-                Items[i] = content.Load<Texture2D>(Game1.ImageFolder + "items\\" + i);
+                Items[i] = content.Load<Texture2D>(Game1.IMAGE_FOLDER + "items\\" + i);
             }
             Program.StopSw("Loaded Sprite Items");
         }

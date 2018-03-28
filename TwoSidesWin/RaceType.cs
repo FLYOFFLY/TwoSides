@@ -55,17 +55,16 @@ namespace TwoSides
             foreach (XmlNode xnode in xRoot)
             {
 
-                string name = "";
-                int colorR = 255;
-                int colorG = 255;
-                int colorB = 255;
+                var name = "";
+                var colorR = 255;
+                var colorG = 255;
+                var colorB = 255;
                 // получаем атрибут name
                 Debug.Assert(xnode.Attributes != null , "xnode.Attributes != null");
                 if (xnode.Attributes.Count > 0)
                 {
                     const string S = "name";
-                    if (xnode.Attributes.GetNamedItem(S) != null)
-                        name = xnode.Attributes.GetNamedItem(S)?.Value ?? "";
+                    name = xnode.Attributes.GetNamedItem(S)?.Value ?? "";
                 }
                 // обходим все дочерние узлы элемента user
                 foreach (XmlNode childnode in xnode.ChildNodes)

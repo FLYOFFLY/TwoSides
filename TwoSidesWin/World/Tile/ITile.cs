@@ -14,10 +14,9 @@ using TwoSides.World.Generation;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 namespace TwoSides.World.Tile
 {
-    [Serializable]
     public sealed class Tile
     {
-        public const int TileMaxSize = 16;
+        public const int TILE_MAX_SIZE = 16;
         public byte WaterType;
         public bool Active;
         public short Light;
@@ -32,7 +31,7 @@ namespace TwoSides.World.Tile
         readonly BaseDimension _dimension;
 
 
-        public enum SIde
+        public enum SIde : byte
         {
             LEFT = 0,
             CENTER = 1,
@@ -59,6 +58,12 @@ namespace TwoSides.World.Tile
             WaterType = 0;
             Frame = 0;
             IdSubTexture = 0;
+            Active = false;
+            Light = 0;
+            IdTexture = 0;
+            Hp = 0;
+            TileDate = null;
+            TimeCount = 0;
         }
         public int GetSoildType() => IdTexture < _tileMax ? _tileListCurrent[IdTexture].GetSoildType() : 1;
         public bool IsSolid() => Active && _tileListCurrent[IdTexture].IsSolid();
@@ -85,8 +90,8 @@ namespace TwoSides.World.Tile
         public void Update(int x, int y, Camera camera)
         {
             UpdateTime();
-            if (IdTexture <TileTwoSides.TileMax)
-                _tileListCurrent[IdTexture].Update(x,y,_dimension,camera.InView(new Point(x * TileMaxSize, y * TileMaxSize)));
+            if (IdTexture <TileTwoSides.TILE_MAX)
+                _tileListCurrent[IdTexture].Update(x,y,_dimension,camera.InView(new Point(x * TILE_MAX_SIZE, y * TILE_MAX_SIZE)));
         }
         public float GetBlockHp() => _tileListCurrent[IdTexture].MaxHp;
 
@@ -146,18 +151,18 @@ namespace TwoSides.World.Tile
             if (x < SizeGeneratior.WorldWidth - 1 && y < SizeGeneratior.WorldHeight - 1) tileSIde[7] = _dimension.MapTile[x + 1, y + 1];
             return tileSIde;
         }
-        public bool GetActive(int x,int y)
+        public static bool GetActive(BaseDimension dimension, int x,int y)
         {
             if (x < 0 || x >= SizeGeneratior.WorldWidth) return false;
             if (y < 0 || y >= SizeGeneratior.WorldHeight) return false;
-            return _dimension.MapTile[x,y].Active;
+            return dimension.MapTile[x,y].Active;
         }
         public SIde GetSIde(int i, int j)
         {
             if (IdTexture >= _tileMax) return SIde.CENTER;
             Tile[] tileSIde = GetSIdeBlock(i,j);
-            if (GetActive(i+1,j) && _dimension.MapTile[i + 1, j].IdTexture == IdTexture && _dimension.MapHeight[i + 1] == j &&
-                GetActive(i-1,j) && _dimension.MapTile[i - 1, j].IdTexture == IdTexture && _dimension.MapHeight[i - 1] == j) return SIde.CENTER;
+            if (GetActive(_dimension,i+1,j) && _dimension.MapTile[i + 1, j].IdTexture == IdTexture && _dimension.MapHeight[i + 1] == j &&
+                GetActive(_dimension,i-1,j) && _dimension.MapTile[i - 1, j].IdTexture == IdTexture && _dimension.MapHeight[i - 1] == j) return SIde.CENTER;
 
             if (i-1>0 &&  tileSIde[3].IdTexture == IdTexture && tileSIde[3].Active && _dimension.MapHeight[i - 1] == j) return SIde.RIGHT;
 
@@ -245,7 +250,7 @@ namespace TwoSides.World.Tile
             Console.WriteLine($"new x:{i1} new Y:{j1}");
             return true;
         }
-        public void  Render(int i,int j,Vector2 pos, SpriteBatch spriteBatch,Texture2D water)
+        public void  Render(int i,int j,Vector2 pos, Render render,Texture2D water)
         {
             if (WaterType <= 0) return;
             if (IsSolid() )
@@ -258,7 +263,7 @@ namespace TwoSides.World.Tile
                 _dimension.MapTile[i, j + 1].Blockheight = 1;
             }
             if(Blockheight<=7) AddWater(i, j);
-            spriteBatch.Draw(water, new Rectangle((int)pos.X, (int)pos.Y, 16,16), new Rectangle(0, 0, 16, 16), Color.Blue);
+            render.Draw(water, new Rectangle((int)pos.X, (int)pos.Y, 16,16), new Rectangle(0, 0, 16, 16), Color.Blue);
         }
 
         void AddWater(int i, int j)
@@ -276,17 +281,17 @@ namespace TwoSides.World.Tile
         }
         int GetTickFrame() => IdTexture < _tileMax ? _tileListCurrent[IdTexture].GetTickFrame() : 9999;
 
-        public void Render(int i,int j, SpriteBatch spriteBatch, bool isGround, Texture2D[] textures, Texture2D[] addtexture, Vector2 pos, Color color)
+        public void Render(int i,int j,Render render, bool isGround, Texture2D[] textures, Texture2D[] addtexture, Vector2 pos, Color color)
         {
             UpdateTime();
             if (!HasSpecialTexture() || !isGround)
             {
-                _tileListCurrent[IdTexture].Render(TileDate, spriteBatch, textures[IdTexture], _dimension, pos, i, j, Frame, IdSubTexture, color);
+                _tileListCurrent[IdTexture].Render(TileDate, render, textures[IdTexture], _dimension, pos, i, j, Frame, IdSubTexture, color);
 
             }
             else if (HasSpecialTexture())
             {
-                _tileListCurrent[IdTexture].Render(TileDate, spriteBatch, addtexture[GetIdSideTexture() + (int)GetSIde(i, j)], _dimension, pos, i, j, Frame, IdSubTexture, color);
+                _tileListCurrent[IdTexture].Render(TileDate, render, addtexture[GetIdSideTexture() + (int)GetSIde(i, j)], _dimension, pos, i, j, Frame, IdSubTexture, color);
             }
         }
 

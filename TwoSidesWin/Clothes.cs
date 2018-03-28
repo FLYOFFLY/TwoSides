@@ -81,74 +81,79 @@ namespace TwoSides
         public static void Loadclothes(ContentManager content )
         {
             Program.StartSw();
-            for (int i = 0; i < Pants.Length; i++)
-                Pants[i] = content.Load<Texture2D>($"{Game1.ImageFolder}clothes\\pants_{i}");
+            for (var i = 0; i < Pants.Length; i++)
+                Pants[i] = content.Load<Texture2D>($"{Game1.IMAGE_FOLDER}clothes\\pants_{i}");
 
-            for (int i = 0; i < Suit.Length; i++)
-                Suit[i] = content.Load<Texture2D>($"{Game1.ImageFolder}clothes\\suit_{i}");
+            for (var i = 0; i < Suit.Length; i++)
+                Suit[i] = content.Load<Texture2D>($"{Game1.IMAGE_FOLDER}clothes\\suit_{i}");
 
-            for (int i = 0; i < Shirt.Length; i++)
-                Shirt[i] = content.Load<Texture2D>($"{Game1.ImageFolder}clothes\\shirt_{i}");
+            for (var i = 0; i < Shirt.Length; i++)
+                Shirt[i] = content.Load<Texture2D>($"{Game1.IMAGE_FOLDER}clothes\\shirt_{i}");
 
-            for (int i = 0; i < Belt.Length; i++)
-                Belt[i] = content.Load<Texture2D>($"{Game1.ImageFolder}clothes\\belt_{i}");
+            for (var i = 0; i < Belt.Length; i++)
+                Belt[i] = content.Load<Texture2D>($"{Game1.IMAGE_FOLDER}clothes\\belt_{i}");
 
-            for (int i = 0; i < ShirtLeft.Length; i++)
-                ShirtLeft[i] = content.Load<Texture2D>($"{Game1.ImageFolder}clothes\\shirtl_{i}");
+            for (var i = 0; i < ShirtLeft.Length; i++)
+                ShirtLeft[i] = content.Load<Texture2D>($"{Game1.IMAGE_FOLDER}clothes\\shirtl_{i}");
         
-            for (int i = 0; i < Shoes.Length; i++)
-                Shoes[i] = content.Load<Texture2D>($"{Game1.ImageFolder}clothes\\shoes_{i}");
+            for (var i = 0; i < Shoes.Length; i++)
+                Shoes[i] = content.Load<Texture2D>($"{Game1.IMAGE_FOLDER}clothes\\shoes_{i}");
 
-            for (int i = 0; i < Gloves.Length; i++)
-                Gloves[i] = content.Load<Texture2D>($"{Game1.ImageFolder}clothes\\glove_{i}");
+            for (var i = 0; i < Gloves.Length; i++)
+                Gloves[i] = content.Load<Texture2D>($"{Game1.IMAGE_FOLDER}clothes\\glove_{i}");
 
-            for (int i = 0; i < GlovesLeft.Length; i++)
-                GlovesLeft[i] = content.Load<Texture2D>($"{Game1.ImageFolder}clothes\\glovel_{i}");
+            for (var i = 0; i < GlovesLeft.Length; i++)
+                GlovesLeft[i] = content.Load<Texture2D>($"{Game1.IMAGE_FOLDER}clothes\\glovel_{i}");
 
-            for (int i = 0; i < Armor.Length; i++)
-                Armor[i] = content.Load<Texture2D>($"{Game1.ImageFolder}armor\\{i}");
+            for (var i = 0; i < Armor.Length; i++)
+                Armor[i] = content.Load<Texture2D>($"{Game1.IMAGE_FOLDER}armor\\{i}");
 
-            for (int i = 0; i < Hair.Length; i++)
-                Hair[i] = content.Load<Texture2D>($"{Game1.ImageFolder}clothes\\hair_{i}");
+            for (var i = 0; i < Hair.Length; i++)
+                Hair[i] = content.Load<Texture2D>($"{Game1.IMAGE_FOLDER}clothes\\hair_{i}");
 
             Program.StopSw("Loaded clothes");
         }
-        public void RenderLeft(SpriteBatch spriteBatch, Rectangle rect, Rectangle src, Color colors, int type, SpriteEffects effect)
+        public void RenderLeft(Render render, Rectangle rect, Rectangle src, Color colors, int type, SpriteEffects effect)
         {
             if (GetId() <= -1) return;
 
-            switch ( type ) {
+            switch (type)
+            {
                 case 1:
-                    spriteBatch.Draw(ShirtLeft[_idClothes], rect, src, colors, 0, Vector2.Zero, effect, 0);
+                    render.Draw(ShirtLeft[_idClothes], rect, src, colors,effect);
                     break;
                 case 5:
-                    spriteBatch.Draw(GlovesLeft[_idClothes], rect, src, colors, 0, Vector2.Zero, effect, 0);
+                    render.Draw(GlovesLeft[_idClothes], rect, src, colors,effect);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
-        public void Render(SpriteBatch spriteBatch,Rectangle rect,Rectangle src,Color colors,int type,SpriteEffects effect)
+        public void Render(Render render,Rectangle rect,Rectangle src,Color colors,int type,SpriteEffects effect)
         {
             if (GetId() <= -1) return;
 
             switch ( type ) {
                 case 0:
-                    if (_idClothes < MaxHair) spriteBatch.Draw(Hair[_idClothes], rect, src, colors, 0, Vector2.Zero, effect, 0);
+                    if (_idClothes < MaxHair) render.Draw(Hair[_idClothes], rect, src, colors, effect);
                     break;
                 case 1:
-                    if (_idClothes < MaxShirt) spriteBatch.Draw(Shirt[_idClothes], rect, src, colors, 0, Vector2.Zero, effect, 0);
+                    if (_idClothes < MaxShirt) render.Draw(Shirt[_idClothes], rect, src, colors, effect);
                     break;
                 case 2:
-                    if (_idClothes < MaxPants) spriteBatch.Draw(Pants[_idClothes], rect, src, colors, 0, Vector2.Zero, effect, 0);
+                    if (_idClothes < MaxPants) render.Draw(Pants[_idClothes], rect, src, colors, effect);
                     break;
                 case 3:
-                    if (_idClothes < MaxShoes) spriteBatch.Draw(Shoes[_idClothes], rect, src, colors, 0, Vector2.Zero, effect, 0);
+                    if (_idClothes < MaxShoes) render.Draw(Shoes[_idClothes], rect, src, colors, effect);
                     break;
                 case 4:
-                    if (_idClothes < MaxBelt) spriteBatch.Draw(Belt[_idClothes], rect, src, colors, 0, Vector2.Zero, effect, 0);
+                    if (_idClothes < MaxBelt) render.Draw(Belt[_idClothes], rect, src, colors, effect);
                     break;
                 case 5:
-                    if (_idClothes < MaxGlove) spriteBatch.Draw(Gloves[_idClothes], rect, src, colors, 0, Vector2.Zero, effect, 0);
+                    if (_idClothes < MaxGlove) render.Draw(Gloves[_idClothes], rect, src, colors, effect);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }

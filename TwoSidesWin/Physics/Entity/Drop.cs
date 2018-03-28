@@ -31,6 +31,6 @@ namespace TwoSides.Physics.Entity
         }
         public Item GetSlot() => _slot;
 
-        public void Render(SpriteBatch spriteBatch,int x,int y) => _slot.Render(spriteBatch, x, y);
+        public void Render(Render render,int x,int y) => _slot.Render(render, x, y);
     }
 }

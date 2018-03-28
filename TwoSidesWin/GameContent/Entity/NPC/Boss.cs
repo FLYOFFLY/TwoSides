@@ -33,23 +33,23 @@ namespace TwoSides.GameContent.Entity.NPC
             SetSetting();
         }
 
-         public override void RenderNpc(SpriteBatch spriteBatch, SpriteFont font1, Texture2D head, Texture2D head2,
+         public override void RenderNpc(Render render, SpriteFont font1, Texture2D head, Texture2D head2,
               Texture2D body, Texture2D legs, Texture2D eye, Texture2D hand, Texture2D shadow)
         {
 
             SpriteEffects effect = SpriteEffects.None;
             if (Direction < 0)
                 effect = SpriteEffects.FlipHorizontally;
-            spriteBatch.DrawString(font1, ((int)Hp).ToString(CultureInfo.CurrentCulture), new Vector2((int)(Position.X + (Width - head.Width)), (int)Position.Y - 30), Color.Black);
-                spriteBatch.Draw(head2, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height),Color.White , 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(body, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75), 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(legs, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75), 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(Clothes.Shirt[1], new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), Color.Red, 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(Clothes.Pants[0], new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), Color.Red, 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(Clothes.Shoes[0], new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), Color.Red, 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(eye, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75), 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(hand, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75), 0, Vector2.Zero, effect, 0);
-            DrawShadow(shadow, spriteBatch);
+            render.DrawString(font1, ((int)Hp).ToString(CultureInfo.CurrentCulture), new Vector2((int)(Position.X + (Width - head.Width)), (int)Position.Y - 30), Color.Black);
+            render.Draw(head2, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height),Color.White,effect);
+            render.Draw(body, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75), effect);
+            render.Draw(legs, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75), effect);
+            render.Draw(Clothes.Shirt[1], new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), Color.Red,effect);
+            render.Draw(Clothes.Pants[0], new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), Color.Red,effect);
+            render.Draw(Clothes.Shoes[0], new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), Color.Red,effect);
+            render.Draw(eye, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75),effect);
+            render.Draw(hand, new Rectangle((int)(Position.X + (Width - head.Width)), (int)Position.Y, head.Width, head.Height), new Rectangle(0, 0, head.Width, head.Height), new Color(136, 105, 75),effect);
+            DrawShadow(shadow, render);
         }
         public override void Kill() 
         {

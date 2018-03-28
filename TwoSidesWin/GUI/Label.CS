@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using TwoSides.Utils;
-using TwoSides.GUI;
 
 namespace TwoSides.GUI
 {
@@ -45,15 +44,15 @@ namespace TwoSides.GUI
             _text = Localisation.GetName(text);
         }
 
-        public override void  Draw(SpriteBatch spriteBatch)
+        public override void  Draw(Render render)
         {
-            spriteBatch.Begin();
-            spriteBatch.DrawString(_font,
+            render.Start();
+            render.DrawString(_font,
                 _text,
                 GetPos(),
                 Color);
 
-            spriteBatch.End();
+            render.End();
         }
 
     }

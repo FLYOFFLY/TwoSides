@@ -48,14 +48,14 @@ namespace TwoSides.Physics.Entity.NPC
             if (blockx <= 0) blockx = 0;
             else if (blockx > SizeGeneratior.WorldWidth) blockx = SizeGeneratior.WorldWidth - 1;
 
-            Position.X = blockx * Tile.TileMaxSize;
-            Position.Y = Program.Game.Dimension[Program.Game.CurrentDimension].MapHeight[blockx] * Tile.TileMaxSize - Tile.TileMaxSize * 3;
+            Position.X = blockx * Tile.TILE_MAX_SIZE;
+            Position.Y = Program.Game.Dimension[Program.Game.CurrentDimension].MapHeight[blockx] * Tile.TILE_MAX_SIZE - Tile.TILE_MAX_SIZE * 3;
             Type = Program.Game.Rand.Next(2);
             Rect.Width = Width;
 
             NpcSkin = npcSkin;
             WayPoint = Position.X;
-            WayPoint += Program.Game.Rand.Next(-1, 1) * Tile.TileMaxSize;
+            WayPoint += Program.Game.Rand.Next(-1, 1) * Tile.TILE_MAX_SIZE;
             Rect.Height = Height;
             Drop.Clear();
             Drop.Add(new Item(1, 7));
@@ -66,7 +66,7 @@ namespace TwoSides.Physics.Entity.NPC
         {
             Position = positions;
             WayPoint = Position.X;
-            WayPoint += Program.Game.Rand.Next(-Tile.TileMaxSize, Tile.TileMaxSize);
+            WayPoint += Program.Game.Rand.Next(-Tile.TILE_MAX_SIZE, Tile.TILE_MAX_SIZE);
             Rect.Width = Width;
             Rect.Height = Height;
             Drop.Clear();
@@ -74,43 +74,42 @@ namespace TwoSides.Physics.Entity.NPC
             NpcSkin = npcSkin;
         }
         
-        protected void DrawShadow(Texture2D shadow, SpriteBatch spriteBatch)
+        protected void DrawShadow(Texture2D shadow, Render render)
         {
-            int startnew = (int)Position.Y / Tile.TileMaxSize;
+            var startnew = (int)Position.Y / Tile.TILE_MAX_SIZE;
             startnew += 3;
-            int endnew = startnew + 10;
-            for (int j = startnew; j < endnew; j++)
+            var endnew = startnew + 10;
+            for (var j = startnew; j < endnew; j++)
             {
                 if (endnew >= SizeGeneratior.WorldHeight) continue;
                 if ( !Program.Game.Dimension[Program.Game.CurrentDimension]
-                             .MapTile[(int) Math.Floor(Position.X) / Tile.TileMaxSize , j].Active ) continue;
+                             .MapTile[(int) Math.Floor(Position.X) / Tile.TILE_MAX_SIZE , j].Active ) continue;
 
-                int del = j - startnew;
+                var del = j - startnew;
                 //if (del == 0) del = 1;
                 Rectangle rectShadow = new Rectangle((int)Math.Floor(Position.X),
-                                                     j * Tile.TileMaxSize, shadow.Width, shadow.Height - del);
+                                                     j * Tile.TILE_MAX_SIZE, shadow.Width, shadow.Height - del);
 
-                spriteBatch.Draw(shadow, rectShadow, Color.Black);
+                render.Draw(shadow, rectShadow, Color.Black);
                 break;
             }
         }
 
-        public virtual void RenderNpc(SpriteBatch spriteBatch, SpriteFont font, Texture2D shadow)
+        public virtual void RenderNpc(Render render, SpriteFont font, Texture2D shadow)
         {
 
             SpriteEffects effect = SpriteEffects.None;
             if (Direction < 0)
                 effect = SpriteEffects.FlipHorizontally;
-            spriteBatch.DrawString(font, ((int)Hp).ToString(CultureInfo.CurrentCulture), new Vector2((int)(Position.X + (Width - NpcSkin[0].Width)), (int)Position.Y - 30), Color.Black);
+            render.DrawString(font, ((int)Hp).ToString(CultureInfo.CurrentCulture), new Vector2((int)(Position.X + (Width - NpcSkin[0].Width)), (int)Position.Y - 30), Color.Black);
             Rect = new Rectangle((int)(Position.X + (Width - NpcSkin[0].Width)),
                     (int)Position.Y, NpcSkin[0].Width, NpcSkin[0].Height);
             Rectangle src = new Rectangle(0, 0, NpcSkin[0].Width, NpcSkin[0].Height);
             foreach ( Texture2D skin in NpcSkin )
             {
-                spriteBatch.Draw(skin, Rect, src, Color.White,
-                                 0, Vector2.Zero, effect, 0);
+                render.Draw(skin, Rect, src, Color.White, effect);
             }
-            DrawShadow(shadow, spriteBatch);
+            DrawShadow(shadow, render);
         }
 
         public void Move(float x)
@@ -130,10 +129,10 @@ namespace TwoSides.Physics.Entity.NPC
 
         protected virtual void UpdateAi()
         {
-            if ((int)WayPoint / Tile.TileMaxSize == (int)Position.X / Tile.TileMaxSize)
+            if ((int)WayPoint / Tile.TILE_MAX_SIZE == (int)Position.X / Tile.TILE_MAX_SIZE)
             {
-                WayPoint += Program.Game.Rand.Next(-Tile.TileMaxSize, Tile.TileMaxSize);
-                if (WayPoint < 5 * Tile.TileMaxSize) WayPoint = 5 * Tile.TileMaxSize;
+                WayPoint += Program.Game.Rand.Next(-Tile.TILE_MAX_SIZE, Tile.TILE_MAX_SIZE);
+                if (WayPoint < 5 * Tile.TILE_MAX_SIZE) WayPoint = 5 * Tile.TILE_MAX_SIZE;
             }
             if (WayPoint > Position.X)
                 ControlRight = true;
@@ -155,24 +154,24 @@ namespace TwoSides.Physics.Entity.NPC
         protected void Move()
         {
             ControlJump = false;
-            float a = Velocity.X;
+            var a = Velocity.X;
             Velocity = Colision.TileCollision(this, Position, Velocity, Width, Height, false);
             Position += Velocity;
             if (Position.X < 0)
             {
                 Position.X = 0;
             }
-            if (Position.X > (SizeGeneratior.WorldWidth - 1) * Tile.TileMaxSize)
+            if (Position.X > (SizeGeneratior.WorldWidth - 1) * Tile.TILE_MAX_SIZE)
             {
-                Position.X = (SizeGeneratior.WorldWidth - 1) * Tile.TileMaxSize;
+                Position.X = (SizeGeneratior.WorldWidth - 1) * Tile.TILE_MAX_SIZE;
             }
             if (Position.Y < 0)
             {
                 Position.Y = 0;
             }
-            if (Position.Y > (SizeGeneratior.WorldHeight - 1) * Tile.TileMaxSize)
+            if (Position.Y > (SizeGeneratior.WorldHeight - 1) * Tile.TILE_MAX_SIZE)
             {
-                Position.Y = (SizeGeneratior.WorldHeight - 1) * Tile.TileMaxSize;
+                Position.Y = (SizeGeneratior.WorldHeight - 1) * Tile.TILE_MAX_SIZE;
             }
             if (Math.Abs(a - Velocity.X) > float.Epsilon) ControlJump = true;
             Rect.X = (int)Position.X;

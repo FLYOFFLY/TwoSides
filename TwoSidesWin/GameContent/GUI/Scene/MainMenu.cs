@@ -23,12 +23,12 @@ namespace TwoSides.GameContent.GUI.Scene
         }
         void InitElements(Point resolution)
         {
-            int y = resolution.Y / 3 / 2;
-            int x = y * (887 / 133);
-            int sizeButton = (int)Program.Game.Font1.MeasureString("StartServer").X + 50;
-            int xButton = x - sizeButton;
+            var y = resolution.Y / 3 / 2;
+            var x = y * (887 / 133);
+            var sizeButton = (int)Program.Game.Font1.MeasureString("StartServer").X + 50;
+            var xButton = x - sizeButton;
 
-            _logo = new Image(Program.Game.Content.Load<Texture2D>(Game1.ImageFolder + "header"),
+            _logo = new Image(Program.Game.Content.Load<Texture2D>(Game1.IMAGE_FOLDER + "header"),
                 new Rectangle(resolution.X/ 2 - x / 2,0, x,y));
             _version = new Label(Program.Game.GetVersion(),
                                  new Vector2(0,resolution.Y -(int)Program.Game.Font1.MeasureString(Program.Game.GetVersion()).Y),
@@ -37,7 +37,7 @@ namespace TwoSides.GameContent.GUI.Scene
             void InitButton()
             {
 
-                for (int i = 0; i < _buttons.Length; i++)
+                for (var i = 0; i < _buttons.Length; i++)
                 {
                     _buttons[i] = new Button(Program.Game.Button, Program.Game.Font1,
                                              new Rectangle(0, 0, sizeButton, 30),
@@ -77,11 +77,11 @@ namespace TwoSides.GameContent.GUI.Scene
 
 
 
-        public void Render(SpriteBatch spriteBatch) {
+        public void Render(Render render) {
             foreach ( Button button in _buttons )
-                button.Draw(spriteBatch);
-            _version.Draw(spriteBatch);
-            _logo.Draw(spriteBatch);
+                button.Draw(render);
+            _version.Draw(render);
+            _logo.Draw(render);
            //bar.Render(Program.game.carma, spriteBatch);
         }
         public void Update(GameTime gameTime)

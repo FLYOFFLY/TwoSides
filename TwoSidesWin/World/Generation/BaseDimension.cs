@@ -93,9 +93,9 @@ namespace TwoSides.World.Generation
 
         public virtual void Clear()
         {
-            for (int i = 0; i < SizeGeneratior.WorldWidth; i++)
+            for (var i = 0; i < SizeGeneratior.WorldWidth; i++)
             {
-                for (int j = 0; j < SizeGeneratior.WorldHeight; j++)
+                for (var j = 0; j < SizeGeneratior.WorldHeight; j++)
                 {
                     MapTile[i, j] = new Tile.Tile(this);
                 }
@@ -118,12 +118,12 @@ namespace TwoSides.World.Generation
            bar.SetText("Load World");
             reader.ReadString();
 
-            for (int i = 0; i < SizeGeneratior.WorldWidth; i++)
+            for (var i = 0; i < SizeGeneratior.WorldWidth; i++)
             {
                 MapBiomes[i] = new Biome();
                 MapBiomes[i].Read(reader);
                 MapHeight[i] = reader.ReadInt32();
-                for (int j = 0; j < SizeGeneratior.WorldHeight; j++)
+                for (var j = 0; j < SizeGeneratior.WorldHeight; j++)
                 {
                     MapTile[i, j].Read(reader,version);
                 }
@@ -158,10 +158,10 @@ namespace TwoSides.World.Generation
             bar.Reset();
             bar.SetText("SAVE world");
             writer.Write(@"World");
-            for (int i = 0; i < SizeGeneratior.WorldWidth; i++) {
+            for (var i = 0; i < SizeGeneratior.WorldWidth; i++) {
                 MapBiomes[i].Save(writer);
                 writer.Write(MapHeight[i]);
-                for (int j = 0; j < SizeGeneratior.WorldHeight; j++)
+                for (var j = 0; j < SizeGeneratior.WorldHeight; j++)
                 {
                     MapTile[i, j].Save(writer);
                 }
@@ -207,9 +207,9 @@ namespace TwoSides.World.Generation
             if (MapTile[x, y].IsLightBlock())
             {
                 MapTile[x, y].Light = 0;
-                for (int i = -20; i < 20; i++)
+                for (var i = -20; i < 20; i++)
                 {
-                    for (int j = -20; j < 20; j++)
+                    for (var j = -20; j < 20; j++)
                     {
                         if ( x + i < 0 || y + j < 0 || x + i > SizeGeneratior.WorldWidth - 1 ||
                              y + j > SizeGeneratior.WorldHeight - 1 ) continue;
@@ -281,7 +281,7 @@ namespace TwoSides.World.Generation
         public void UpdateMaxY(int x)
         {
             MapHeight[x] = 0;
-            for (int i = 0; i < SizeGeneratior.WorldHeight; i++)
+            for (var i = 0; i < SizeGeneratior.WorldHeight; i++)
             {
                 if ( !MapTile[x , i].IsSolid() ) continue;
 
@@ -307,9 +307,9 @@ namespace TwoSides.World.Generation
             MapTile[x, y].IdTexture = (short)id;
             if (MapTile[x,y].IsLightBlock()) { 
                 MapTile[x, y].Light = 15; 
-                for (int i = -20; i < 20; i++)
+                for (var i = -20; i < 20; i++)
                 {
-                    for (int j = -20; j < 20; j++)
+                    for (var j = -20; j < 20; j++)
                     {
                         if ( x + i < 0 || y + j < 0 || x + i > SizeGeneratior.WorldWidth - 1 ||
                              y + j > SizeGeneratior.WorldHeight - 1 ) continue;
@@ -329,7 +329,7 @@ namespace TwoSides.World.Generation
         
         public int GetHeight(int w) => MapHeight[w];
 
-        public virtual void Draw(SpriteBatch spriteBatch,ITileList tileList,Rectangle radious)
+        public virtual void Draw(Render render,ITileList tileList,Rectangle radious)
         {
             /*   foreach (Cloud cloud in cloud)
                {
@@ -340,16 +340,16 @@ namespace TwoSides.World.Generation
                            16),
                            Color.White);
                }*/
-            tileList.RenderPlasters(this, radious, spriteBatch);
-            tileList.RenderWall(this, radious, spriteBatch);
-            tileList.RenderTiles(this, radious, spriteBatch);
+            tileList.RenderPlasters(this, radious, render);
+            tileList.RenderWall(this, radious, render);
+            tileList.RenderTiles(this, radious, render);
             foreach (Explosion exp in _explosions)
             {
-                exp.Draw(spriteBatch);
+                exp.Draw(render);
             }
             foreach(Dust dust in Dusts)
             {
-                dust.Render(spriteBatch);
+                dust.Render(render);
             }
         }
         
@@ -384,7 +384,7 @@ namespace TwoSides.World.Generation
             GenerationStructes(bar);
             Clearring(bar);
             Active = true;
-            for (int i = 0; i < 1; i++)
+            for (var i = 0; i < 1; i++)
             {
                 Cloud.Add(new Cloud(new Vector2(i*10,SizeGeneratior.RockLayer-120)));
             }

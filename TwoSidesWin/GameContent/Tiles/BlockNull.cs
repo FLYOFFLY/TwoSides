@@ -19,7 +19,7 @@ namespace TwoSides.GameContent.Tiles
         public override List<Item> Destory(int x,int y, BaseDimension dimension,DynamicEntity entity)
         {
             List<Item> itemDrop = new List<Item>();
-            float procent = Program.Game.Player.Carma / 100.0f;
+            var procent = Program.Game.Player.Carma / 100.0f;
             switch ( Id ) {
                 case 27:
                     if ( Program.Game.Rand.Next(100) < (int) (80 * procent) )
@@ -28,7 +28,7 @@ namespace TwoSides.GameContent.Tiles
                         itemDrop.Add(new Item(1 , 19));
                     break;
                 case 32 when dimension.MapTile[x , y].IdSubTexture == 3:
-                    int minValue = 2 + (int) (4 * procent);
+                    var minValue = 2 + (int) (4 * procent);
                     itemDrop.Add(new Item(dimension.Rand.Next(minValue , minValue + minValue / 2) , 51));
                     itemDrop.Add(new Item(dimension.Rand.Next(minValue , minValue + minValue * 2) , 50));
                     break;
@@ -55,7 +55,7 @@ namespace TwoSides.GameContent.Tiles
                 case 27:
                     if (isView) return;
                     if (dimension.Rand.Next(0, 3) != 0) return;
-                    int direction = dimension.Rand.Next(0, 2);
+                    var direction = dimension.Rand.Next(0, 2);
                     switch ( direction ) {
                         case 0:
                             AddTexture(x + 1, y, dimension);

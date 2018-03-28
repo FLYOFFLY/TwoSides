@@ -44,9 +44,9 @@ namespace TwoSides.World.Generation
         }
         public void Place(int x, BaseDimension dimension, int wIdth, int[] mapHeight)
         {
-            for (int i = x; i < wIdth+x; i++)
+            for (var i = x; i < wIdth+x; i++)
             {
-                for (int j = mapHeight[i]; j < SizeGeneratior.WorldHeight; j++)
+                for (var j = mapHeight[i]; j < SizeGeneratior.WorldHeight; j++)
                 {
                     if ( dimension.MapTile[i , j].Active ) continue;
 

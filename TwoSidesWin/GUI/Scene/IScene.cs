@@ -8,7 +8,7 @@ namespace TwoSides.GUI.Scene
         bool LastSceneRender { get; set; }
         bool LastSceneUpdate{ get; set; }
         void Load(ControlScene scene);
-        void Render(SpriteBatch spriteBatch);
+        void Render(Render render);
         void Update(GameTime gameTime);
         void TryExit();
     }

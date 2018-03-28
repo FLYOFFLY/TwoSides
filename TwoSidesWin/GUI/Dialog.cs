@@ -65,11 +65,10 @@ namespace TwoSides.GUI
             GoodText   = new Label(Program.Game.Player.Name + "," + goodText,   new Vector2(area.X + 2, area.Y + 2), font);
             BadText    = new Label(Program.Game.Player.Name + "," + badText,    new Vector2(area.X + 2, area.Y + 2), font);
             Background = new Image(background, area);
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
                 if (Buttons[i].Text.Length > 0) IsBtnVisible[i] = true;
                 else IsBtnVisible[i] = false;
-                int j = i;
             }
             Type = 0;
         }
@@ -90,7 +89,7 @@ namespace TwoSides.GUI
             BadText    = new Label(Program.Game.Player.Name + "," + badText,  new Vector2(area.X + 2, area.Y + 2), font);
             Background = new Image(background, area);
             Recipes = recipe;
-            for (int i = 1; i < 4; i++)
+            for (var i = 1; i < 4; i++)
             {
                 Buttons[i] = null;
                 IsBtnVisible[i] = false;
@@ -101,11 +100,11 @@ namespace TwoSides.GUI
 
         public bool GetValidRecipes(int id)
         {
-            bool t = false;
+            var t = false;
             Recipe recipe = Recipes[id];
-            for (int i = 0; i < recipe.GetSize(); i++)
+            for (var i = 0; i < recipe.GetSize(); i++)
             {
-                int slotIds = Program.Game.Player.GetSlotItem(recipe.GetIngrident(i), recipe.Hp, recipe.GetSize(i));
+                var slotIds = Program.Game.Player.GetSlotItem(recipe.GetIngrident(i), recipe.Hp, recipe.GetSize(i));
                 if (slotIds != -1)
                 {
                     t = true;
@@ -116,12 +115,12 @@ namespace TwoSides.GUI
             if ( !t ) return false;
 
             if (!recipe.Isblock) return true;
-            for (int xi = -3; xi <= 3; xi++)
+            for (var xi = -3; xi <= 3; xi++)
             {
-                for (int yi = -5; yi <= 5; yi++)
+                for (var yi = -5; yi <= 5; yi++)
                 {
-                    int newx = (int)(Program.Game.Player.Position.X / Tile.TileMaxSize) + xi;
-                    int newy = (int)(Program.Game.Player.Position.Y / Tile.TileMaxSize) + yi;
+                    var newx = (int)(Program.Game.Player.Position.X / Tile.TILE_MAX_SIZE) + xi;
+                    var newy = (int)(Program.Game.Player.Position.Y / Tile.TILE_MAX_SIZE) + yi;
                     if (newx >= SizeGeneratior.WorldWidth ||
                         newx < 0) continue;
                     if (newy >= SizeGeneratior.WorldHeight ||
@@ -138,10 +137,10 @@ namespace TwoSides.GUI
         public void RemoveRecipes(int id)
         {
             Recipe recipe = Recipes[id];
-            for (int i = 0; i < recipe.GetSize(); i++)
+            for (var i = 0; i < recipe.GetSize(); i++)
             {
 
-                int slotIds = Program.Game.Player.GetSlotItem(recipe.GetIngrident(i), recipe.Hp, recipe.GetSize(i));
+                var slotIds = Program.Game.Player.GetSlotItem(recipe.GetIngrident(i), recipe.Hp, recipe.GetSize(i));
                 if ( slotIds == -1 ) continue;
 
                 Program.Game.Player.Slot[slotIds].Ammount -= recipe.GetSize(i);
@@ -158,7 +157,7 @@ namespace TwoSides.GUI
         {
             if (Type == 0)
             {
-                for (int i = 0; i < 4; i++)
+                for (var i = 0; i < 4; i++)
                 {
                     if (IsBtnVisible[i])
                     {
@@ -171,7 +170,7 @@ namespace TwoSides.GUI
                 Buttons[0].Update();
                 if (!IsClick && Program.Game.MouseState.LeftButton == ButtonState.Pressed )
                 {
-                    for ( int i = 0 ; i < Recipes.Count ; i++ )
+                    for ( var i = 0 ; i < Recipes.Count ; i++ )
                     {
                         if ( !GetValidRecipes(i) ) continue;
 
@@ -200,25 +199,25 @@ namespace TwoSides.GUI
             IsBtnVisible[idButton] = !IsBtnVisible[idButton];
         }
 
-        public void Render(SpriteBatch spriteBatch)
+        public void Render(Render render)
         {
             if (Font == null) Font = Program.Game.Font1;
-            Background.Draw(spriteBatch);
+            Background.Draw(render);
             if (Type == 0)
             {
-                for (int i = 0; i < 4; i++)
+                for (var i = 0; i < 4; i++)
                 {
                     if (IsBtnVisible[i])
                     {
-                        Buttons[i].Draw(spriteBatch);
+                        Buttons[i].Draw(render);
                     }
                 }
             }
             else
             {
-                Buttons[0].Draw(spriteBatch);
-                spriteBatch.Begin();
-                for (int i = 0; i < Recipes.Count; i++)
+                Buttons[0].Draw(render);
+                render.Start();
+                for (var i = 0; i < Recipes.Count; i++)
                 {
                     if ( !GetValidRecipes(i) ) continue;
                     
@@ -228,9 +227,9 @@ namespace TwoSides.GUI
                     reitems.Y += 16 - 8;
                     reitems.Width = 16;
                     reitems.Height = 16;
-                    spriteBatch.Draw(Program.Game.Inv, rectrecip, Color.Black);
-                    Recipes[i].Slot.Render(spriteBatch, reitems);
-                    for (int j = 0; j < Recipes[i].GetSize(); j++)
+                    render.Draw(Program.Game.Inv, rectrecip, Color.Black);
+                    Recipes[i].Slot.Render(render, reitems);
+                    for (var j = 0; j < Recipes[i].GetSize(); j++)
                     {
                         Rectangle rectrecip2 = new Rectangle(Area.X + 32 + i * 32, 
                             Area.Y + Area.Height / 2 + 32 * (j + 2), 32, 32);
@@ -239,18 +238,18 @@ namespace TwoSides.GUI
                         reitems2.Y += 16 - 8;
                         reitems2.Width = 16;
                         reitems2.Height = 16;
-                        spriteBatch.Draw(Program.Game.Inv, rectrecip2, Color.Green);
-                        Item.Render(spriteBatch, Recipes[i].GetIngrident(j), reitems2);
+                        render.Draw(Program.Game.Inv, rectrecip2, Color.Green);
+                        Item.Render(render, Recipes[i].GetIngrident(j), reitems2);
                         reitems2.Y += 2;
                         reitems2.X = rectrecip2.X;
-                        spriteBatch.DrawString(Font, Recipes[i].GetSize(j).ToString(CultureInfo.CurrentCulture), new Vector2(reitems2.X, reitems2.Y), Color.White);
+                        render.DrawString(Font, Recipes[i].GetSize(j).ToString(CultureInfo.CurrentCulture), new Vector2(reitems2.X, reitems2.Y));
                     }
                 }
-                spriteBatch.End();
+                render.End();
             }
-            if      (Program.Game.Player.Carma < 40)   BadText.Draw (   spriteBatch   );
-            else if (Program.Game.Player.Carma > 60)   GoodText.Draw(   spriteBatch   );
-            else                                NormalText.Draw    (   spriteBatch   );
+            if      (Program.Game.Player.Carma < 40)   BadText.Draw (   render   );
+            else if (Program.Game.Player.Carma > 60)   GoodText.Draw(   render   );
+            else                                NormalText.Draw    (   render   );
         }
     }
 }//TODO

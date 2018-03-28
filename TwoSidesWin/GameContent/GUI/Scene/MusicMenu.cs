@@ -24,10 +24,10 @@ namespace TwoSides.GameContent.GUI.Scene
                                 Program.Game.Resolution.Y / 2 - 16, 32, 32));
             _scene = scene;
         }
-        public void Render(SpriteBatch spriteBatch)
+        public void Render(Render render)
         {
-            LableMusic.Draw(spriteBatch);
-            _radioButtonMusicOn.Draw(spriteBatch);
+            LableMusic.Draw(render);
+            _radioButtonMusicOn.Draw(render);
         }
         public void Update(GameTime gameTime)
         {

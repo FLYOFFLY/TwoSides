@@ -27,7 +27,7 @@ namespace TwoSides.GameContent.GUI.Scene
         Texture2D _pallete;
         public void Load(ControlScene scene)
         {
-            _pallete = Program.Game.Content.Load<Texture2D>(Game1.ImageFolder + "pallete");
+            _pallete = Program.Game.Content.Load<Texture2D>(Game1.IMAGE_FOLDER + "pallete");
             _image = new Image(_pallete,
                 new Rectangle(0,
                    0,
@@ -44,7 +44,6 @@ namespace TwoSides.GameContent.GUI.Scene
 
             _buttonCreatePerson = new Button(Program.Game.Button, Program.Game.Font1, new Rectangle(0, 0, 100, 30), "null");
             _buttonCreatePerson.SetPatern(_nameInput);
-            _buttonCreatePerson.Text = "Start";
             _buttonCreatePerson.SetRect(new Rectangle(0, 35, (int)Program.Game.Font1.MeasureString(_buttonCreatePerson.Text).X+30, 30));
             _image.SetPatern(_nameInput);
             _image.SetPos(new Vector2((int)Program.Game.Font1.MeasureString(_buttonCreatePerson.Text).X +60, 0));
@@ -66,20 +65,20 @@ namespace TwoSides.GameContent.GUI.Scene
 
         int _currentSlot;
         bool _keyDownHorizontal;
-        public void Render(SpriteBatch spriteBatch)
+        public void Render(Render render)
         {
-            Version.Draw(spriteBatch);
-            _nameInput.Draw(spriteBatch);
-            _nameLabel.Draw(spriteBatch);
-            _buttonCreatePerson.Draw(spriteBatch);
-            spriteBatch.Begin();
-            spriteBatch.DrawString(Program.Game.Font1, Localisation.GetName("tip0"), new Vector2(150, 180), Color.Black);
-            spriteBatch.DrawString(Program.Game.Font1, Localisation.GetName("tip1"), new Vector2(150, 200), Color.Black);
+            Version.Draw(render);
+            _nameInput.Draw(render);
+            _nameLabel.Draw(render);
+            _buttonCreatePerson.Draw(render);
+            render.Start();
+            render.DrawString(Program.Game.Font1, Localisation.GetName("tip0"), new Vector2(150, 180), Color.Black);
+            render.DrawString(Program.Game.Font1, Localisation.GetName("tip1"), new Vector2(150, 200), Color.Black);
             Program.Game.PlayerRender(2);
             Program.Game.PlayerRenderTexture(Program.Game.Slots[_currentSlot],2);
             
-           spriteBatch.End();
-            _image.Draw(spriteBatch);
+           render.End();
+            _image.Draw(render);
         }
         public void TryExit() => Scene.ReturnScene();
         public void Update(GameTime gameTime)
@@ -101,8 +100,8 @@ namespace TwoSides.GameContent.GUI.Scene
 
             if (keyState.IsKeyDown(Keys.Right) && !_keyDownHorizontal)
             {
-                bool type = false;
-                int currentClothesSlot = TryChange(ref type);
+                var type = false;
+                var currentClothesSlot = TryChange(ref type);
                 if (type)
                 {
                     _keyDownHorizontal = true;
@@ -111,7 +110,7 @@ namespace TwoSides.GameContent.GUI.Scene
             }
             if (keyState.IsKeyDown(Keys.Left) && !_keyDownHorizontal)
             {
-                int currentitem = Program.Game.Player.Clslot[_currentSlot].GetId();
+                var currentitem = Program.Game.Player.Clslot[_currentSlot].GetId();
                 if ( currentitem > 0 ) Program.Game.Player.Clslot[_currentSlot] = new Clothes(currentitem - 1);
                 else Program.Game.Player.Clslot[_currentSlot] = new Clothes();
                 _keyDownHorizontal = true;
@@ -128,7 +127,7 @@ namespace TwoSides.GameContent.GUI.Scene
 
         int TryChange(ref bool type)
         {
-            int currentitem = Program.Game.Player.Clslot[_currentSlot].GetId();
+            var currentitem = Program.Game.Player.Clslot[_currentSlot].GetId();
             switch ( _currentSlot ) {
                 case 0 when currentitem + 1 < Clothes.MaxHair:
                 case 1 when currentitem + 1 < Clothes.MaxShirt:

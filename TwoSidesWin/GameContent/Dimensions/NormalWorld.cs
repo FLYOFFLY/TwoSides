@@ -46,7 +46,7 @@ namespace TwoSides.GameContent.Dimensions
             while ( true )
             {
                 double scaleHoles = Program.Game.Rand.Next(7 , 15);
-                int offsetHolesX = 1;
+                var offsetHolesX = 1;
                 if ( Program.Game.Rand.Next(2) == 0 )
                 {
                     offsetHolesX = -1;
@@ -54,17 +54,17 @@ namespace TwoSides.GameContent.Dimensions
                 Vector2 posHoles;
                 posHoles.X = i;
                 posHoles.Y = j;
-                int lenghtHoles = Program.Game.Rand.Next(20 , 40);
+                var lenghtHoles = Program.Game.Rand.Next(20 , 40);
                 Vector2 offsetHoles;
                 offsetHoles.Y = Program.Game.Rand.Next(10 , 20) * 0.01f;
                 offsetHoles.X = offsetHolesX;
                 while ( lenghtHoles > 0 )
                 {
                     lenghtHoles--;
-                    int tileLeft = (int) (posHoles.X - scaleHoles * 0.5);
-                    int tileRight = (int) (posHoles.X + scaleHoles * 0.5);
-                    int tileTop = (int) (posHoles.Y - scaleHoles * 0.5);
-                    int tileBottom = (int) (posHoles.Y + scaleHoles * 0.5);
+                    var tileLeft = (int) (posHoles.X - scaleHoles * 0.5);
+                    var tileRight = (int) (posHoles.X + scaleHoles * 0.5);
+                    var tileTop = (int) (posHoles.Y - scaleHoles * 0.5);
+                    var tileBottom = (int) (posHoles.Y + scaleHoles * 0.5);
                     if ( tileLeft < 0 )
                     {
                         tileLeft = 0;
@@ -81,14 +81,14 @@ namespace TwoSides.GameContent.Dimensions
                     {
                         tileBottom = SizeGeneratior.WorldHeight - 1;
                     }
-                    double radius = scaleHoles * Program.Game.Rand.Next(80 , 120) * 0.01;
-                    for ( int l = tileLeft ; l < tileRight ; l++ )
+                    var radius = scaleHoles * Program.Game.Rand.Next(80 , 120) * 0.01;
+                    for ( var l = tileLeft ; l < tileRight ; l++ )
                     {
-                        for ( int m = tileTop ; m < tileBottom ; m++ )
+                        for ( var m = tileTop ; m < tileBottom ; m++ )
                         {
-                            float lenghtX = Math.Abs(l - posHoles.X);
-                            float lenghtY = Math.Abs(m - posHoles.Y);
-                            double lenghtSqrt = Math.Sqrt(lenghtX * lenghtX + lenghtY * lenghtY);
+                            var lenghtX = Math.Abs(l - posHoles.X);
+                            var lenghtY = Math.Abs(m - posHoles.Y);
+                            var lenghtSqrt = Math.Sqrt(lenghtX * lenghtX + lenghtY * lenghtY);
                             if ( lenghtSqrt < radius * 0.4 )
                             {
                                 Reset(l , m);
@@ -131,10 +131,10 @@ namespace TwoSides.GameContent.Dimensions
 
         public void AddTree(int x, int y)
         {
-            int size = Rand.Next(1, 4);
+            var size = Rand.Next(1, 4);
             if (Equals(MapBiomes[x] , ArrayResource.Grass))
             {
-                for (int i = -size; i < size; i++)
+                for (var i = -size; i < size; i++)
                 {
                     if (x + i < 0) continue;
                     if (x + i >= SizeGeneratior.WorldWidth) continue;
@@ -153,11 +153,11 @@ namespace TwoSides.GameContent.Dimensions
             }
             //if (MapBiomes[x] == ArrayResource.snow || MapBiomes[x] == ArrayResource.worldshow) subId = 1;
             SetTexture(x, y, 13);
-            int b = Program.Game.Rand.Next(2, 5);
+            var b = Program.Game.Rand.Next(2, 5);
             SetTexture(x, y - 1, 14);
             MapTile[x, y].Blockheight = 1;
             MapTile[x, y - 1].Blockheight = (short)(b + 1);
-            for (int i = 0; i < b; i++)
+            for (var i = 0; i < b; i++)
             {
                 SetTexture(x, y - 2 - i, 15);
                 MapTile[x, y - 2 - i].Blockheight = (short)(b - i + 2);
@@ -181,7 +181,7 @@ namespace TwoSides.GameContent.Dimensions
         public void CaveOpenater(int i, int j)
         {
             double scaleHoles = Program.Game.Rand.Next(7, 12);
-            int num2 = 1;
+            var num2 = 1;
             if (Program.Game.Rand.Next(2) == 0)
             {
                 num2 = -1;
@@ -189,7 +189,7 @@ namespace TwoSides.GameContent.Dimensions
             Vector2 posCaves;
             posCaves.X = i;
             posCaves.Y = j;
-            int k = 100;
+            var k = 100;
             Vector2 directionCaves;
             directionCaves.Y = 0f;
             directionCaves.X = num2;
@@ -200,10 +200,10 @@ namespace TwoSides.GameContent.Dimensions
                     k = 0;
                 }
                 k--;
-                int tileLeft = (int)(posCaves.X - scaleHoles * 0.5);
-                int tileRight = (int)(posCaves.X + scaleHoles * 0.5);
-                int tileTop = (int)(posCaves.Y - scaleHoles * 0.5);
-                int tileBottom = (int)(posCaves.Y + scaleHoles * 0.5);
+                var tileLeft = (int)(posCaves.X - scaleHoles * 0.5);
+                var tileRight = (int)(posCaves.X + scaleHoles * 0.5);
+                var tileTop = (int)(posCaves.Y - scaleHoles * 0.5);
+                var tileBottom = (int)(posCaves.Y + scaleHoles * 0.5);
                 if (tileLeft < 0)
                 {
                     tileLeft = 0;
@@ -220,14 +220,14 @@ namespace TwoSides.GameContent.Dimensions
                 {
                     tileBottom = SizeGeneratior.WorldHeight - 1;
                 }
-                double radius = scaleHoles * Program.Game.Rand.Next(80, 120) * 0.01;
-                for (int l = tileLeft; l < tileRight; l++)
+                var radius = scaleHoles * Program.Game.Rand.Next(80, 120) * 0.01;
+                for (var l = tileLeft; l < tileRight; l++)
                 {
-                    for (int m = tileTop; m < tileBottom; m++)
+                    for (var m = tileTop; m < tileBottom; m++)
                     {
-                        float lenX = Math.Abs(l - posCaves.X);
-                        float lenY = Math.Abs(m - posCaves.Y);
-                        double lenSqrt = Math.Sqrt(lenX * lenX + lenY * lenY);
+                        var lenX = Math.Abs(l - posCaves.X);
+                        var lenY = Math.Abs(m - posCaves.Y);
+                        var lenSqrt = Math.Sqrt(lenX * lenX + lenY * lenY);
                         if (lenSqrt < radius * 0.4)
                         {
                             Reset(l, m);
@@ -259,11 +259,11 @@ namespace TwoSides.GameContent.Dimensions
         protected override void GenerationBiomes(ProgressBar progressBar)
         {
 
-            int changeBiome = 0;
-            int currentBiome = 0;
+            var changeBiome = 0;
+            var currentBiome = 0;
             progressBar.Reset();
             progressBar.SetText("Generation Biomes");
-            for (int i = 0; i < SizeGeneratior.WorldWidth; i++)
+            for (var i = 0; i < SizeGeneratior.WorldWidth; i++)
             {
                 if (changeBiome == 0)
                 {
@@ -340,13 +340,13 @@ namespace TwoSides.GameContent.Dimensions
                 }
             } while (stop);*/
         }
-        public override void Draw(SpriteBatch spriteBatch, ITileList tileList, Rectangle radious)
+        public override void Draw(Render render, ITileList tileList, Rectangle radious)
         {
-            base.Draw(spriteBatch,tileList,radious);
+            base.Draw(render,tileList,radious);
 
             foreach (BaseNpc npc in Npcs)
             {
-                npc.RenderNpc(spriteBatch,Program.Game.Font1,Program.Game.Tiles.Textures[0]);
+                npc.RenderNpc(render,Program.Game.Font1,Program.Game.Tiles.Textures[0]);
             }
         }
         protected override void GeneratorHeight(ProgressBar bar)
@@ -356,11 +356,11 @@ namespace TwoSides.GameContent.Dimensions
             bool[] min = new bool[2];
             bar.Reset();
             bar.SetText("Generation HeightMap");
-            for (int i = 1; i < SizeGeneratior.WorldWidth; i++)
+            for (var i = 1; i < SizeGeneratior.WorldWidth; i++)
             {
                 min[1] = min[0];
                 min[0] = false;
-                int temp  = Rand.Next(0, 3);
+                var temp  = Rand.Next(0, 3);
                 MapHeight[i] = MapHeight[i - 1];
                 if (temp == 1 && MapHeight[i] > 0)
                 {
@@ -385,9 +385,9 @@ namespace TwoSides.GameContent.Dimensions
         {
             bar.Reset();
             bar.SetText("Smooth Map");
-            for (int i = 0; i + 2 < SizeGeneratior.WorldWidth; i++)
+            for (var i = 0; i + 2 < SizeGeneratior.WorldWidth; i++)
             {
-                for (int j = i + 5; j > i; j--)
+                for (var j = i + 5; j > i; j--)
                 {
                     if ( j + 1 >= SizeGeneratior.WorldWidth ) continue;
 
@@ -401,9 +401,9 @@ namespace TwoSides.GameContent.Dimensions
         {
             bar.Reset();
             bar.SetText("Generation Terrain");
-            for (int i = 0; i < SizeGeneratior.WorldWidth; i++)
+            for (var i = 0; i < SizeGeneratior.WorldWidth; i++)
             {
-                for (int j = MapHeight[i]; j < SizeGeneratior.WorldHeight; j++)
+                for (var j = MapHeight[i]; j < SizeGeneratior.WorldHeight; j++)
                 {
                     if (j > MapHeight[i] + 6)
                     {
@@ -412,13 +412,13 @@ namespace TwoSides.GameContent.Dimensions
                 }
                 bar.Add(1);
             }
-            for (int i = 0; i < _biomesIDs.Count - 1; i++)
+            for (var i = 0; i < _biomesIDs.Count - 1; i++)
             {
-                int biomeCurrentX = _biomesIDs[i].X;
-                int biomeNextX = _biomesIDs[i + 1].X;
-                int wIdth = biomeNextX - biomeCurrentX;
+                var biomeCurrentX = _biomesIDs[i].X;
+                var biomeNextX = _biomesIDs[i + 1].X;
+                var wIdth = biomeNextX - biomeCurrentX;
 
-                int idBiome = _biomesIDs[i].Y;
+                var idBiome = _biomesIDs[i].Y;
 
                 switch ( idBiome ) {
                     case 0:
@@ -452,13 +452,13 @@ namespace TwoSides.GameContent.Dimensions
          
         protected void SpawnOre(int x, int y,Ore ore)
         {
-            int countOre = 0;
+            var countOre = 0;
             while (countOre < ore.Range)
             {
-                for (int i = x - 3; i < x + 3; i++)
+                for (var i = x - 3; i < x + 3; i++)
                 {
                     if (i < 0 || i >= SizeGeneratior.WorldWidth) continue;
-                    for (int j = y - 3; j < y + 3; j++)
+                    for (var j = y - 3; j < y + 3; j++)
                     {
                         if (j < ore.MinY || j >= ore.MaxY) continue;
                         if (countOre >= ore.Range) break;
@@ -508,8 +508,8 @@ namespace TwoSides.GameContent.Dimensions
             {
                 if ( ReferenceEquals(MapBiomes[(int) vec.X] , ArrayResource.Desrt) )
                 {
-                    int height = Rand.Next(2 , 5);
-                    for ( int i = 0 ; i < height ; i++ )
+                    var height = Rand.Next(2 , 5);
+                    for ( var i = 0 ; i < height ; i++ )
                     {
                         SetTexture((int) vec.X , (int) vec.Y - i , 28);
                     }
@@ -526,7 +526,7 @@ namespace TwoSides.GameContent.Dimensions
 
         void GeneratorStructurePosition(ProgressBar bar)
         {
-            for ( int i = 0 ; i < SizeGeneratior.WorldWidth ; i++ )
+            for ( var i = 0 ; i < SizeGeneratior.WorldWidth ; i++ )
             {
                 GeneratorHomeAndFactory(bar,i);
 
@@ -547,8 +547,8 @@ namespace TwoSides.GameContent.Dimensions
             {
                 if ( StructuresList.Count >= 1 )
                 {
-                    bool test = false;
-                    for ( int structureId = StructuresList.Count - 1 ; structureId > 0 ; structureId-- )
+                    var test = false;
+                    for ( var structureId = StructuresList.Count - 1 ; structureId > 0 ; structureId-- )
                     {
                         if ( !(StructuresList[structureId] is Home home)  ) continue;
 
@@ -571,9 +571,9 @@ namespace TwoSides.GameContent.Dimensions
 
         void GeneratorCaves(int i)
         {
-            for ( int j = SizeGeneratior.RockLayer ; j < SizeGeneratior.WorldHeight ; j++ )
+            for ( var j = SizeGeneratior.RockLayer ; j < SizeGeneratior.WorldHeight ; j++ )
             {
-                int airspawn = Rand.Next(0 , 800);
+                var airspawn = Rand.Next(0 , 800);
 
                 if ( airspawn == 0 && Program.Game.CurrentDimension != 1 )
                 {
@@ -584,7 +584,7 @@ namespace TwoSides.GameContent.Dimensions
 
         void GeneratorTree(int i)
         {
-            int tree = Rand.Next(0 , 3);
+            var tree = Rand.Next(0 , 3);
             if ( tree == 1 &&
                  (ReferenceEquals(MapBiomes[i] , ArrayResource.Grass) ||
                   !ReferenceEquals(MapBiomes[i] , ArrayResource.Snow)) )

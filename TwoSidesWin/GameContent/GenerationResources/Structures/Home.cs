@@ -24,7 +24,7 @@ namespace TwoSides.GameContent.GenerationResources.Structures
         void SpawnInForest(BaseDimension dimension)
         {
             Clear(dimension);
-            short tile = PlaceBackground(dimension);
+            var tile = PlaceBackground(dimension);
             PlaceWall(dimension , tile);
             GeneratorPersonOrZombie(dimension);
             PlaceFurniture(dimension);
@@ -49,19 +49,19 @@ namespace TwoSides.GameContent.GenerationResources.Structures
         {
             if ( !Isplaying )
             {
-                int a = dimension.Rand.Next(1 , 4);
-                for ( int i = 0 ; i < a ; i++ )
+                var a = dimension.Rand.Next(1 , 4);
+                for ( var i = 0 ; i < a ; i++ )
                 {
                     Clothes[] cl = new Clothes[6];
                     Color[] color = new Color[6];
-                    for ( int c = 0 ; c < 6 ; c++ )
+                    for ( var c = 0 ; c < 6 ; c++ )
                     {
                         int[] maxInt =
                         {
                             Clothes.MaxHair , Clothes.MaxShirt , Clothes.MaxPants , Clothes.MaxShoes , Clothes.MaxBelt ,
                             Clothes.MaxGlove 
                         };
-                        int b = Program.Game.Rand.Next(-1 , maxInt[c]);
+                        var b = Program.Game.Rand.Next(-1 , maxInt[c]);
                         if ( b == -1 ) cl[c] = new Clothes();
                         else
                         {
@@ -86,17 +86,17 @@ namespace TwoSides.GameContent.GenerationResources.Structures
 
         void PlaceWall(BaseDimension dimension , short tile)
         {
-            for ( int i = 0 ; i < 10 ; i++ )
+            for ( var i = 0 ; i < 10 ; i++ )
             {
                 dimension.SetTexture(X + i , Y , tile);
                 dimension.SetTexture(X + i , Y - 5 , tile);
             }
-            for ( int i = 4 ; i < 6 ; i++ )
+            for ( var i = 4 ; i < 6 ; i++ )
             {
                 if ( !Isplaying ) dimension.SetTexture(X , Y - i , tile);
                 else dimension.SetTexture(X + 9 , Y - i , tile);
             }
-            for ( int i = 0 ; i < 6 ; i++ )
+            for ( var i = 0 ; i < 6 ; i++ )
             {
                 if ( !Isplaying ) dimension.SetTexture(X + 9 , Y - i , tile);
                 else dimension.SetTexture(X , Y - i , tile);
@@ -106,18 +106,18 @@ namespace TwoSides.GameContent.GenerationResources.Structures
         short PlaceBackground(BaseDimension dimension)
         {
             const short TILE = 26;
-            for ( int j = 1 ; j < 5 ; j++ )
+            for ( var j = 1 ; j < 5 ; j++ )
             {
                 if ( Isplaying )
                 {
-                    for ( int i = 1 ; i < 10 ; i++ )
+                    for ( var i = 1 ; i < 10 ; i++ )
                     {
                         dimension.SetWallId(X + i , Y - j , TILE);
                     }
                 }
                 else
                 {
-                    for ( int i = 0 ; i < 9 ; i++ )
+                    for ( var i = 0 ; i < 9 ; i++ )
                     {
                         dimension.SetWallId(X + i , Y - j , TILE);
                     }
@@ -129,9 +129,9 @@ namespace TwoSides.GameContent.GenerationResources.Structures
 
         void Clear(BaseDimension dimension)
         {
-            for ( int i = 0 ; i < 10 ; i++ )
+            for ( var i = 0 ; i < 10 ; i++ )
             {
-                for ( int j = 0 ; j < 10 ; j++ )
+                for ( var j = 0 ; j < 10 ; j++ )
                 {
                     if ( X + i + 1 >= SizeGeneratior.WorldWidth ) continue;
 
@@ -252,33 +252,33 @@ namespace TwoSides.GameContent.GenerationResources.Structures
 
         void SpawnPyr(BaseDimension dimension)
         {
-            int wallStone = dimension.Rand.Next(10,15);
-            int size = wallStone*2+dimension.Rand.Next(wallStone / 3, wallStone / 2);
+            var wallStone = dimension.Rand.Next(10,15);
+            var size = wallStone*2+dimension.Rand.Next(wallStone / 3, wallStone / 2);
             
             Y += wallStone;
             if (X + size >= SizeGeneratior.WorldWidth) return;
             if (Y - wallStone >= SizeGeneratior.WorldHeight) return;
-            for (int i = 0; i < wallStone; i++)
+            for (var i = 0; i < wallStone; i++)
                 dimension.SetTexture(X + i, Y - i, 25);
-            for (int i = 0; i < wallStone; i++)
+            for (var i = 0; i < wallStone; i++)
                 dimension.SetTexture(X + (size - wallStone) + i, Y - (wallStone - 1) + i, 25);
-            for (int i = 0; i < size - wallStone * 2; i++)
+            for (var i = 0; i < size - wallStone * 2; i++)
                 dimension.SetTexture(X + i + wallStone, Y - (wallStone - 1), 25);
-            for (int i = 0; i < size; i++)
+            for (var i = 0; i < size; i++)
                 dimension.SetTexture(X + i, Y, 25);
-            for (int i = 1; i < wallStone - 1; i++)
+            for (var i = 1; i < wallStone - 1; i++)
             {
-                for (int j = i+1; j < size - i-1; j++)
+                for (var j = i+1; j < size - i-1; j++)
                 {
                     dimension.SetWallId(X + j, Y - i, 25);
                 }
             }
-            int direction = 0;
-            int stepsToDirection = dimension.Rand.Next(5, 10);
-            int stepX = X + (size-4);
-            int stepY = Y-1;
-            int countPath = dimension.Rand.Next(5, 7);
-            for (int i = 0; i < countPath; i++)
+            var direction = 0;
+            var stepsToDirection = dimension.Rand.Next(5, 10);
+            var stepX = X + (size-4);
+            var stepY = Y-1;
+            var countPath = dimension.Rand.Next(5, 7);
+            for (var i = 0; i < countPath; i++)
             {
                 _countAddPath = 1;
                 CreatePath(dimension, direction, stepsToDirection, ref stepX, ref stepY);
@@ -295,11 +295,11 @@ namespace TwoSides.GameContent.GenerationResources.Structures
 
             if ( dimension.Rand.Next(100) > 30 - 10 * _countAddPath ) return;
 
-            int countPath = dimension.Rand.Next(5, 7);
-            int stepXNew = stepX;
-            int stepYNew = stepY;
+            var countPath = dimension.Rand.Next(5, 7);
+            var stepXNew = stepX;
+            var stepYNew = stepY;
             _countAddPath = 2;
-            for (int i = 0; i < countPath; i++)
+            for (var i = 0; i < countPath; i++)
             {
                 switch ( direction )
                 {
@@ -324,7 +324,7 @@ namespace TwoSides.GameContent.GenerationResources.Structures
         static bool GeneratorHoles(BaseDimension dimension , int direction , int stepsToDirection , ref int stepX ,
                                    ref int stepY)
         {
-            for ( int j = 0 ; j < stepsToDirection ; j++ )
+            for ( var j = 0 ; j < stepsToDirection ; j++ )
             {
                 if ( stepX - 5 <= 0 || stepX + 5 >= SizeGeneratior.WorldWidth ) return true;
                 if ( stepY - 5 <= 0 || stepY + 5 >= SizeGeneratior.WorldHeight ) return true;

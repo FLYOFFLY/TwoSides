@@ -20,6 +20,7 @@ namespace TwoSides.Physics
         {
             Texture = texture;
             Pos = position;
+            Color = color;
             Velocity = velocity;
             Size = size;
             CountMaxUpdate = countMaxUpdate;

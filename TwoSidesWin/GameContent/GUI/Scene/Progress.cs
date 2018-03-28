@@ -23,9 +23,9 @@ namespace TwoSides.GameContent.GUI.Scene
 
         public void Load(ControlScene scene)
         {
-            Bar = new ProgressBar(Game1.SizeCarmaHeight ,Program.Game.Resolution.Y - Game1.SizeCarmaHeight -
-                                  (int) Program.Game.Font1.MeasureString("1.1").Y ,Game1.SizeCarmaWidth ,
-                                  Program.Game.Resolution.X - Game1.SizeCarmaWidth ,
+            Bar = new ProgressBar(Game1.SIZE_CARMA_HEIGHT ,Program.Game.Resolution.Y - Game1.SIZE_CARMA_HEIGHT -
+                                  (int) Program.Game.Font1.MeasureString("1.1").Y ,Game1.SIZE_CARMA_WIDTH ,
+                                  Program.Game.Resolution.X - Game1.SIZE_CARMA_WIDTH ,
                                   SizeGeneratior.WorldWidth , null , Color.Black);
             Version = new Label(Program.Game.GetVersion() ,
                                 new Vector2(0 ,
@@ -35,9 +35,9 @@ namespace TwoSides.GameContent.GUI.Scene
 
         }
 
-        public void Render(SpriteBatch spriteBatch) {
-            Bar.Render(Program.Game.Carma, spriteBatch);
-            Version.Draw(spriteBatch);
+        public void Render(Render render) {
+            Bar.Render(Program.Game.Carma, render);
+            Version.Draw(render);
         }
         public void Update(GameTime gameTime){ }
 

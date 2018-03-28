@@ -16,7 +16,7 @@ namespace TwoSides
         bool _isDestory;
         public static void LoadContent()
         {
-            DustTexture = Program.Game.Content.Load<Texture2D>(Game1.ImageFolder+ @"tiles\dust");
+            DustTexture = Program.Game.Content.Load<Texture2D>(Game1.IMAGE_FOLDER+ @"tiles\dust");
         }
         public Dust(Vector2 position,Random rand)
         {
@@ -26,10 +26,10 @@ namespace TwoSides
             _frame = 0;
             _isDestory = false;
         }
-        public void Render(SpriteBatch spriteBatch)
+        public void Render(Render render)
         {
             if (_isDestory) return;
-            spriteBatch.Draw(DustTexture, Position, new Rectangle(8*_id,8*_frame,8,8),Color.White,0,Vector2.Zero,0,SpriteEffects.None,0);
+            render.Draw(DustTexture, Position, new Rectangle(8*_id,8*_frame,8,8));
         }
         public override void Update()
         {

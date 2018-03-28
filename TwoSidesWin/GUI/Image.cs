@@ -23,14 +23,14 @@ namespace TwoSides.GUI
             SetPos(new Vector2(_rect.X, _rect.Y));
         }
 
-        public override void  Draw(SpriteBatch spriteBatch)
+        public override void  Draw(Render render)
         {
             _rect.X = (int)GetPos().X;
             _rect.Y = (int)GetPos().Y;
             if (_image == null) _image = Program.Game.Dialogtex;
-            spriteBatch.Begin();
-            spriteBatch.Draw(_image, _rect, Color.White);
-            spriteBatch.End();
+            render.Start();
+            render.Draw(_image, _rect);
+            render.End();
         }
         public bool InHover(MouseState ms) => _rect.Contains(new Point(ms.X, ms.Y));
         public Color this[int x , int y]

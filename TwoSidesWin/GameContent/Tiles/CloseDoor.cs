@@ -15,10 +15,10 @@ namespace TwoSides.GameContent.Tiles
         }
         public override bool UseBlock(int x, int y, BaseDimension dimension, DynamicEntity entity)
         {
-            int xDoor = x;
-            int yDoor = y + (2 - dimension.MapTile[x, y].IdSubTexture);
+            var xDoor = x;
+            var yDoor = y + (2 - dimension.MapTile[x, y].IdSubTexture);
             int idDoor = dimension.MapTile[xDoor, yDoor].IdTexture;
-            for (int j = 0; j < 3; j++)
+            for (var j = 0; j < 3; j++)
             {
                 dimension.Reset(xDoor, yDoor - j);
             }
@@ -27,14 +27,14 @@ namespace TwoSides.GameContent.Tiles
         }
         public void DestorySIde(BaseDimension dimension,int xDoor,int yDoor)
         {
-            for (int i = 0; i <= 3; i++)
+            for (var i = 0; i <= 3; i++)
             {
                 dimension.Reset(xDoor, yDoor - i);
             }
         }
         public override List<Item> Destory(int x, int y, BaseDimension dimension, DynamicEntity entity)
         {
-            int yDoor = y;
+            var yDoor = y;
             yDoor -= dimension.MapTile[x, y].IdSubTexture;
             DestorySIde(dimension, x, yDoor);
             return base.Destory(x, y, dimension, entity);

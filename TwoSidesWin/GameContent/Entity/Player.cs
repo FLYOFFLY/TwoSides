@@ -39,7 +39,7 @@ namespace TwoSides.GameContent.Entity
             _desc[1] = "Tallking NPC";
             _name[0] = "God";
             _name[1] = "Communicative";
-            for (int i = 0; i < ACHIVEMENT_COUNT; i++)
+            for (var i = 0; i < ACHIVEMENT_COUNT; i++)
             {
                 _achivemets[i] = false;
             }
@@ -61,11 +61,11 @@ namespace TwoSides.GameContent.Entity
         int _translition;
         int _killBossUltraNpc;
 
-        readonly int[] _idItems = new int[Item.ItemMax + Clothes.MaxArmor];
+        readonly int[] _idItems = new int[Item.ITEM_MAX + Clothes.MaxArmor];
         
         public Stats()
         {
-            for (int i = 0; i < Item.ItemMax + Clothes.MaxArmor; i++)
+            for (var i = 0; i < Item.ITEM_MAX + Clothes.MaxArmor; i++)
             {
                 _idItems[i] = new int();
             }
@@ -74,7 +74,7 @@ namespace TwoSides.GameContent.Entity
         
         public void Clear()
         {
-            for (int i = 0; i < Item.ItemMax + Clothes.MaxArmor; i++)
+            for (var i = 0; i < Item.ITEM_MAX + Clothes.MaxArmor; i++)
             {
                 _idItems[i] = 0;
             }
@@ -124,7 +124,7 @@ namespace TwoSides.GameContent.Entity
         #region CONSTS
         
         #region INVENTORY
-        public const int Slotmax = 9 * 5;
+        public const int SLOTMAX = 9 * 5;
         #endregion
         
         #region  PHYSIC
@@ -139,7 +139,7 @@ namespace TwoSides.GameContent.Entity
         #region FIELDS
 
         #region INVENTORY
-        public Item[] Slot = new Item[Slotmax + 3];
+        public Item[] Slot = new Item[SLOTMAX + 3];
         public Clothes[] Clslot = new Clothes[6];
         public int CurrentMaxSlot = 1 + 9 * 4;
         public Color[] Colors = new Color[5];
@@ -230,11 +230,11 @@ namespace TwoSides.GameContent.Entity
         public Player()
         {
             _stats = new Stats();
-            for (int i = 0; i < Slotmax + 3; i++)
+            for (var i = 0; i < SLOTMAX + 3; i++)
             {
                 Slot[i] = new Item();
             }
-            for (int i = 0; i < 5; i++)
+            for (var i = 0; i < 5; i++)
             {
                 Colors[i] = Color.Red;
             }
@@ -248,17 +248,17 @@ namespace TwoSides.GameContent.Entity
         public override void Load(BinaryReader reader)
         {
             base.Load(reader);
-            for (int i = 0; i < 6; i++)
+            for (var i = 0; i < 6; i++)
             {
                 Clslot[i] = new Clothes();
                 Clslot[i].Load(reader);
             }
-            for (int i = 0; i < Slotmax + 3; i++)
+            for (var i = 0; i < SLOTMAX + 3; i++)
             {
                 Slot[i] = new Item();
                 Slot[i].Load(reader);
             }
-            for (int i = 0; i < 5; i++)
+            for (var i = 0; i < 5; i++)
             {
                 Colors[i] = Tools.ReadColor(reader);
             }
@@ -268,15 +268,15 @@ namespace TwoSides.GameContent.Entity
         public override void Save(BinaryWriter writer)
         {
             base.Save(writer);
-            for (int i = 0; i < 6; i++)
+            for (var i = 0; i < 6; i++)
             {
                 Clslot[i].Save(writer);
             }
-            for (int i = 0; i < Slotmax + 3; i++)
+            for (var i = 0; i < SLOTMAX + 3; i++)
             {
                 Slot[i].Save(writer);
             }
-            for (int i = 0; i < 5; i++)
+            for (var i = 0; i < 5; i++)
             {
                 Tools.SaveColor(Colors[i], writer);
             }
@@ -287,22 +287,22 @@ namespace TwoSides.GameContent.Entity
 
         public void BossKill() => _stats.SetStats(Stats.StatsType.KILL_BOSS, _stats.Getstats(Stats.StatsType.KILL_BOSS, 0) + 1);
 
-        public int GetDef() => Slot[Slotmax].GetDef() + Slot[Slotmax + 1].GetDef() + Slot[Slotmax + 2].GetDef();
+        public int GetDef() => Slot[SLOTMAX].GetDef() + Slot[SLOTMAX + 1].GetDef() + Slot[SLOTMAX + 2].GetDef();
 
         public float GetX() => Position.X;
 
         public float GetY() => Position.Y;
 
-        public float GetXLocal() => Position.X / Tile.TileMaxSize;
+        public float GetXLocal() => Position.X / Tile.TILE_MAX_SIZE;
 
-        public float GetYLocal() => Position.Y / Tile.TileMaxSize;
+        public float GetYLocal() => Position.Y / Tile.TILE_MAX_SIZE;
 
         void RemoveRecipes(int id)
         {
-            for (int i = 0; i < Recipe.Recipes[id].GetSize(); i++)
+            for (var i = 0; i < Recipe.Recipes[id].GetSize(); i++)
             {
 
-                int slotIds = GetSlotItem(Recipe.Recipes[id].GetIngrident(i), Recipe.Recipes[id].Hp, Recipe.Recipes[id].GetSize(i));
+                var slotIds = GetSlotItem(Recipe.Recipes[id].GetIngrident(i), Recipe.Recipes[id].Hp, Recipe.Recipes[id].GetSize(i));
                 if (slotIds == -1) continue;
 
                 Slot[slotIds].Ammount -= Recipe.Recipes[id].GetSize(i);
@@ -316,10 +316,10 @@ namespace TwoSides.GameContent.Entity
 
         public bool GetValidRecipes(int id)
         {
-            bool t = false;
-            for (int i = 0; i < Recipe.Recipes[id].GetSize(); i++)
+            var t = false;
+            for (var i = 0; i < Recipe.Recipes[id].GetSize(); i++)
             {
-                int slotIds = GetSlotItem(Recipe.Recipes[id].GetIngrident(i),
+                var slotIds = GetSlotItem(Recipe.Recipes[id].GetIngrident(i),
                                           Recipe.Recipes[id].Hp,
                                           Recipe.Recipes[id].GetSize(i));
 
@@ -333,12 +333,12 @@ namespace TwoSides.GameContent.Entity
             if (!t) return false;
 
             if (!Recipe.Recipes[id].Isblock) return true;
-            for (int xi = -3; xi <= 3; xi++)
+            for (var xi = -3; xi <= 3; xi++)
             {
-                for (int yi = -5; yi <= 5; yi++)
+                for (var yi = -5; yi <= 5; yi++)
                 {
-                    int newx = (int)(Position.X / Tile.TileMaxSize) + xi;
-                    int newy = (int)(Position.Y / Tile.TileMaxSize) + yi;
+                    var newx = (int)(Position.X / Tile.TILE_MAX_SIZE) + xi;
+                    var newy = (int)(Position.Y / Tile.TILE_MAX_SIZE) + yi;
                     if (newx >= SizeGeneratior.WorldWidth ||
                         newx < 0) continue;
                     if (newy >= SizeGeneratior.WorldHeight ||
@@ -377,16 +377,6 @@ namespace TwoSides.GameContent.Entity
         public void SetUserColor(Color clrace) => _colorRace = clrace;
 
         public Color GetColor() => _colorRace;
-
-        void MissionHelloWorld(Civilian civ,int ActiveDialog)
-        {
-        }
-        void MissionQuest2(Civilian civ, int ActiveDialog)
-        {
-        }
-        void MissionQuest3(Civilian civ)
-        {
-        }
         void Dialog()
         {
             Civilian civ = Program.Game.Dimension[0].Civil[0];
@@ -395,35 +385,33 @@ namespace TwoSides.GameContent.Entity
             switch (civ.Activedialog)
             {
                 case 1:
-                    int questId1 = Quests.IndexOf(_quest);
+                    var questId1 = Quests.IndexOf(_quest);
                     if (_zombiekill) Quests[questId1].SetCompliction(0);
                     break;
                 case 3:
-                    int questId3 = Quests.IndexOf(Quest2);
+                    var questId3 = Quests.IndexOf(Quest2);
 
-                    PassedQuestDialog(civ, questId3, 4, Quests[questId3]);
+                    PassedQuestDialog(civ, Quests[questId3]);
                     break;
                 case 5:
-                    int questId5 = Quests.IndexOf(Quest3);
+                    var questId5 = Quests.IndexOf(Quest3);
                     if (_stats.Getstats(Stats.StatsType.ITEM_COUNT, 19) >= 2) Quests[questId5].SetCompliction(0);
                     if (_stats.Getstats(Stats.StatsType.KILL_BOSS, 8) >= 1) Quests[questId5].SetCompliction(1);
-                    PassedQuestDialog(civ, questId5, 6, Quests[questId5]);
+                    PassedQuestDialog(civ, Quests[questId5]);
                     break;
                 case 7:
                     {
-                        int questId7 = Quests.IndexOf(Quest4);
+                        var questId7 = Quests.IndexOf(Quest4);
                         if (_stats.Getstats(0, 22) >= 1) Quests[questId7].SetCompliction(1);
                         if (_stats.Getstats(0, 23) >= 1) Quests[questId7].SetCompliction(2);
                         if (_stats.Getstats(0, 24) >= 1) Quests[questId7].SetCompliction(3);
-                        PassedQuestDialog(civ, questId7, 8,Quests[questId7]);
+                        PassedQuestDialog(civ,Quests[questId7]);
                         break;
                     }
-                default:
-                    break;
             }
         }
 
-        void PassedQuestDialog(Civilian civ, int questId, int newDialog, Quest currentQuest)
+        void PassedQuestDialog(Civilian civ, Quest currentQuest)
         {
             if (currentQuest.IsPassed())
             {
@@ -437,13 +425,13 @@ namespace TwoSides.GameContent.Entity
             }
         }
 
-        private void PassedQuestNo(Civilian civ,bool isCarma)
+        void PassedQuestNo(Civilian civ,bool isCarma)
         {
             if (isCarma) Carma = Math.Max(Carma - 2, 0);
             civ.ToggleEnabled();
         }
 
-        private void PassedQuestYes(Civilian civ, int questId, int newDialog,bool isCarma)
+        void PassedQuestYes(Civilian civ, int questId, int newDialog,bool isCarma)
         {
             if(isCarma) Carma = Math.Max(Carma - 1, 0);
             _quest.Passed();
@@ -452,15 +440,15 @@ namespace TwoSides.GameContent.Entity
 
         }
 
-        private void AccesQuest(Civilian civ,int questID,Quest questAcces)
+        void AccesQuest(Civilian civ,int questId,Quest questAcces)
         {
-            civ.Activedialog = questID;
+            civ.Activedialog = questId;
             Quests.Add(questAcces);
         }
 
         public void QuestUpdate()
         {
-            int questId = Quests.IndexOf(Quest5);
+            var questId = Quests.IndexOf(Quest5);
             if (questId < 0) return;
 
             if (_stats.Getstats(Stats.StatsType.KILL_BOSS, 0) >= 1) Quests[questId].SetCompliction(0);
@@ -524,15 +512,15 @@ namespace TwoSides.GameContent.Entity
             Zombie = false;
             Hunger = 100;
             Drought = 100;
-            Position.X = 1 * Tile.TileMaxSize;
+            Position.X = 1 * Tile.TILE_MAX_SIZE;
             Bellframe = 0;
-            Position.Y = Program.Game.Dimension[Program.Game.CurrentDimension].MapHeight[1] * Tile.TileMaxSize - Tile.TileMaxSize * 3;
-            for (int i = 0; i < Slotmax + 3; i++)
+            Position.Y = Program.Game.Dimension[Program.Game.CurrentDimension].MapHeight[1] * Tile.TILE_MAX_SIZE - Tile.TILE_MAX_SIZE * 3;
+            for (var i = 0; i < SLOTMAX + 3; i++)
             {
                 Slot[i] = new Item { IsEmpty = true };
             }
 
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
                 Bloods[i] = false;
             }
@@ -567,33 +555,33 @@ namespace TwoSides.GameContent.Entity
             _deltaAnimation = 0;
         }
 
-        private void AddQuestDialog(Civilian civs, int idStartQuest, int idNextDialog, Quest quest)
+        void AddQuestDialog(Civilian civs, int idStartQuest, int idNextDialog, Quest quest)
         {
-            Program.Game.Dimension[0].Civil[0].Dialog[idStartQuest].Buttons[0].OnClicked += (_, _a) => { Carma = Math.Max(Carma - 2, 0); civs.ToggleEnabled(); };
-            Program.Game.Dimension[0].Civil[0].Dialog[idStartQuest].Buttons[1].OnClicked += (_, _a) => { Carma = Math.Max(Carma + 2, 0); AccesQuest(civs, idNextDialog, quest); };
-            Program.Game.Dimension[0].Civil[0].Dialog[idStartQuest].Buttons[3].OnClicked += (_, _a) => { AccesQuest(civs, idNextDialog, quest); };
-            Program.Game.Dimension[0].Civil[0].Dialog[idStartQuest].Buttons[2].OnClicked += (_, _a) => { civs.ToggleEnabled(); };
+            Program.Game.Dimension[0].Civil[0].Dialog[idStartQuest].Buttons[0].OnClicked += (_, a) => { Carma = Math.Max(Carma - 2, 0); civs.ToggleEnabled(); };
+            Program.Game.Dimension[0].Civil[0].Dialog[idStartQuest].Buttons[1].OnClicked += (_, a) => { Carma = Math.Max(Carma + 2, 0); AccesQuest(civs, idNextDialog, quest); };
+            Program.Game.Dimension[0].Civil[0].Dialog[idStartQuest].Buttons[3].OnClicked += (_, a) => { AccesQuest(civs, idNextDialog, quest); };
+            Program.Game.Dimension[0].Civil[0].Dialog[idStartQuest].Buttons[2].OnClicked += (_, a) => { civs.ToggleEnabled(); };
         }
 
-        private void AddQuestDialog(Civilian civs, int i)
+        void AddQuestDialog(Civilian civs, int i)
         {
-            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[0].OnClicked += (_, _a) => { Carma = Math.Max(Carma - 2, 0); civs.ToggleEnabled(); };
-            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[1].OnClicked += (_, _a) => civs.ToggleEnabled();
-            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[3].OnClicked += (_, _a) => civs.ToggleEnabled();
-            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[2].OnClicked += (_, _a) => civs.ToggleEnabled();
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[0].OnClicked += (_, a) => { Carma = Math.Max(Carma - 2, 0); civs.ToggleEnabled(); };
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[1].OnClicked += (_, a) => civs.ToggleEnabled();
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[3].OnClicked += (_, a) => civs.ToggleEnabled();
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[2].OnClicked += (_, a) => civs.ToggleEnabled();
         }
 
-        private void AddQuestDialog(Civilian civs, int i, int questIDNew)
+        void AddQuestDialog(Civilian civs, int i, int questIdNew)
         {
-            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[0].OnClicked += (_, _a) => PassedQuestNo(civs, true);
-            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[1].OnClicked += (_, _a) => PassedQuestYes(civs, Quests.IndexOf(_quest), questIDNew, true);
-            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[3].OnClicked += (_, _a) => PassedQuestYes(civs, Quests.IndexOf(_quest), questIDNew, false);
-            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[2].OnClicked += (_, _a) => PassedQuestNo(civs, false);
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[0].OnClicked += (_,a) => PassedQuestNo(civs, true);
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[1].OnClicked += (_,a) => PassedQuestYes(civs, Quests.IndexOf(_quest), questIdNew, true);
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[3].OnClicked += (_,a) => PassedQuestYes(civs, Quests.IndexOf(_quest), questIdNew, false);
+            Program.Game.Dimension[0].Civil[0].Dialog[i].Buttons[2].OnClicked += (_, a) => PassedQuestNo(civs, false);
         }
 
         public int GetSlotFull()
         {
-            for (int i = 0; i < Slotmax; i++)
+            for (var i = 0; i < SLOTMAX; i++)
             {
                 if (Slot[i].IsEmpty) return i;
             }
@@ -602,7 +590,7 @@ namespace TwoSides.GameContent.Entity
 
         public int GetSlotItem(int iditem)
         {
-            for (int i = 0; i < CurrentMaxSlot; i++)
+            for (var i = 0; i < CurrentMaxSlot; i++)
             {
                 if (!Slot[i].IsEmpty && Slot[i].Id == iditem && Slot[i].GetStack() > Slot[i].Ammount) return i;
 
@@ -612,7 +600,7 @@ namespace TwoSides.GameContent.Entity
 
         public int GetSlotItem(int iditem, int ammout)
         {
-            for (int i = 0; i < CurrentMaxSlot; i++)
+            for (var i = 0; i < CurrentMaxSlot; i++)
             {
                 if (!Slot[i].IsEmpty && Slot[i].Id == iditem && Slot[i].GetStack() > Slot[i].Ammount && Slot[i].Ammount >= ammout) return i;
 
@@ -622,7 +610,7 @@ namespace TwoSides.GameContent.Entity
 
         public int GetSlotItem(int iditem, float hpb, bool plusravno = true)
         {
-            for (int i = 0; i < CurrentMaxSlot; i++)
+            for (var i = 0; i < CurrentMaxSlot; i++)
             {
                 if (!Slot[i].IsEmpty && Slot[i].Id == iditem && (Slot[i].Hp >= hpb && plusravno || Math.Abs(Slot[i].Hp - hpb) < float.Epsilon && !plusravno) && Slot[i].GetStack() > Slot[i].Ammount) return i;
 
@@ -632,7 +620,7 @@ namespace TwoSides.GameContent.Entity
 
         public int GetSlotItem(int iditem, float hpb, int ammout, bool plusravno = true)
         {
-            for (int i = 0; i < CurrentMaxSlot; i++)
+            for (var i = 0; i < CurrentMaxSlot; i++)
             {
                 if (!Slot[i].IsEmpty && Slot[i].Ammount >= ammout && Slot[i].Id == iditem && (Slot[i].Hp >= hpb && plusravno || Math.Abs(Slot[i].Hp - hpb) < float.Epsilon && !plusravno) && Slot[i].GetStack() > Slot[i].Ammount) return i;
 
@@ -642,32 +630,33 @@ namespace TwoSides.GameContent.Entity
 
         public void ClearClothes()
         {
-            for (int i = 0; i < Clslot.Length; i++)
+            for (var i = 0; i < Clslot.Length; i++)
             {
                 Clslot[i] = new Clothes();
             }
         }
 
-        public void RenderFog(Texture2D fog, SpriteBatch spriteBatch)
+        public void RenderFog(Texture2D fog, Render render)
         {
             if (_animationfog > fog.Width - Program.Game.Resolution.X)
             {
                 _animationfog = 0;
             }
             else _animationfog += Program.Game.Seconds * ((fog.Width - Program.Game.Resolution.X) / 60.0f);
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp);
+            render.End();
+            render.Start(SamplerState.AnisotropicClamp);
             Rectangle dest = new Rectangle(0, 0,
            Program.Game.Resolution.X * 2, Program.Game.Resolution.Y * 2);
             Rectangle src = new Rectangle((int)_animationfog, 0, 800, 600);
             if (Program.Game.CurrentDimension == 2)
             {
-                if (Program.Game.Dimension[Program.Game.CurrentDimension].MapHeight[(int)Position.X / Tile.TileMaxSize] > Position.Y / Tile.TileMaxSize) spriteBatch.Draw(fog, dest, src, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
+                if (Program.Game.Dimension[Program.Game.CurrentDimension].MapHeight[(int)Position.X / Tile.TILE_MAX_SIZE] > Position.Y / Tile.TILE_MAX_SIZE)
+                    render.Draw(fog, dest, src, Color.White);
             }
-            spriteBatch.End();
+            render.End();
         }
 
-        public void Render(Texture2D eye, Texture2D head, Texture2D body, Texture2D legs, SpriteBatch spriteBatch, float scale = 1.0f)
+        public void Render(Texture2D eye, Texture2D head, Texture2D body, Texture2D legs, Render render, float scale = 1.0f)
         {
             SpriteEffects effect = SpriteEffects.None;
             Rectangle dest = new Rectangle(
@@ -679,43 +668,43 @@ namespace TwoSides.GameContent.Entity
                  24, 42);
             if (_direction < 0)
                 effect = SpriteEffects.FlipHorizontally;
-            spriteBatch.Draw(head, dest, src, _colorRace, 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(body, dest, src, _colorRace, 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(legs, dest, src2, _colorRace, 0, Vector2.Zero, effect, 0);
-            spriteBatch.Draw(eye, dest, src, Color.White, 0, Vector2.Zero, effect, 0);
-            RenderClothes(spriteBatch, effect, dest, src, src2);
+            render.Draw(head, dest, src, _colorRace, effect);
+            render.Draw(body, dest, src, _colorRace, effect);
+            render.Draw(legs, dest, src2, _colorRace, effect);
+            render.Draw(eye, dest, src, Color.White,effect);
+            RenderClothes(render, effect, dest, src, src2);
             //   spriteBatch.Draw(Program.game.shootgun, dest2, new Rectangle(0,0,40,17), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
             // spriteBatch.Draw(suit[1], dest, src, Color.White, 0, Vector2.Zero, effect, 0);//
         }
 
-        void RenderClothes(SpriteBatch spriteBatch, SpriteEffects effect, Rectangle dest, Rectangle src, Rectangle src2)
+        void RenderClothes(Render render, SpriteEffects effect, Rectangle dest, Rectangle src, Rectangle src2)
         {
-            Clslot[0].Render(spriteBatch, dest, src, Color.Black, 0, effect);
-            Clslot[1].Render(spriteBatch, dest, src, Colors[0], 1, effect);
-            Clslot[2].Render(spriteBatch, dest, src2, Colors[1], 2, effect);
-            Clslot[3].Render(spriteBatch, dest, src2, Colors[2], 3, effect);
-            Clslot[4].Render(spriteBatch, dest, src, Colors[3], 4, effect);
-            Clslot[5].Render(spriteBatch, dest, src, Colors[4], 5, effect);
-            if (!Slot[Slotmax].IsEmpty)
+            Clslot[0].Render(render, dest, src, Color.Black, 0, effect);
+            Clslot[1].Render(render, dest, src, Colors[0], 1, effect);
+            Clslot[2].Render(render, dest, src2, Colors[1], 2, effect);
+            Clslot[3].Render(render, dest, src2, Colors[2], 3, effect);
+            Clslot[4].Render(render, dest, src, Colors[3], 4, effect);
+            Clslot[5].Render(render, dest, src, Colors[4], 5, effect);
+            if (!Slot[SLOTMAX].IsEmpty)
             {
-                spriteBatch.Draw(Clothes.Armor[Slot[Slotmax].GetArmorModel()], dest, src, Color.White, 0, Vector2.Zero, effect, 0);
+                render.Draw(Clothes.Armor[Slot[SLOTMAX].GetArmorModel()], dest, src, Color.White, effect);
             }
-            if (!Slot[Slotmax + 1].IsEmpty)
+            if (!Slot[SLOTMAX + 1].IsEmpty)
             {
-                spriteBatch.Draw(Clothes.Armor[Slot[Slotmax + 1].GetArmorModel()], dest, src, Color.White, 0, Vector2.Zero, effect, 0);
+                render.Draw(Clothes.Armor[Slot[SLOTMAX + 1].GetArmorModel()], dest, src, Color.White,effect);
             }
-            if (!Slot[Slotmax + 2].IsEmpty)
+            if (!Slot[SLOTMAX + 2].IsEmpty)
             {
-                spriteBatch.Draw(Clothes.Armor[Slot[Slotmax + 2].GetArmorModel()], dest, src, Color.White, 0, Vector2.Zero, effect, 0);
+                render.Draw(Clothes.Armor[Slot[SLOTMAX + 2].GetArmorModel()], dest, src, Color.White, effect);
             }
             // ReSharper disable once InvertIf
             if (_special != -1)
             {
-                spriteBatch.Draw(Clothes.Suit[_special], dest, src, Color.White, 0, Vector2.Zero, effect, 0);
+                render.Draw(Clothes.Suit[_special], dest, src, Color.White, effect);
             }
         }
 
-        public void RenderLeftPart(Texture2D hand, SpriteBatch sb, float scale = 1.0f)
+        public void RenderLeftPart(Texture2D hand,Render render, float scale = 1.0f)
         {
             SpriteEffects effect = SpriteEffects.None;
             Rectangle dest = new Rectangle(
@@ -725,14 +714,14 @@ namespace TwoSides.GameContent.Entity
                 24, 42);
             if (_direction < 0)
                 effect = SpriteEffects.FlipHorizontally;
-            sb.Draw(hand, dest, src, _colorRace, 0, Vector2.Zero, effect, 0);
-            Clslot[1].RenderLeft(sb, dest, src, Colors[0], 1, effect);
-            Clslot[5].RenderLeft(sb, dest, src, Colors[4], 5, effect);
+            render.Draw(hand, dest, src, _colorRace,effect);
+            Clslot[1].RenderLeft(render, dest, src, Colors[0], 1, effect);
+            Clslot[5].RenderLeft(render, dest, src, Colors[4], 5, effect);
         }
 
-        public void Render(Texture2D hand, Texture2D eye, Texture2D head, Texture2D body, Texture2D legs, SpriteBatch spriteBatch, Texture2D shadow)
+        public void Render(Texture2D hand, Texture2D eye, Texture2D head, Texture2D body, Texture2D legs,Render render, Texture2D shadow)
         {
-            RenderLeftPart(hand, spriteBatch);
+            RenderLeftPart(hand, render);
             if (!Slot[SelectedItem].IsEmpty)
             {
                 if (_direction > 0)
@@ -744,12 +733,12 @@ namespace TwoSides.GameContent.Entity
                         src,
                         Color.White, itemframe, new Vector2(0, itemIcon.Height / 2), effect, 0);
                         */
-                    Item.Render(spriteBatch, Slot[SelectedItem].Id,
+                    Item.Render(render, Slot[SelectedItem].Id,
                         (int)Position.X + 22 - 8, (int)(Position.Y + 30 - 8), SpriteEffects.None, _itemframe, new Vector2(0, 0.5f));
                 }
                 else
                 {
-                    Item.Render(spriteBatch, Slot[SelectedItem].Id, (int)Position.X - 22 + 16,
+                    Item.Render(render, Slot[SelectedItem].Id, (int)Position.X - 22 + 16,
                             (int)Position.Y + 30 - 8, SpriteEffects.FlipHorizontally, -_itemframe, new Vector2(0.5f, 0.5f));
                     /*    spriteBatch.Draw(itemIcon,
                             new Rectangle((int)position.X- 22 + 16,
@@ -760,21 +749,21 @@ namespace TwoSides.GameContent.Entity
                     */
                 }
             }
-            Render(eye, head, body, legs, spriteBatch);
-            int startnew = (int)Position.Y / Tile.TileMaxSize;
+            Render(eye, head, body, legs, render);
+            var startnew = (int)Position.Y / Tile.TILE_MAX_SIZE;
             startnew += 3;
-            int endnew = startnew + 10;
-            for (int j = startnew; j < endnew; j++)
+            var endnew = startnew + 10;
+            for (var j = startnew; j < endnew; j++)
             {
                 if (j >= SizeGeneratior.WorldHeight) continue;
-                if (!Program.Game.Dimension[Program.Game.CurrentDimension].MapTile[(int)Math.Floor(Position.X) / Tile.TileMaxSize, j].Active) continue;
+                if (!Program.Game.Dimension[Program.Game.CurrentDimension].MapTile[(int)Math.Floor(Position.X) / Tile.TILE_MAX_SIZE, j].Active) continue;
 
-                int del = j - startnew;
+                var del = j - startnew;
                 //if (del == 0) del = 1;
                 Rectangle rectShadow = new Rectangle((int)Math.Floor(Position.X),
-                                                     j * Tile.TileMaxSize, shadow.Width, shadow.Height - del);
+                                                     j * Tile.TILE_MAX_SIZE, shadow.Width, shadow.Height - del);
 
-                spriteBatch.Draw(shadow, rectShadow, Color.Black);
+                render.Draw(shadow, rectShadow, Color.Black);
                 break;
             }
             //   spriteBatch.Draw(Program.game.shootgun, dest2, new Rectangle(0,0,40,17), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
@@ -783,23 +772,23 @@ namespace TwoSides.GameContent.Entity
 
         public void Teleport()
         {
-            Position.X = 1 * Tile.TileMaxSize;
-            Position.Y = Program.Game.Dimension[Program.Game.CurrentDimension].MapHeight[1] * Tile.TileMaxSize - Tile.TileMaxSize * 3;
-            if (Position.Y >= (SizeGeneratior.WorldHeight - 1) * Tile.TileMaxSize) Position.Y = Tile.TileMaxSize * (SizeGeneratior.WorldHeight - 1);
+            Position.X = 1 * Tile.TILE_MAX_SIZE;
+            Position.Y = Program.Game.Dimension[Program.Game.CurrentDimension].MapHeight[1] * Tile.TILE_MAX_SIZE - Tile.TILE_MAX_SIZE * 3;
+            if (Position.Y >= (SizeGeneratior.WorldHeight - 1) * Tile.TILE_MAX_SIZE) Position.Y = Tile.TILE_MAX_SIZE * (SizeGeneratior.WorldHeight - 1);
         }
 
         public void Teleport(int x, int y)
         {
-            Position.X = x * Tile.TileMaxSize;
-            Position.Y = y * Tile.TileMaxSize;
+            Position.X = x * Tile.TILE_MAX_SIZE;
+            Position.Y = y * Tile.TILE_MAX_SIZE;
         }
 
         public void Teleport(int x)
         {
             if (x < 0 || x >= SizeGeneratior.WorldWidth) return;
 
-            Position.X = x * Tile.TileMaxSize;
-            Position.Y = Program.Game.Dimension[Program.Game.CurrentDimension].MapHeight[x] * Tile.TileMaxSize - Tile.TileMaxSize * 3;
+            Position.X = x * Tile.TILE_MAX_SIZE;
+            Position.Y = Program.Game.Dimension[Program.Game.CurrentDimension].MapHeight[x] * Tile.TILE_MAX_SIZE - Tile.TILE_MAX_SIZE * 3;
         }
         void Move()
         {
@@ -807,7 +796,7 @@ namespace TwoSides.GameContent.Entity
             if (_tilePos.X >= 0)
                 vec = Tools.GetDir(_tilePos.ToPoint(), Position.ToPoint());
             const float SPEED_ACC = RUN_ACCELERATION;
-            float speedMax = _maxRunSpeed;
+            var speedMax = _maxRunSpeed;
             const float NEW_JUMP_SPEED = JUMP_SPEED;
             const int NEW_JUMP_HEIGHT = JUMP_HEIGHT;
             /*for(int i = 0;i<3;i++){
@@ -817,10 +806,10 @@ namespace TwoSides.GameContent.Entity
                 newJumpHeight = (int)(newJumpHeight* slot[slotmax + i].getSpeedModdif());
             }*/
             HorisontalMove(SPEED_ACC, speedMax);
-            float a = VerticalMove(vec, NEW_JUMP_SPEED, NEW_JUMP_HEIGHT);
+            VerticalMove(vec, NEW_JUMP_SPEED, NEW_JUMP_HEIGHT,out var a);
             Velocity = Colision.TileCollision(this, Position, Velocity, Width, Height, _keyState.IsKeyDown(Keys.S));
             Position += Velocity;
-            if (Velocity.X != 0 && ItemAnimation == 0)
+            if ( Math.Abs(Velocity.X) > 0.01f && ItemAnimation == 0)
             {
                 ItemAnimation = 1;
             }
@@ -841,22 +830,22 @@ namespace TwoSides.GameContent.Entity
             {
                 Position.X = 0;
             }
-            if (Position.X > (SizeGeneratior.WorldWidth - 1) * Tile.TileMaxSize)
+            if (Position.X > (SizeGeneratior.WorldWidth - 1) * Tile.TILE_MAX_SIZE)
             {
-                Position.X = (SizeGeneratior.WorldWidth - 1) * Tile.TileMaxSize;
+                Position.X = (SizeGeneratior.WorldWidth - 1) * Tile.TILE_MAX_SIZE;
             }
             if (Position.Y < 0)
             {
                 Position.Y = 0;
             }
-            if (Position.Y > (SizeGeneratior.WorldHeight - 1) * Tile.TileMaxSize)
+            if (Position.Y > (SizeGeneratior.WorldHeight - 1) * Tile.TILE_MAX_SIZE)
             {
-                Position.Y = (SizeGeneratior.WorldHeight - 1) * Tile.TileMaxSize;
+                Position.Y = (SizeGeneratior.WorldHeight - 1) * Tile.TILE_MAX_SIZE;
             }
             if (Velocity.Y < a && a > MaxFallSpeed - 5) { Bloods[0] = Bloods[1] = true; }
         }
 
-        float VerticalMove(Vector2 vec, float newJumpSpeed, int newJumpHeight)
+        void VerticalMove(Vector2 vec, float newJumpSpeed, int newJumpHeight, out float f)
         {
             if (_controlJump)
             {
@@ -906,8 +895,7 @@ namespace TwoSides.GameContent.Entity
             {
                 Velocity.Y = MaxFallSpeed;
             }
-            float a = Velocity.Y;
-            return a;
+            f = Velocity.Y;
         }
 
         void HorisontalMove(float speedAcc, float speedMax)
@@ -976,7 +964,7 @@ namespace TwoSides.GameContent.Entity
 
         public bool HasItem(int idItem)
         {
-            for (int i = 0; i < CurrentMaxSlot; i++)
+            for (var i = 0; i < CurrentMaxSlot; i++)
             {
                 if (!Slot[i].IsEmpty && Slot[i].Id == idItem) return true;
             }
@@ -1007,8 +995,8 @@ namespace TwoSides.GameContent.Entity
             }
             if ( Program.Game.KeyState.IsKeyDown(Keys.F) )
             {
-                _tilePos.X = TileTargetX * Tile.TileMaxSize;
-                _tilePos.Y = TileTargetY * Tile.TileMaxSize;
+                _tilePos.X = TileTargetX * Tile.TILE_MAX_SIZE;
+                _tilePos.Y = TileTargetY * Tile.TILE_MAX_SIZE;
             }
             if ( Program.Game.KeyState.IsKeyUp(Keys.G) ) _controlG = false;
             if ( Program.Game.KeyState.IsKeyUp(Keys.E) && _keyState.IsKeyDown(Keys.E) ||
@@ -1102,7 +1090,7 @@ namespace TwoSides.GameContent.Entity
             {
                 Zombie npc = new Zombie(Position, new Race(GetColor(), null), Clslot, Colors);
                 npc.Drop.Clear();
-                for (int i = 0; i < Slotmax + 3; i++)
+                for (var i = 0; i < SLOTMAX + 3; i++)
                 {
                     if (!Slot[i].IsEmpty)
                     {
@@ -1115,7 +1103,7 @@ namespace TwoSides.GameContent.Entity
             else
             {
 
-                for (int i = 0; i < Slotmax + 3; i++)
+                for (var i = 0; i < SLOTMAX + 3; i++)
                 {
                     if (!Slot[i].IsEmpty)
                     {
@@ -1128,7 +1116,7 @@ namespace TwoSides.GameContent.Entity
             Spawn();
         }
 
-        public void Update(float delta, float seconds)
+        public  void Update(float delta, float seconds)
         {
             if (Quests.Count >= 1) QuestUpdate();
             if (Program.Game.Dimension[Program.Game.CurrentDimension].Civil.Count >= 1) Dialog();
@@ -1156,22 +1144,22 @@ namespace TwoSides.GameContent.Entity
         {
             Rect.X = (int)Position.X;
             Rect.Y = (int)Position.Y;
-            TileTargetX = (int)Tools.MouseToCamera(Program.Game.MouseState.Position.ToVector2()).X / Tile.TileMaxSize;
-            TileTargetY = (int)Tools.MouseToCamera(Program.Game.MouseState.Position.ToVector2()).Y / Tile.TileMaxSize;
+            TileTargetX = (int)Tools.MouseToCamera(Program.Game.MouseState.Position.ToVector2()).X / Tile.TILE_MAX_SIZE;
+            TileTargetY = (int)Tools.MouseToCamera(Program.Game.MouseState.Position.ToVector2()).Y / Tile.TILE_MAX_SIZE;
             MathHelper.Clamp(SelectedItem + Program.Game.MouseState.ScrollWheelValue - _mouseState.ScrollWheelValue, 0, CurrentMaxSlot - 1);
             if (_timeSlotUse > 0) _timeSlotUse -= 1;
             if (Tools.MouseInCube(0, 0, Program.Game.Resolution.X, Program.Game.Resolution.Y))
             {
                 if (GameInput.MouseButtonIsDown(GameInput.MouseButton.LEFT_BUTTON))
                 {
-                    int r = -1;
+                    var r = -1;
                     if (_itemframe >= 1) _itemto = true;
                     else if (_itemframe < 0) _itemto = false;
                     if (_itemto) _itemframe -= 10f * Program.Game.Seconds;
                     else _itemframe += 10f * Program.Game.Seconds;
                     if (!DamageNpc())
                     {
-                        for (int i = 0; i < CurrentMaxSlot; i++)
+                        for (var i = 0; i < CurrentMaxSlot; i++)
                         {
                             if (!ControlJ && i > 9) break;
                             if (i % 9 == 0) r++;
@@ -1192,11 +1180,11 @@ namespace TwoSides.GameContent.Entity
                     else _itemframe += 10f * Program.Game.Seconds;
                     if (!UpdateRecept() && !Bloods[2])
                     {
-                        if (Tools.Distance((int)Position.X / Tile.TileMaxSize, TileTargetX, 7) &&
-                        Tools.Distance((int)Position.Y / Tile.TileMaxSize, TileTargetY, 7) &&
+                        if (Tools.Distance((int)Position.X / Tile.TILE_MAX_SIZE, TileTargetX, 7) &&
+                        Tools.Distance((int)Position.Y / Tile.TILE_MAX_SIZE, TileTargetY, 7) &&
                         Program.Game.Dimension[Program.Game.CurrentDimension].MapTile[TileTargetX, TileTargetY].Active)
                         {
-                            DestoryBlock(TileTargetX, TileTargetY);
+                            DestoryBlock();
                         }
                         DamageNpc();
                     }
@@ -1215,7 +1203,7 @@ namespace TwoSides.GameContent.Entity
                     {
                         _timeSlotUse = 60;
                     }
-                    bool drag = false;
+                    var drag = false;
                     DragAndDrop(ref drag);
                     if (!Slot[SelectedItem].IsEmpty && !Bloods[3])
                     {
@@ -1237,12 +1225,12 @@ namespace TwoSides.GameContent.Entity
             }
             _mouseState = Program.Game.MouseState;
         }
-        float GetMassFactor() => Slot[Slotmax].GetMassFactor() + Slot[Slotmax + 1].GetMassFactor() + Slot[Slotmax + 2].GetMassFactor();
+        float GetMassFactor() => Slot[SLOTMAX].GetMassFactor() + Slot[SLOTMAX + 1].GetMassFactor() + Slot[SLOTMAX + 2].GetMassFactor();
 
         void UpdateHealth(float delta, float seconds)
         {
             // ReSharper disable once ForCanBeConvertedToForeach
-            for (int partId = 0; partId < Bloods.Length; partId++)
+            for (var partId = 0; partId < Bloods.Length; partId++)
             {
                 if (Bloods[partId])
                     Blood -= 100 * delta;
@@ -1257,7 +1245,7 @@ namespace TwoSides.GameContent.Entity
                 TypeKill = 1;
         }
 
-        void DestoryBlock(int blockX, int blockY)
+        void DestoryBlock()
         {
             Removeblock();
         }
@@ -1285,11 +1273,11 @@ namespace TwoSides.GameContent.Entity
             if (ControlJ)
             {
                 t = DragItemSlot(t, CurrentMaxSlot);
-                for (int i = Slotmax; i < Slotmax + 3; i++)
+                for (var i = SLOTMAX; i < SLOTMAX + 3; i++)
                 {
-                    if ( !Tools.MouseInCube((i - Slotmax) * 32 , Program.Game.Resolution.Y - 32 ,32 , 32) ) continue;
+                    if ( !Tools.MouseInCube((i - SLOTMAX) * 32 , Program.Game.Resolution.Y - 32 ,32 , 32) ) continue;
 
-                    if (MouseItem.GetArmorSlot() - 1 == i - Slotmax)
+                    if (MouseItem.GetArmorSlot() - 1 == i - SLOTMAX)
                     {
                         t = MouseItemSlot(t, ref Slot[i]);
                     }
@@ -1306,14 +1294,14 @@ namespace TwoSides.GameContent.Entity
         }
         bool DragItemSlot(bool t,int maxSlot)
         {
-            int r = -1;
-            int centerSlot = Program.Game.Resolution.X - 9 * 32;
-            for (int i = 0; i < maxSlot; i++)
+            var r = -1;
+            var centerSlot = Program.Game.Resolution.X - 9 * 32;
+            for (var i = 0; i < maxSlot; i++)
             {
 
                 if (i % 9 == 0) r++;
-                int xslot = i % 9 * 32;
-                int yslot = 32 * r;
+                var xslot = i % 9 * 32;
+                var yslot = 32 * r;
                 if ( !Tools.MouseInCube(xslot + centerSlot , yslot , 32 , 32) ) continue;
 
                 t = MouseItemSlot(t, ref Slot[i]);
@@ -1379,7 +1367,7 @@ namespace TwoSides.GameContent.Entity
                 }
                 case (int) Item.Type.BANDAGE when Bloods.Any(val => val):
                 {
-                    int a = 0;
+                    var a = 0;
                     while ( !Bloods[a] )
                     {
                         a = Program.Game.Rand.Next(0 , 4);
@@ -1394,7 +1382,7 @@ namespace TwoSides.GameContent.Entity
                 case (int)Item.Type.LEGS:
                     {
                         Item sl = new Item();
-                        int slotId = Slotmax + (Slot[selecteditem].GetTypeItem() - (int)Item.Type.HEAD);
+                        var slotId = SLOTMAX + (Slot[selecteditem].GetTypeItem() - (int)Item.Type.HEAD);
                         if (!Slot[slotId].IsEmpty) sl = Slot[slotId];
                         Slot[slotId] = Slot[selecteditem];
                         Slot[selecteditem] = sl;
@@ -1402,7 +1390,7 @@ namespace TwoSides.GameContent.Entity
                     }
                 case (int)Item.Type.WEAPONGUN :
                     {
-                        int slotIds = GetSlotItem(1);
+                        var slotIds = GetSlotItem(1);
                         if (slotIds == -1) return;
 
                         _timeSlotUse = 10;
@@ -1414,8 +1402,8 @@ namespace TwoSides.GameContent.Entity
                 case (int)Item.Type.BLOCKICON:
                 case (int)Item.Type.VERTICALBLOCKICON:
                     {
-                        if (Tools.Distance((int)Position.X / Tile.TileMaxSize, TileTargetX, 7) &&
-                             Tools.Distance((int)Position.Y / Tile.TileMaxSize, TileTargetY, 7))
+                        if (Tools.Distance((int)Position.X / Tile.TILE_MAX_SIZE, TileTargetX, 7) &&
+                             Tools.Distance((int)Position.Y / Tile.TILE_MAX_SIZE, TileTargetY, 7))
                         {
                             AddBlock();
                         }
@@ -1501,10 +1489,10 @@ namespace TwoSides.GameContent.Entity
         
         public void SetSlot(Item slots)
         {
-            int ammout = slots.Ammount;
-            for (int j = 0; j < ammout; j++)
+            var ammout = slots.Ammount;
+            for (var j = 0; j < ammout; j++)
             {
-                int i = GetSlotItem(slots.Id, slots.Hp);//pos.x = 5;tiletar=6; 5-6=-1 
+                var i = GetSlotItem(slots.Id, slots.Hp);//pos.x = 5;tiletar=6; 5-6=-1 
                 if (i != -1)
                 {
                     Slot[i].Ammount += 1;
@@ -1537,7 +1525,7 @@ namespace TwoSides.GameContent.Entity
                          .IsNeadTool(Slot[SelectedItem]) ) return false;
 
             Program.Game.Dimension[Program.Game.CurrentDimension].MapTile[TileTargetX, TileTargetY].DamageSlot(
-                                                                                                   Slot[SelectedItem].GetPower() * (Slot[SelectedItem].Hp / 100) * Program.Game.Seconds,new Vector2(TileTargetX*Tile.TileMaxSize, TileTargetY * Tile.TileMaxSize));
+                                                                                                   Slot[SelectedItem].GetPower() * (Slot[SelectedItem].Hp / 100) * Program.Game.Seconds,new Vector2(TileTargetX*Tile.TILE_MAX_SIZE, TileTargetY * Tile.TILE_MAX_SIZE));
             Slot[SelectedItem].DamageSlot(Program.Game.Dimension[Program.Game.CurrentDimension].MapTile[TileTargetX, TileTargetY].GetBlockHp()
                                           * (Program.Game.Seconds / 2));
 
@@ -1576,7 +1564,7 @@ namespace TwoSides.GameContent.Entity
             Tools.Distance((int)Position.X, (int)npc.Position.X, 32 + 8) &&
             Tools.Distance((int)Position.Y, (int)npc.Position.Y, 32 + 8))
             {
-                float hpdamage = Slot[SelectedItem].GetDamage() * (Slot[SelectedItem].Hp / 100) * Program.Game.Seconds;
+                var hpdamage = Slot[SelectedItem].GetDamage() * (Slot[SelectedItem].Hp / 100) * Program.Game.Seconds;
                 FlashText ft = new FlashText(new Vector2(posEnemy.X, posEnemy.Y - 20), hpdamage.ToString(CultureInfo.CurrentCulture), Program.Game.Font1, Color.Red);
                 npc.Hp -= hpdamage;
                 _fTlist.Add(ft);
@@ -1599,7 +1587,7 @@ namespace TwoSides.GameContent.Entity
         }
         public void DamageHead()
         {
-            if (!Slot[Slotmax].IsEmpty)
+            if (!Slot[SLOTMAX].IsEmpty)
             {
                 DamageArmor(0);
             }
@@ -1607,8 +1595,8 @@ namespace TwoSides.GameContent.Entity
         }
         public void DamageArmor(int armorId)
         {
-            Slot[Slotmax+ armorId].DamageSlot(Math.Max(1, 10 - Slot[Slotmax + armorId].GetDef()));
-            if (Slot[Slotmax + armorId].Hp < 2) Slot[Slotmax + armorId] = new Item();
+            Slot[SLOTMAX+ armorId].DamageSlot(Math.Max(1, 10 - Slot[SLOTMAX + armorId].GetDef()));
+            if (Slot[SLOTMAX + armorId].Hp < 2) Slot[SLOTMAX + armorId] = new Item();
         }
         bool DamageNpc()
         {
@@ -1626,8 +1614,8 @@ namespace TwoSides.GameContent.Entity
         {
             if ( !ControlJ ) return false;
 
-            int a = 0;
-            for (int i = 0; i < Recipe.Recipes.Count && a<=9; i++)
+            var a = 0;
+            for (var i = 0; i < Recipe.Recipes.Count && a<=9; i++)
             {
                 if ( !GetValidRecipes(i) ) continue;
 
@@ -1647,17 +1635,18 @@ namespace TwoSides.GameContent.Entity
 
         void GiveItem(Item item)
         {
-            int i2 = GetSlotItem(item.Id, 100);//pos.x = 5;tiletar=6; 5-6=-1 
-            if (i2 != -1)
+            var itemSlot = GetSlotItem(item.Id, 100);//pos.x = 5;tiletar=6; 5-6=-1 
+            if (itemSlot >= 0)
             {
-                Slot[i2].Ammount += item.Ammount;
-                Slot[i2].IsEmpty = false;
+                Slot[itemSlot].Ammount += item.Ammount;
+                Slot[itemSlot].IsEmpty = false;
             }
             else
             {
-                i2 = GetSlotFull();
-                Slot[i2] = item;
-                Slot[i2].IsEmpty = false;
+                var slotEmpty = GetSlotFull();
+                if (slotEmpty <= -1) return;
+                Slot[slotEmpty] = item;
+                Slot[slotEmpty].IsEmpty = false;
             }
         }
 

@@ -44,17 +44,17 @@ namespace TwoSides.GUI
         {
             _maxValue = maxValue;
         }
-        public void Render(Texture2D texture, SpriteBatch spriteBatch){
-            spriteBatch.Begin();
+        public void Render(Texture2D texture, Render render){
+            render.Start();
             if (_text != null)
             {
                 Vector2 textSize = Program.Game.Font1.MeasureString(_text);
-                int widthProgress = _rightBorder - _leftBorder;
+                var widthProgress = _rightBorder - _leftBorder;
                 Program.Game.DrawText(_text, _rightBorder-widthProgress/2 - (int)(textSize.X / 2), (int)(_y-textSize.Y*2),_color);
             } 
-            spriteBatch.Draw(texture, new Rectangle(_leftBorder, _y, _rightBorder - _leftBorder, _heightPresss), Color.White);
-            spriteBatch.Draw(texture, new Rectangle(_leftBorder, _y, (int)(_rightBorder * (_value / _maxValue)) - _leftBorder, _heightPresss), Color.BlueViolet);
-            spriteBatch.End();
+            render.Draw(texture, new Rectangle(_leftBorder, _y, _rightBorder - _leftBorder, _heightPresss), Color.White);
+            render.Draw(texture, new Rectangle(_leftBorder, _y, (int)(_rightBorder * (_value / _maxValue)) - _leftBorder, _heightPresss), Color.BlueViolet);
+            render.End();
     
         }
     }

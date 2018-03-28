@@ -16,14 +16,14 @@ namespace TwoSides.GameContent.Tiles
         }
         public override bool IsSolid() => false;
 
-        public override void Render(ITileDatecs tileDate, SpriteBatch spriteBatch, Texture2D texture, BaseDimension dimension, Vector2 pos, int x, int y, int frame, int subTexture, Color color)
+        public override void Render(ITileDatecs tileDate, Render render, Texture2D texture, BaseDimension dimension, Vector2 pos, int x, int y, int frame, int subTexture, Color color)
         {
             TreeDate treeDate = (TreeDate)tileDate;
             if (dimension.MapTile[x,y].IdTexture == 16)
-                spriteBatch.Draw(texture, new Rectangle((int)pos.X-25, (int)pos.Y-42, 64, 64), new Rectangle(64 * frame, 64 * treeDate.TypeTree, 64, 64), color, 0.0f, Vector2.Zero, SpriteEffects.None, 0);
+                render.Draw(texture, new Rectangle((int)pos.X-25, (int)pos.Y-42, 64, 64), new Rectangle(64 * frame, 64 * treeDate.TypeTree, 64, 64), color);
             else if (dimension.MapTile[x, y].IdTexture == 38)
-                spriteBatch.Draw(texture, new Rectangle((int)pos.X, (int)pos.Y, 16, 16), new Rectangle(16 * subTexture, 16 * treeDate.TypeTree, 16, 16), color, 0.0f, Vector2.Zero, SpriteEffects.None, 0);
-            else base.Render(tileDate, spriteBatch, texture, dimension, pos, x, y, frame, subTexture, color);
+                render.Draw(texture, new Rectangle((int)pos.X, (int)pos.Y, 16, 16), new Rectangle(16 * subTexture, 16 * treeDate.TypeTree, 16, 16), color);
+            else base.Render(tileDate, render, texture, dimension, pos, x, y, frame, subTexture, color);
         }
         public override void InTile(DynamicEntity entity)
         {

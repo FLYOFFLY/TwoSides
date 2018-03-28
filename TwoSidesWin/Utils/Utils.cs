@@ -32,15 +32,15 @@ namespace TwoSides.Utils
 
         public static object[] Distance(int x,int y)
         {
-            int mx = Program.Game.MouseState.X + (int)Program.Game.Camera.Pos.X;
-            int my = Program.Game.MouseState.Y + (int)Program.Game.Camera.Pos.Y;
+            var mx = Program.Game.MouseState.X + (int)Program.Game.Camera.Pos.X;
+            var my = Program.Game.MouseState.Y + (int)Program.Game.Camera.Pos.Y;
             return Distance(x,y,mx,my);
         }
 
         public static Vector2 Distance(Vector2 pos)
         {
-            int mx = Program.Game.MouseState.X + (int)Program.Game.Camera.Pos.X;
-            int my = Program.Game.MouseState.Y + (int)Program.Game.Camera.Pos.Y;
+            var mx = Program.Game.MouseState.X + (int)Program.Game.Camera.Pos.X;
+            var my = Program.Game.MouseState.Y + (int)Program.Game.Camera.Pos.Y;
             pos.Y += 16;
             return new Vector2(mx, my) - pos;
         }
@@ -48,16 +48,16 @@ namespace TwoSides.Utils
         public static double AngleMouse(int x, int y)
         {
 
-            int mx = Program.Game.MouseState.X + (int)Program.Game.Camera.Pos.X;
-            int my = Program.Game.MouseState.Y + (int)Program.Game.Camera.Pos.Y;
+            var mx = Program.Game.MouseState.X + (int)Program.Game.Camera.Pos.X;
+            var my = Program.Game.MouseState.Y + (int)Program.Game.Camera.Pos.Y;
             //A = (A < 0) ? A + 360 : A;   //Без этого диапазон от 0...180 и -1...-180
             return Math.Atan2(my - y, x - mx);
         }
 
         public static Vector2 GetTile(int x, int y)
         {
-            int n = x / Tile.TileMaxSize;
-            int n2 = y / Tile.TileMaxSize;
+            var n = x / Tile.TILE_MAX_SIZE;
+            var n2 = y / Tile.TILE_MAX_SIZE;
             if (n < 0) n = 0;
             else if (n >= SizeGeneratior.WorldWidth) n = SizeGeneratior.WorldWidth - 1;
             if (n2 < 0) n2 = 0;
@@ -68,8 +68,8 @@ namespace TwoSides.Utils
 
         public static bool MouseInCube(int x, int y, int w, int h)
         {
-            int mx = Program.Game.MouseState.X;
-            int my = Program.Game.MouseState.Y;
+            var mx = Program.Game.MouseState.X;
+            var my = Program.Game.MouseState.Y;
             return mx >= x && mx <= x + w &&
                my >= y && my <= y + h;
         }

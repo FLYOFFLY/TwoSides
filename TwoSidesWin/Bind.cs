@@ -23,7 +23,7 @@ namespace TwoSides
             {
                 if ( oldKeyboardState.IsKeyDown(key) ) continue;
 
-                string keyText = "";
+                var keyText = "";
                 if ( key >= Keys.A && key <= Keys.Z )
                 {
                     // ReSharper disable once InvertIf

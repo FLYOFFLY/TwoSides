@@ -14,6 +14,7 @@ namespace TwoSides.Physics
         public Explosion(Animation anim,Vector2 pos)
         {
             _explosionAnimation = anim;
+            
             Active = true;
             //this.timeToLive = 30;
         }
@@ -23,8 +24,8 @@ namespace TwoSides.Physics
            // timeToLive-=1;
             //if (timeToLive < 0) Active = false;
         }
-        public void Draw(SpriteBatch spriteBatch) {
-            _explosionAnimation.Draw(spriteBatch);
+        public void Draw(Render render) {
+            _explosionAnimation.Draw(render);
         }
 
      

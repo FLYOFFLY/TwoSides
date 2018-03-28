@@ -18,9 +18,9 @@ namespace TwoSides.GameContent.GUI.Scene
             Scene = scene;
             Version = new Label(Program.Game.GetVersion(), new Vector2(0, Program.Game.Resolution.Y - (int)Program.Game.Font1.MeasureString(Program.Game.GetVersion()).Y), Program.Game.Font1, Color.Black);
 
-            for (int i = 0; i < Racelist.Count; i++)
+            for (var i = 0; i < Racelist.Count; i++)
             {
-                int j = i;
+                var j = i;
                 // ReSharper disable once ExceptionNotDocumentedOptional
                 Racelist[i].GetButton().OnClicked += (_, _a) =>
                 {
@@ -31,21 +31,20 @@ namespace TwoSides.GameContent.GUI.Scene
                 };
             }
         }
-        public void Render(SpriteBatch spriteBatch)
+        public void Render(Render render)
         {
             foreach ( Race race in Racelist ) {
                 // spriteBatch.DrawString(Font1, (i+1)+"-"+race.getName(), new Vector2(120, 120+10*i), Color.White);
-                race.GetButton().Draw(spriteBatch);
+                race.GetButton().Draw(render);
             }
 
-            Version.Draw(spriteBatch);
+            Version.Draw(render);
         }
         public void Update(GameTime gameTime)
         {
-            for (int i = 0; i < Racelist.Count; i++)
+            foreach (Race race in Racelist)
             {
-                // ReSharper disable once ExceptionNotDocumentedOptional
-                Racelist[i].GetButton().Update();
+                race.GetButton().Update();
             }
         }
         public void TryExit() => Scene.ReturnScene();

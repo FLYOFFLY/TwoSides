@@ -42,7 +42,7 @@ namespace TwoSides.Utils
         }
         public static string GetName(string a)
         {
-            string programName = a;
+            var programName = a;
             if (!LangItem[_currentLanguage].TryGetValue(programName, out a)) a = programName;
             return a;
         }

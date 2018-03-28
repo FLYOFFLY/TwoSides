@@ -47,15 +47,14 @@ namespace TwoSides.GUI
                 _offset.X = -_font.MeasureString(_text).X;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(Render render)
         {
-            string s = _text + "|";
-            spriteBatch.Begin();
+            render.Start();
 
-            spriteBatch.DrawString(_font, s,
+            render.DrawString(_font, $"{_text}|",
                 new Vector2(GetPos().X + _offset.X, GetPos().Y + _offset.Y
                     ), _color);
-            spriteBatch.End();
+            render.End();
         }
         public override void Update()
         {
@@ -64,7 +63,7 @@ namespace TwoSides.GUI
         }
        void UpdateKey()
         {
-            bool leftshift = false;
+            var leftshift = false;
             KeyboardState oldKeyboardState = _keystateCurrentKeyboardState;
             _keystateCurrentKeyboardState = Keyboard.GetState();
 
@@ -74,7 +73,7 @@ namespace TwoSides.GUI
             {
                 if (oldKeyboardState.IsKeyDown(key) ) continue;
 
-                string keyText = key.ToString();
+                var keyText = key.ToString();
                 // ReSharper disable once ConvertIfStatementToSwitchStatement
                 if (key == Keys.Back && _text?.Length >= 1) // overflows
                     _text = _text.Remove(_text.Length - 1, 1);

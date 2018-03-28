@@ -14,8 +14,8 @@ namespace TwoSides.GameContent.GUI.Scene
         readonly Button[] _buttons = new Button[2];
         public void Load(ControlScene scene)
         {
-            int sizeButton = (int)Program.Game.Font1.MeasureString("Exit Game").X + 50;
-            for (int i = 0; i < _buttons.Length; i++)
+            var sizeButton = (int)Program.Game.Font1.MeasureString("Exit Game").X + 50;
+            for (var i = 0; i < _buttons.Length; i++)
             {
                 _buttons[i] = new Button(Program.Game.Button, Program.Game.Font1, new Rectangle(0, 0, 400, 400), "null");
                 Rectangle rect = new Rectangle(Program.Game.Resolution.X / 2-sizeButton/2, Program.Game.HeightMenu + 35 * i, sizeButton, 30);
@@ -27,10 +27,10 @@ namespace TwoSides.GameContent.GUI.Scene
             _buttons[1].OnClicked += (_, __) => { _scene.ChangeScene(new MainMenu()); };
             _scene = scene;
         }
-        public void Render(SpriteBatch spriteBatch)
+        public void Render(Render render)
         {
             foreach ( Button button in _buttons )
-                button.Draw(spriteBatch);
+                button.Draw(render);
         }
         public void Update(GameTime gameTime)
         {

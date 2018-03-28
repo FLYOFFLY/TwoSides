@@ -62,9 +62,9 @@ namespace TwoSides.Physics
                 (int)(FrameHeight*_scale));
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(Render render)
         {
-            if (_active) spriteBatch.Draw(Sprite, _destRect, _srcRect, _color);
+            if (_active) render.Draw(Sprite, _destRect, _srcRect, _color);
         }
     }
 }

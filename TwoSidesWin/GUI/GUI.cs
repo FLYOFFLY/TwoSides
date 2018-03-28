@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Microsoft.Xna.Framework.Graphics;
-
-using TwoSides.GUI;
-
 namespace TwoSides.GUI
 {
     public sealed class XnaLayout
@@ -19,10 +15,10 @@ namespace TwoSides.GUI
         public T GetElement<T>(int elementId) where T:GuiElement => _guielements[elementId] as T;
 
  
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(Render render)
         {
             foreach ( GuiElement element in _guielements)
-                element.Draw(spriteBatch);
+                element.Draw(render);
         }
 
         public void Update()

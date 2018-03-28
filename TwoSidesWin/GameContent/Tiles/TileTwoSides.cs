@@ -12,13 +12,13 @@ namespace TwoSides.GameContent.Tiles
 {
     public class TileTwoSides : ITileList
     {
-        public const int TileMax = 39;
-        public const int Addmaxt = 13;
-        public const int MaxPosters = 1;
+        public const int TILE_MAX = 39;
+        public const int ADDMAXT = 13;
+        public const int MAX_POSTERS = 1;
 
-        public Texture2D[] Textures { get; } = new Texture2D[TileMax];
-        public Texture2D[] Posters { get; } = new Texture2D[TileMax];
-        public Texture2D[] Addtexture { get; } = new Texture2D[Addmaxt];
+        public Texture2D[] Textures { get; } = new Texture2D[TILE_MAX];
+        public Texture2D[] Posters { get; } = new Texture2D[TILE_MAX];
+        public Texture2D[] Addtexture { get; } = new Texture2D[ADDMAXT];
 
         readonly BaseTile[] _tileList;
         public TileTwoSides() => _tileList = new[] {
@@ -73,99 +73,126 @@ namespace TwoSides.GameContent.Tiles
         public void Loadtiles(ContentManager content)
         {
             Program.StartSw();
-            for (int i = 0; i < TileMax; i++)
+            for (var i = 0; i < TILE_MAX; i++)
             {
-                Textures[i] = content.Load<Texture2D>($"{Game1.ImageFolder}tiles\\{i}");
+                Textures[i] = content.Load<Texture2D>($"{Game1.IMAGE_FOLDER}tiles\\{i}");
             }
-            Addtexture[0] = content.Load<Texture2D>(Game1.ImageFolder + "tiles\\0_1");
-            Addtexture[1] = content.Load<Texture2D>(Game1.ImageFolder + "tiles\\0_2");
-            Addtexture[2] = content.Load<Texture2D>(Game1.ImageFolder + "tiles\\0_3");
-            Addtexture[3] = content.Load<Texture2D>(Game1.ImageFolder + "tiles\\0_4");
+            Addtexture[0] = content.Load<Texture2D>(Game1.IMAGE_FOLDER + "tiles\\0_1");
+            Addtexture[1] = content.Load<Texture2D>(Game1.IMAGE_FOLDER + "tiles\\0_2");
+            Addtexture[2] = content.Load<Texture2D>(Game1.IMAGE_FOLDER + "tiles\\0_3");
+            Addtexture[3] = content.Load<Texture2D>(Game1.IMAGE_FOLDER + "tiles\\0_4");
 
-            Addtexture[4] = content.Load<Texture2D>(Game1.ImageFolder + "tiles\\4_1");
-            Addtexture[5] = content.Load<Texture2D>(Game1.ImageFolder + "tiles\\4_2");
-            Addtexture[6] = content.Load<Texture2D>(Game1.ImageFolder + "tiles\\4_3");
-            Addtexture[7] = content.Load<Texture2D>(Game1.ImageFolder + "tiles\\4_4");
+            Addtexture[4] = content.Load<Texture2D>(Game1.IMAGE_FOLDER + "tiles\\4_1");
+            Addtexture[5] = content.Load<Texture2D>(Game1.IMAGE_FOLDER + "tiles\\4_2");
+            Addtexture[6] = content.Load<Texture2D>(Game1.IMAGE_FOLDER + "tiles\\4_3");
+            Addtexture[7] = content.Load<Texture2D>(Game1.IMAGE_FOLDER + "tiles\\4_4");
 
-            Addtexture[8] = content.Load<Texture2D>(Game1.ImageFolder + "tiles\\10_1");
-            Addtexture[9] = content.Load<Texture2D>(Game1.ImageFolder + "tiles\\10_2");
-            Addtexture[10] = content.Load<Texture2D>(Game1.ImageFolder + "tiles\\10_3");
-            Addtexture[11] = content.Load<Texture2D>(Game1.ImageFolder + "tiles\\10_4");
-            Addtexture[12] = content.Load<Texture2D>(Game1.ImageFolder + "tiles\\11_1");
+            Addtexture[8] = content.Load<Texture2D>(Game1.IMAGE_FOLDER + "tiles\\10_1");
+            Addtexture[9] = content.Load<Texture2D>(Game1.IMAGE_FOLDER + "tiles\\10_2");
+            Addtexture[10] = content.Load<Texture2D>(Game1.IMAGE_FOLDER + "tiles\\10_3");
+            Addtexture[11] = content.Load<Texture2D>(Game1.IMAGE_FOLDER + "tiles\\10_4");
+            Addtexture[12] = content.Load<Texture2D>(Game1.IMAGE_FOLDER + "tiles\\11_1");
             Program.StopSw("load tiles");
             Program.StartSw();
-            for (int i = 0; i < MaxPosters; i++)
+            for (var i = 0; i < MAX_POSTERS; i++)
             {
-                Posters[i] = content.Load<Texture2D>($"{Game1.ImageFolder}posters\\{i}");
+                Posters[i] = content.Load<Texture2D>($"{Game1.IMAGE_FOLDER}posters\\{i}");
             }
             Program.StopSw("Loaded Posters");
             Tile.SetTileList(_tileList);
         }
 
-        public void RenderTiles(BaseDimension dimension, Rectangle rect, SpriteBatch spriteBatch)
+        public void RenderTiles(BaseDimension dimension, Rectangle rect, Render render)
         {
-            for (int i = rect.X; i < rect.Width + rect.X; i++)
+            if (rect.Y <= 0) rect.Y = 0;
+            if (rect.X <= 0) rect.X = 0;
+            for (var i = rect.X; i < rect.Width + rect.X; i++)
             {
 
-                if (i < SizeGeneratior.WorldWidth && i >= 0) dimension.UpdateMaxY(i);
-                if (i > SizeGeneratior.WorldWidth - 1 || i < 0) continue;
-                for (int j = rect.Y; j < rect.Height + rect.Y; j++)
+                if (i < SizeGeneratior.WorldWidth) dimension.UpdateMaxY(i);
+                if (i > SizeGeneratior.WorldWidth - 1) { break; }
+                /*
+                 
+                    Parallel.For(rect.Y, rect.Height + rect.Y, (j) => {
+
+                        if (j > SizeGeneratior.WorldHeight - 1 || j < 0) return;
+                        //dimension[CurrentDimension].globallighting = 1;
+                        Color color = Color.White;
+                        //рисование
+                        Tile tile = dimension.MapTile[i, j];
+                        Vector2 postile = new Vector2(Tile.TileMaxSize * i, Tile.TileMaxSize * j);
+                        if (dimension.MapTile[i, j].Active)
+                        {
+                            tile.Render(i, j, spriteBatch, dimension.MapHeight[i] == j, Textures, Addtexture, postile, color);
+
+                        }
+                        else
+                        {
+                            tile.Render(i, j, postile, spriteBatch, Textures[1]);
+                        }
+                    });
+                 */
+                
+                for (var j = rect.Y; j < rect.Height + rect.Y; j++)
                 {
-                    if (j > SizeGeneratior.WorldHeight - 1 || j < 0) continue;
+                    if (j > SizeGeneratior.WorldHeight - 1) { break; }
                     //dimension[CurrentDimension].globallighting = 1;
-                    Color color = Color.White;
                     //рисование
                     Tile tile = dimension.MapTile[i, j];
-                    Vector2 postile = new Vector2(Tile.TileMaxSize * i, Tile.TileMaxSize * j);
+                    Vector2 postile = new Vector2(Tile.TILE_MAX_SIZE * i, Tile.TILE_MAX_SIZE * j);
+                    if (tile.Light <= 0) continue;
                     if (dimension.MapTile[i, j].Active)
                     {
-                        tile.Render(i, j, spriteBatch, dimension.MapHeight[i] == j, Textures, Addtexture, postile, color);
+                        Color color = Color.White;
+                        tile.Render(i, j, render, dimension.MapHeight[i] == j, Textures, Addtexture, postile, color);
 
                     }
                     else
                     {
-                        tile.Render(i,j,postile, spriteBatch, Textures[1]);
+                        tile.Render(i,j,postile, render, Textures[1]);
                     }
 
                 }
             }
         }
 
-        public void RenderPlasters(BaseDimension dimension, Rectangle rect, SpriteBatch spriteBatch)
+        public void RenderPlasters(BaseDimension dimension, Rectangle rect, Render render)
         {
-            for (int i = rect.X; i < rect.Width+rect.X; i++)
+            for (var i = rect.X; i < rect.Width+rect.X; i++)
             {
 
                 if (i < SizeGeneratior.WorldWidth && i >= 0) dimension.UpdateMaxY(i);
                 if (i > SizeGeneratior.WorldWidth - 1 || i < 0) continue;
-                for (int j = rect.Y; j < rect.Y+rect.Height; j++)
+                for (var j = rect.Y; j < rect.Y+rect.Height; j++)
                 {
                     if (j > SizeGeneratior.WorldHeight - 1 || j < 0) continue;
                     //dimension[CurrentDimension].globallighting = 1;
                     //рисование
+                    if (dimension.MapTile[i, j].Light <= 0) continue;
                     if (dimension.MapTile[i, j].IdPoster >= 0)
-                        spriteBatch.Draw(Posters[dimension.MapTile[i, j].IdPoster], new Vector2(Tile.TileMaxSize * i, Tile.TileMaxSize * j), Color.Gray);
+                        render.Draw(Posters[dimension.MapTile[i, j].IdPoster], new Vector2(Tile.TILE_MAX_SIZE * i, Tile.TILE_MAX_SIZE * j), Color.Gray);
                 }
             }
         }
 
-        public void RenderWall(BaseDimension dimension, Rectangle rect, SpriteBatch spriteBatch)
+        public void RenderWall(BaseDimension dimension, Rectangle rect, Render render)
         {
-            for (int i = rect.X; i < rect.Width + rect.X; i++)
+            for (var i = rect.X; i < rect.Width + rect.X; i++)
             {
 
                 if (i < SizeGeneratior.WorldWidth && i >= 0) dimension.UpdateMaxY(i);
                 if (i > SizeGeneratior.WorldWidth - 1 || i < 0) continue;
-                for (int j = rect.Y; j < rect.Y + rect.Height; j++)
+                for (var j = rect.Y; j < rect.Y + rect.Height; j++)
                 {
                     if (j > SizeGeneratior.WorldHeight - 1 || j < 0) continue;
 
                     if ( dimension.MapTile[i , j].IdWall < 0 ) continue;
 
-                    spriteBatch.Draw(Textures[dimension.MapTile[i, j].IdWall], new Vector2(Tile.TileMaxSize * i, Tile.TileMaxSize * j), Color.Gray);
+                    if (dimension.MapTile[i, j].Light <= 0) continue;
+                    render.Draw(Textures[dimension.MapTile[i, j].IdWall], new Vector2(Tile.TILE_MAX_SIZE * i, Tile.TILE_MAX_SIZE * j), Color.Gray);
 
-                    int lighting = 255 - dimension.MapTile[i, j].Light * 5;
-                    spriteBatch.Draw(Program.Game.Black, new Vector2(Tile.TileMaxSize * i, Tile.TileMaxSize * j), new Color(0, 0, 0, lighting));
+                    var lighting = 255 - dimension.MapTile[i, j].Light * 5;
+                    render.Draw(Program.Game.Black, new Vector2(Tile.TILE_MAX_SIZE * i, Tile.TILE_MAX_SIZE * j), new Color(0, 0, 0, lighting));
                 }
             }
         }
