@@ -26,11 +26,11 @@ namespace TwoSides.GameContent.Entity.NPC
         {
         }
 
-        public Zombie(int blockx, Race race, IReadOnlyList<Clothes> clslot, Color[] color):base(blockx,race,clslot,color)
+        public Zombie(int blockx, Race race, IReadOnlyList<Clothes> clslot, ColorScheme[] color):base(blockx,race,clslot,color)
         {
         }
 
-        public Zombie(Vector2 positions, Race race, IReadOnlyList<Clothes> clslot, Color[] color) : base(positions,race,clslot,color) { }
+        public Zombie(Vector2 positions, Race race, IReadOnlyList<Clothes> clslot, ColorScheme[] color) : base(positions,race,clslot,color) { }
         public virtual void RenderNpc( Render render, SpriteFont font1, Texture2D head, Texture2D head2,
             Texture2D body, Texture2D legs, Texture2D blood, Texture2D eye,Texture2D hand, Texture2D shadow)
         {
@@ -43,12 +43,12 @@ namespace TwoSides.GameContent.Entity.NPC
             Rectangle src = new Rectangle(0, 0, head.Width, head.Height);
 
             RenderLeft(hand, render);
-            render.Draw(head, Rect, src, Race.GetZombieColor(),effect);
-            render.Draw(eye, Rect, src, Color.White,effect);
-            render.Draw(body, Rect, src, Race.GetZombieColor(),effect);
-            render.Draw(legs, Rect, src,Race.GetZombieColor(),  effect);
+            render.Draw(head, Rect, src,effect, Race.GetZombieColor());
+            render.Draw(eye, Rect, src, effect);
+            render.Draw(body, Rect, src,effect, Race.GetZombieColor());
+            render.Draw(legs, Rect, src,  effect, Race.GetZombieColor());
             ClothesRender(effect,render,Rect,src);
-            render.Draw(blood, Rect, src, Color.White, effect);
+            render.Draw(blood, Rect, src, effect);
             DrawShadow(shadow, render);
         }
 

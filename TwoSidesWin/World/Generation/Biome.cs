@@ -11,7 +11,7 @@ namespace TwoSides.World.Generation
     [Serializable]
     public sealed class Biome
     {
-        public Color Color{ get;  private set; }
+        public ColorScheme Color{ get;  private set; }
 
         public int Temperature { get; private set; }
         public int Id { get; private set; }
@@ -40,7 +40,7 @@ namespace TwoSides.World.Generation
             MinHeight = minHeight;
             TopBlock = topBlock;
             StoneBlock = stoneBlock;
-            Color = color;
+            Color = new ColorScheme(color);
         }
         public void Place(int x, BaseDimension dimension, int wIdth, int[] mapHeight)
         {

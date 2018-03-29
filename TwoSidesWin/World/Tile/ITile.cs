@@ -263,7 +263,7 @@ namespace TwoSides.World.Tile
                 _dimension.MapTile[i, j + 1].Blockheight = 1;
             }
             if(Blockheight<=7) AddWater(i, j);
-            render.Draw(water, new Rectangle((int)pos.X, (int)pos.Y, 16,16), new Rectangle(0, 0, 16, 16), Color.Blue);
+            //render.Draw(water, new Rectangle((int)pos.X, (int)pos.Y, 16,16), new Rectangle(0, 0, 16, 16), Color.Blue);
         }
 
         void AddWater(int i, int j)
@@ -281,7 +281,7 @@ namespace TwoSides.World.Tile
         }
         int GetTickFrame() => IdTexture < _tileMax ? _tileListCurrent[IdTexture].GetTickFrame() : 9999;
 
-        public void Render(int i,int j,Render render, bool isGround, Texture2D[] textures, Texture2D[] addtexture, Vector2 pos, Color color)
+        public void Render(int i,int j,Render render, bool isGround, Texture2D[] textures, Texture2D[] addtexture, Vector2 pos, ColorScheme color)
         {
             UpdateTime();
             if (!HasSpecialTexture() || !isGround)

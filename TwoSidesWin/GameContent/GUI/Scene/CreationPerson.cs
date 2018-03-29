@@ -122,7 +122,7 @@ namespace TwoSides.GameContent.GUI.Scene
             if ( !_image.InHover(ms) || ms.LeftButton != ButtonState.Pressed || _currentSlot < 1 ) return;
 
             Vector2 pos = ms.Position.ToVector2()-_image.GetPos();
-            Program.Game.Player.Colors[_currentSlot-1] = _image[(int)pos.X, (int)pos.Y];
+            Program.Game.Player.Colors[_currentSlot-1] =new  ColorScheme(_image[(int)pos.X, (int)pos.Y]);
         }
 
         int TryChange(ref bool type)

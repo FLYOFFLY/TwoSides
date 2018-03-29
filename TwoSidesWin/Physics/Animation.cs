@@ -16,13 +16,13 @@ namespace TwoSides.Physics
         readonly int _frameCount;
         int _currentFrame;
 
-        readonly Color _color;
+        readonly ColorScheme _color;
         Rectangle _srcRect;
         Rectangle _destRect;
         bool _active;
         readonly bool _looping;
         Vector2 _pos;
-        public Animation(Texture2D texture,Vector2 pos,int frameWidth,int frameHeight,int frameCount,int frameTime,Color color,float scale,bool looping)
+        public Animation(Texture2D texture,Vector2 pos,int frameWidth,int frameHeight,int frameCount,int frameTime, ColorScheme color,float scale,bool looping)
         {
             Sprite = texture;
             FrameWidth = frameWidth;

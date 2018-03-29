@@ -52,8 +52,8 @@ namespace TwoSides.GUI
                 var widthProgress = _rightBorder - _leftBorder;
                 Program.Game.DrawText(_text, _rightBorder-widthProgress/2 - (int)(textSize.X / 2), (int)(_y-textSize.Y*2),_color);
             } 
-            render.Draw(texture, new Rectangle(_leftBorder, _y, _rightBorder - _leftBorder, _heightPresss), Color.White);
-            render.Draw(texture, new Rectangle(_leftBorder, _y, (int)(_rightBorder * (_value / _maxValue)) - _leftBorder, _heightPresss), Color.BlueViolet);
+            render.Draw(texture, new Rectangle(_leftBorder, _y, _rightBorder - _leftBorder, _heightPresss));
+            render.Draw(texture, new Rectangle(_leftBorder, _y, (int)(_rightBorder * (_value / _maxValue)) - _leftBorder, _heightPresss), ColorScheme.ProgressColor);
             render.End();
     
         }

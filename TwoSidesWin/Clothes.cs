@@ -113,44 +113,44 @@ namespace TwoSides
 
             Program.StopSw("Loaded clothes");
         }
-        public void RenderLeft(Render render, Rectangle rect, Rectangle src, Color colors, int type, SpriteEffects effect)
+        public void RenderLeft(Render render, Rectangle rect, Rectangle src, ColorScheme colors, int type, SpriteEffects effect)
         {
             if (GetId() <= -1) return;
 
             switch (type)
             {
                 case 1:
-                    render.Draw(ShirtLeft[_idClothes], rect, src, colors,effect);
+                    render.Draw(ShirtLeft[_idClothes], rect, src,effect, colors);
                     break;
                 case 5:
-                    render.Draw(GlovesLeft[_idClothes], rect, src, colors,effect);
+                    render.Draw(GlovesLeft[_idClothes], rect, src,effect, colors);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
-        public void Render(Render render,Rectangle rect,Rectangle src,Color colors,int type,SpriteEffects effect)
+        public void Render(Render render,Rectangle rect,Rectangle src, ColorScheme colors,int type,SpriteEffects effect)
         {
             if (GetId() <= -1) return;
 
             switch ( type ) {
                 case 0:
-                    if (_idClothes < MaxHair) render.Draw(Hair[_idClothes], rect, src, colors, effect);
+                    if (_idClothes < MaxHair) render.Draw(Hair[_idClothes], rect, src, effect, colors);
                     break;
                 case 1:
-                    if (_idClothes < MaxShirt) render.Draw(Shirt[_idClothes], rect, src, colors, effect);
+                    if (_idClothes < MaxShirt) render.Draw(Shirt[_idClothes], rect, src, effect, colors);
                     break;
                 case 2:
-                    if (_idClothes < MaxPants) render.Draw(Pants[_idClothes], rect, src, colors, effect);
+                    if (_idClothes < MaxPants) render.Draw(Pants[_idClothes], rect, src, effect, colors);
                     break;
                 case 3:
-                    if (_idClothes < MaxShoes) render.Draw(Shoes[_idClothes], rect, src, colors, effect);
+                    if (_idClothes < MaxShoes) render.Draw(Shoes[_idClothes], rect, src, effect, colors);
                     break;
                 case 4:
-                    if (_idClothes < MaxBelt) render.Draw(Belt[_idClothes], rect, src, colors, effect);
+                    if (_idClothes < MaxBelt) render.Draw(Belt[_idClothes], rect, src, effect, colors);
                     break;
                 case 5:
-                    if (_idClothes < MaxGlove) render.Draw(Gloves[_idClothes], rect, src, colors, effect);
+                    if (_idClothes < MaxGlove) render.Draw(Gloves[_idClothes], rect, src, effect, colors);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

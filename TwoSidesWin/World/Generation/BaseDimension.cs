@@ -82,7 +82,7 @@ namespace TwoSides.World.Generation
                 134,
                 12,
                 2000,
-                Color.White,
+                ColorScheme.BaseColor, 
                 1.0f,
                 true);
 

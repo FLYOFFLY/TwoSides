@@ -95,8 +95,7 @@ namespace TwoSides.GUI
                 button.Y += button.Height;
             }
 
-            render.Draw(Image,
-                Area, button, Color.White);
+            render.Draw(Image, Area, button);
             render.DrawString(Font,
                 _text,
                 TextLocation,

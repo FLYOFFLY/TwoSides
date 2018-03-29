@@ -25,19 +25,19 @@ namespace TwoSides
     {
         readonly Button _button;
         [NonSerialized]
-        Color _color;
+        ColorScheme _color;
 
         public static List<Race> Racelist = new List<Race>();
 
         public Race(Color c, Button btn)
         {
-            _color = c;
+            _color = new ColorScheme(c);
             _button = btn;
         }
 
-        public Color GetColor() => _color;
+        public ColorScheme GetColor() => _color;
 
-        public Color GetZombieColor() => _color;
+        public ColorScheme GetZombieColor() => _color;
 
         public Button GetButton() => _button;
 

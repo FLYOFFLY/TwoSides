@@ -168,7 +168,7 @@ namespace TwoSides.GUI
             else
             {
                 Buttons[0].Update();
-                if (!IsClick && Program.Game.MouseState.LeftButton == ButtonState.Pressed )
+                if (!IsClick && GameInput.MouseButtonIsPressed((int)GameInput.MouseButton.LEFT_BUTTON))
                 {
                     for ( var i = 0 ; i < Recipes.Count ; i++ )
                     {
@@ -185,7 +185,7 @@ namespace TwoSides.GUI
                     }
                 }
 
-                else if (Program.Game.MouseState.LeftButton == ButtonState.Released) IsClick = false;
+                else if (GameInput.MouseButtonIsReleased((int)GameInput.MouseButton.LEFT_BUTTON)) IsClick = false;
             }
         }
 
@@ -227,7 +227,7 @@ namespace TwoSides.GUI
                     reitems.Y += 16 - 8;
                     reitems.Width = 16;
                     reitems.Height = 16;
-                    render.Draw(Program.Game.Inv, rectrecip, Color.Black);
+                    render.Draw(Program.Game.Inv, rectrecip, ColorScheme.NotActiveRecipe);
                     Recipes[i].Slot.Render(render, reitems);
                     for (var j = 0; j < Recipes[i].GetSize(); j++)
                     {
@@ -238,7 +238,7 @@ namespace TwoSides.GUI
                         reitems2.Y += 16 - 8;
                         reitems2.Width = 16;
                         reitems2.Height = 16;
-                        render.Draw(Program.Game.Inv, rectrecip2, Color.Green);
+                        render.Draw(Program.Game.Inv, rectrecip2,ColorScheme.ActiveRecipe);
                         Item.Render(render, Recipes[i].GetIngrident(j), reitems2);
                         reitems2.Y += 2;
                         reitems2.X = rectrecip2.X;

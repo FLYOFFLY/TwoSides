@@ -14,7 +14,7 @@ namespace TwoSides.GUI
             Status = on;
         }
 
-        void RenderButton(Render render,Color color)
+        void RenderButton(Render render,ColorScheme color)
         {
             render.Draw(Status ? Image : _offTexture ,
                                Area ,
@@ -26,7 +26,7 @@ namespace TwoSides.GUI
             render.Start(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
             RenderButton(render ,
-                         Area.Contains(new Point(MouseStateNew.X , MouseStateNew.Y)) ? Color.Silver : Color.White);
+                         Area.Contains(new Point(MouseStateNew.X , MouseStateNew.Y)) ? ColorScheme.ActiveRadioColor : ColorScheme.BaseColor);
 
             render.End();
         }

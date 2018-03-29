@@ -90,7 +90,7 @@ namespace TwoSides.Physics.Entity.NPC
                 Rectangle rectShadow = new Rectangle((int)Math.Floor(Position.X),
                                                      j * Tile.TILE_MAX_SIZE, shadow.Width, shadow.Height - del);
 
-                render.Draw(shadow, rectShadow, Color.Black);
+                render.Draw(shadow, rectShadow, ColorScheme.Shadow);
                 break;
             }
         }
@@ -107,7 +107,7 @@ namespace TwoSides.Physics.Entity.NPC
             Rectangle src = new Rectangle(0, 0, NpcSkin[0].Width, NpcSkin[0].Height);
             foreach ( Texture2D skin in NpcSkin )
             {
-                render.Draw(skin, Rect, src, Color.White, effect);
+                render.Draw(skin, Rect, src, effect);
             }
             DrawShadow(shadow, render);
         }

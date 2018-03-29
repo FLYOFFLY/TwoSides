@@ -142,7 +142,7 @@ namespace TwoSides.GameContent.Entity
         public Item[] Slot = new Item[SLOTMAX + 3];
         public Clothes[] Clslot = new Clothes[6];
         public int CurrentMaxSlot = 1 + 9 * 4;
-        public Color[] Colors = new Color[5];
+        public ColorScheme[] Colors = new ColorScheme[5];
         #endregion
 
         #region QUEST
@@ -153,7 +153,7 @@ namespace TwoSides.GameContent.Entity
         #region STATS
         readonly Achivement _achivement = new Achivement();
         public bool[] Bloods = new bool[4];
-        Color _colorRace;
+        ColorScheme _colorRace;
         readonly Stats _stats;
         public bool Speedup;
         public float Temperature = 36;
@@ -236,7 +236,7 @@ namespace TwoSides.GameContent.Entity
             }
             for (var i = 0; i < 5; i++)
             {
-                Colors[i] = Color.Red;
+                Colors[i] = ColorScheme.BaseClothesColor;
             }
             Rect.Width = Width;
             _zombiekill = false;
@@ -357,10 +357,10 @@ namespace TwoSides.GameContent.Entity
                 switch (id)
                 {
                     case RaceType.NIGER:
-                        _colorRace = new Color(81, 21, 21);
+                        _colorRace = ColorScheme.NiggerRace;
                         break;
                     case RaceType.EUROPIAN:
-                        _colorRace = new Color(213, 171, 123);
+                        _colorRace = ColorScheme.EuropianRace;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(id), id, null);
@@ -374,9 +374,9 @@ namespace TwoSides.GameContent.Entity
             }
         }
 
-        public void SetUserColor(Color clrace) => _colorRace = clrace;
+        public void SetUserColor(ColorScheme clrace) => _colorRace = clrace;
 
-        public Color GetColor() => _colorRace;
+        public ColorScheme GetColor() => _colorRace;
         void Dialog()
         {
             Civilian civ = Program.Game.Dimension[0].Civil[0];
@@ -651,7 +651,7 @@ namespace TwoSides.GameContent.Entity
             if (Program.Game.CurrentDimension == 2)
             {
                 if (Program.Game.Dimension[Program.Game.CurrentDimension].MapHeight[(int)Position.X / Tile.TILE_MAX_SIZE] > Position.Y / Tile.TILE_MAX_SIZE)
-                    render.Draw(fog, dest, src, Color.White);
+                    render.Draw(fog, dest, src);
             }
             render.End();
         }
@@ -668,10 +668,10 @@ namespace TwoSides.GameContent.Entity
                  24, 42);
             if (_direction < 0)
                 effect = SpriteEffects.FlipHorizontally;
-            render.Draw(head, dest, src, _colorRace, effect);
-            render.Draw(body, dest, src, _colorRace, effect);
-            render.Draw(legs, dest, src2, _colorRace, effect);
-            render.Draw(eye, dest, src, Color.White,effect);
+            render.Draw(head, dest, src, effect, _colorRace);
+            render.Draw(body, dest, src, effect, _colorRace);
+            render.Draw(legs, dest, src2, effect, _colorRace);
+            render.Draw(eye, dest, src,effect);
             RenderClothes(render, effect, dest, src, src2);
             //   spriteBatch.Draw(Program.game.shootgun, dest2, new Rectangle(0,0,40,17), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
             // spriteBatch.Draw(suit[1], dest, src, Color.White, 0, Vector2.Zero, effect, 0);//
@@ -679,7 +679,7 @@ namespace TwoSides.GameContent.Entity
 
         void RenderClothes(Render render, SpriteEffects effect, Rectangle dest, Rectangle src, Rectangle src2)
         {
-            Clslot[0].Render(render, dest, src, Color.Black, 0, effect);
+            Clslot[0].Render(render, dest, src, ColorScheme.NotActiveRecipe, 0, effect);
             Clslot[1].Render(render, dest, src, Colors[0], 1, effect);
             Clslot[2].Render(render, dest, src2, Colors[1], 2, effect);
             Clslot[3].Render(render, dest, src2, Colors[2], 3, effect);
@@ -687,20 +687,20 @@ namespace TwoSides.GameContent.Entity
             Clslot[5].Render(render, dest, src, Colors[4], 5, effect);
             if (!Slot[SLOTMAX].IsEmpty)
             {
-                render.Draw(Clothes.Armor[Slot[SLOTMAX].GetArmorModel()], dest, src, Color.White, effect);
+                render.Draw(Clothes.Armor[Slot[SLOTMAX].GetArmorModel()], dest, src, effect);
             }
             if (!Slot[SLOTMAX + 1].IsEmpty)
             {
-                render.Draw(Clothes.Armor[Slot[SLOTMAX + 1].GetArmorModel()], dest, src, Color.White,effect);
+                render.Draw(Clothes.Armor[Slot[SLOTMAX + 1].GetArmorModel()], dest, src,effect);
             }
             if (!Slot[SLOTMAX + 2].IsEmpty)
             {
-                render.Draw(Clothes.Armor[Slot[SLOTMAX + 2].GetArmorModel()], dest, src, Color.White, effect);
+                render.Draw(Clothes.Armor[Slot[SLOTMAX + 2].GetArmorModel()], dest, src, effect);
             }
             // ReSharper disable once InvertIf
             if (_special != -1)
             {
-                render.Draw(Clothes.Suit[_special], dest, src, Color.White, effect);
+                render.Draw(Clothes.Suit[_special], dest, src, effect);
             }
         }
 
@@ -714,7 +714,7 @@ namespace TwoSides.GameContent.Entity
                 24, 42);
             if (_direction < 0)
                 effect = SpriteEffects.FlipHorizontally;
-            render.Draw(hand, dest, src, _colorRace,effect);
+            render.Draw(hand, dest, src,effect,_colorRace);
             Clslot[1].RenderLeft(render, dest, src, Colors[0], 1, effect);
             Clslot[5].RenderLeft(render, dest, src, Colors[4], 5, effect);
         }
@@ -763,7 +763,7 @@ namespace TwoSides.GameContent.Entity
                 Rectangle rectShadow = new Rectangle((int)Math.Floor(Position.X),
                                                      j * Tile.TILE_MAX_SIZE, shadow.Width, shadow.Height - del);
 
-                render.Draw(shadow, rectShadow, Color.Black);
+                render.Draw(shadow, rectShadow, ColorScheme.Shadow);
                 break;
             }
             //   spriteBatch.Draw(Program.game.shootgun, dest2, new Rectangle(0,0,40,17), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
@@ -1088,7 +1088,7 @@ namespace TwoSides.GameContent.Entity
         {
             if (isnpc)
             {
-                Zombie npc = new Zombie(Position, new Race(GetColor(), null), Clslot, Colors);
+                Zombie npc = new Zombie(Position, new Race(GetColor().Color, null), Clslot, Colors);
                 npc.Drop.Clear();
                 for (var i = 0; i < SLOTMAX + 3; i++)
                 {
@@ -1144,9 +1144,9 @@ namespace TwoSides.GameContent.Entity
         {
             Rect.X = (int)Position.X;
             Rect.Y = (int)Position.Y;
-            TileTargetX = (int)Tools.MouseToCamera(Program.Game.MouseState.Position.ToVector2()).X / Tile.TILE_MAX_SIZE;
-            TileTargetY = (int)Tools.MouseToCamera(Program.Game.MouseState.Position.ToVector2()).Y / Tile.TILE_MAX_SIZE;
-            MathHelper.Clamp(SelectedItem + Program.Game.MouseState.ScrollWheelValue - _mouseState.ScrollWheelValue, 0, CurrentMaxSlot - 1);
+            TileTargetX = (int)Tools.MouseToCamera(GameInput.GetMousePos()).X / Tile.TILE_MAX_SIZE;
+            TileTargetY = (int)Tools.MouseToCamera(GameInput.GetMousePos()).Y / Tile.TILE_MAX_SIZE;
+            MathHelper.Clamp(SelectedItem + GameInput.GetState().ScrollWheelValue - _mouseState.ScrollWheelValue, 0, CurrentMaxSlot - 1);
             if (_timeSlotUse > 0) _timeSlotUse -= 1;
             if (Tools.MouseInCube(0, 0, Program.Game.Resolution.X, Program.Game.Resolution.Y))
             {
@@ -1223,7 +1223,7 @@ namespace TwoSides.GameContent.Entity
                     _itemframe = 0;
                 }
             }
-            _mouseState = Program.Game.MouseState;
+            _mouseState = GameInput.GetState();
         }
         float GetMassFactor() => Slot[SLOTMAX].GetMassFactor() + Slot[SLOTMAX + 1].GetMassFactor() + Slot[SLOTMAX + 2].GetMassFactor();
 

@@ -143,8 +143,7 @@ namespace TwoSides.GameContent.Tiles
                     if (tile.Light <= 0) continue;
                     if (dimension.MapTile[i, j].Active)
                     {
-                        Color color = Color.White;
-                        tile.Render(i, j, render, dimension.MapHeight[i] == j, Textures, Addtexture, postile, color);
+                        tile.Render(i, j, render, dimension.MapHeight[i] == j, Textures, Addtexture, postile, ColorScheme.BaseColor);
 
                     }
                     else
@@ -170,7 +169,7 @@ namespace TwoSides.GameContent.Tiles
                     //рисование
                     if (dimension.MapTile[i, j].Light <= 0) continue;
                     if (dimension.MapTile[i, j].IdPoster >= 0)
-                        render.Draw(Posters[dimension.MapTile[i, j].IdPoster], new Vector2(Tile.TILE_MAX_SIZE * i, Tile.TILE_MAX_SIZE * j), Color.Gray);
+                        render.Draw(Posters[dimension.MapTile[i, j].IdPoster], new Vector2(Tile.TILE_MAX_SIZE * i, Tile.TILE_MAX_SIZE * j), ColorScheme.GenColorGradient(0.5f));
                 }
             }
         }
@@ -189,10 +188,10 @@ namespace TwoSides.GameContent.Tiles
                     if ( dimension.MapTile[i , j].IdWall < 0 ) continue;
 
                     if (dimension.MapTile[i, j].Light <= 0) continue;
-                    render.Draw(Textures[dimension.MapTile[i, j].IdWall], new Vector2(Tile.TILE_MAX_SIZE * i, Tile.TILE_MAX_SIZE * j), Color.Gray);
+                    render.Draw(Textures[dimension.MapTile[i, j].IdWall], new Vector2(Tile.TILE_MAX_SIZE * i, Tile.TILE_MAX_SIZE * j), ColorScheme.GenColorGradient(0.5f));
 
                     var lighting = 255 - dimension.MapTile[i, j].Light * 5;
-                    render.Draw(Program.Game.Black, new Vector2(Tile.TILE_MAX_SIZE * i, Tile.TILE_MAX_SIZE * j), new Color(0, 0, 0, lighting));
+                    render.Draw(Program.Game.Black, new Vector2(Tile.TILE_MAX_SIZE * i, Tile.TILE_MAX_SIZE * j), ColorScheme.GenColorGradient(lighting/255.0f));
                 }
             }
         }

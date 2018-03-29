@@ -44,7 +44,7 @@ namespace TwoSides.World.Tile
 
         public virtual int GetTickFrame() => 9999;
 
-        public virtual void Render(ITileDatecs tileDate, Render render, Texture2D texture, BaseDimension dimension, Vector2 pos, int x, int y, int frame, int subTexture, Color color)
+        public virtual void Render(ITileDatecs tileDate, Render render, Texture2D texture, BaseDimension dimension, Vector2 pos, int x, int y, int frame, int subTexture, ColorScheme color)
         {
             lock (Locked)
             {

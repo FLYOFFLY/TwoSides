@@ -129,7 +129,7 @@ namespace TwoSides.GUI
             render.Start();
             var max = GetMax();
             render.Draw(Program.Game.Dialogtex, new Rectangle((int)pos.X - (int)Font.MeasureString(max).X,
-                (int)pos.Y, (int)Font.MeasureString(max).X, GetQuestHeight()), Color.Blue);
+                (int)pos.Y, (int)Font.MeasureString(max).X, GetQuestHeight()), ColorScheme.InterfaceColor);
             Vector2 position = pos;
             position.X = pos.X - (int)Font.MeasureString(Name).X;
             render.DrawString(Font, Name, position, Color.White);

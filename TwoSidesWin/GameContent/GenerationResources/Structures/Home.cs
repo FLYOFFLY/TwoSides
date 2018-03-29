@@ -53,7 +53,7 @@ namespace TwoSides.GameContent.GenerationResources.Structures
                 for ( var i = 0 ; i < a ; i++ )
                 {
                     Clothes[] cl = new Clothes[6];
-                    Color[] color = new Color[6];
+                    ColorScheme[] color = new ColorScheme[6];
                     for ( var c = 0 ; c < 6 ; c++ )
                     {
                         int[] maxInt =
@@ -66,8 +66,8 @@ namespace TwoSides.GameContent.GenerationResources.Structures
                         else
                         {
                             cl[c] = new Clothes(b);
-                            color[c] = new Color(Program.Game.Rand.Next(0 , 256) , Program.Game.Rand.Next(0 , 256) ,
-                                                 Program.Game.Rand.Next(0 , 256));
+                            color[c] = new ColorScheme(new Color(Program.Game.Rand.Next(0 , 256) , Program.Game.Rand.Next(0 , 256) ,
+                                                 Program.Game.Rand.Next(0 , 256)));
                         }
                     }
 

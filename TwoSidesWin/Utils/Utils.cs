@@ -32,15 +32,15 @@ namespace TwoSides.Utils
 
         public static object[] Distance(int x,int y)
         {
-            var mx = Program.Game.MouseState.X + (int)Program.Game.Camera.Pos.X;
-            var my = Program.Game.MouseState.Y + (int)Program.Game.Camera.Pos.Y;
-            return Distance(x,y,mx,my);
+            var mx = GameInput.GetMousePos().X + (int)Program.Game.Camera.Pos.X;
+            var my = GameInput.GetMousePos().Y + (int)Program.Game.Camera.Pos.Y;
+            return Distance(x,y,(int)mx,(int)my);
         }
 
         public static Vector2 Distance(Vector2 pos)
         {
-            var mx = Program.Game.MouseState.X + (int)Program.Game.Camera.Pos.X;
-            var my = Program.Game.MouseState.Y + (int)Program.Game.Camera.Pos.Y;
+            var mx = GameInput.GetMousePos().X + (int)Program.Game.Camera.Pos.X;
+            var my = GameInput.GetMousePos().Y + (int)Program.Game.Camera.Pos.Y;
             pos.Y += 16;
             return new Vector2(mx, my) - pos;
         }
@@ -48,8 +48,8 @@ namespace TwoSides.Utils
         public static double AngleMouse(int x, int y)
         {
 
-            var mx = Program.Game.MouseState.X + (int)Program.Game.Camera.Pos.X;
-            var my = Program.Game.MouseState.Y + (int)Program.Game.Camera.Pos.Y;
+            var mx = GameInput.GetMousePos().X + (int)Program.Game.Camera.Pos.X;
+            var my = GameInput.GetMousePos().Y + (int)Program.Game.Camera.Pos.Y;
             //A = (A < 0) ? A + 360 : A;   //Без этого диапазон от 0...180 и -1...-180
             return Math.Atan2(my - y, x - mx);
         }
@@ -68,15 +68,15 @@ namespace TwoSides.Utils
 
         public static bool MouseInCube(int x, int y, int w, int h)
         {
-            var mx = Program.Game.MouseState.X;
-            var my = Program.Game.MouseState.Y;
+            var mx = GameInput.GetMousePos().X;
+            var my = GameInput.GetMousePos().Y;
             return mx >= x && mx <= x + w &&
                my >= y && my <= y + h;
         }
 
         public static bool ScMouseInCube(int x, int y, int w, int h)
         {
-            Vector2 mouse = Program.Game.MouseState.Position.ToVector2();
+            Vector2 mouse =GameInput.GetMousePos();
             mouse = Vector2.Transform(mouse,Program.Game.Camera.GetInverse());
             return mouse.X >= x && mouse.X <= x + w &&
                mouse.Y >= y && mouse.Y <= y + h;
@@ -97,10 +97,11 @@ namespace TwoSides.Utils
         }
 
 
-        public static Color ReadColor(BinaryReader reader) => new Color(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+        public static ColorScheme ReadColor(BinaryReader reader) => new ColorScheme(new Color(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte()));
 
-        public static void SaveColor(Color color,BinaryWriter writer)
+        public static void SaveColor(ColorScheme colorScheme,BinaryWriter writer)
         {
+            Color color = colorScheme.Color;
             writer.Write(color.R);
             writer.Write(color.G);
             writer.Write(color.B);

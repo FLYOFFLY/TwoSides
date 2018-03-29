@@ -48,7 +48,7 @@ namespace TwoSides.GameContent.Entity.NPC
                     (int)Position.Y, src.Width, src.Height);
             foreach ( Texture2D skin in NpcSkin )
             {
-                render.Draw(skin, Rect, src, Color.White, effect);
+                render.Draw(skin, Rect, src, effect);
             }
             DrawShadow(shadow, render);
         }

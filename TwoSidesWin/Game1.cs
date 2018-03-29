@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Xml;
 
@@ -83,32 +84,12 @@ namespace TwoSides
         public SpriteFont Font1;
         public Random Rand = new Random();
         public Player Player = new Player();
-        public MouseState MouseState = Mouse.GetState();
 
 
         readonly Render _render;
-        Texture2D _fog;
-        Texture2D _cursor;
-        Texture2D _shadow;
-        Texture2D _head2;
-        Texture2D _blood;
-        static Texture2D _head;
-        static Texture2D _eye;
-        static Texture2D _body;
-        static Texture2D _legs;
-        readonly Texture2D[] _background = new Texture2D[3];
         readonly ControlScene _controlScene;
         readonly Log _log = new Log("time");
         readonly NamingVersion _versionThis = new NamingVersion(ID_SUB_VERSION, ID_VERSION, MAJOR, MINOR, BUILD, REVESION);
-        public Texture2D Carma;
-        public Texture2D[] Slots = new Texture2D[6];
-        public Texture2D Achivement;
-        public Texture2D Inv;
-        public Texture2D Button;
-        public Texture2D Black;
-        public Texture2D Shootgun;
-        public Texture2D Ramka;
-        public Texture2D Galka;
         public TileTwoSides Tiles;
         Song _music;
         bool _activeConsole;
@@ -116,10 +97,7 @@ namespace TwoSides
         public Camera Camera = new Camera();
         public int SpawnTime;
         bool _isSnowing;
-        Texture2D _snowTexture;
         Random _random;
-        Texture2D _pigSkin;
-        Texture2D _explosion;
         readonly Point[] _snow = new Point[50];
         readonly NamingVersion _versionMap = new NamingVersion(0, 0, 0, 0, 0, 0);
         #endregion
@@ -158,25 +136,9 @@ namespace TwoSides
         }
 
         public bool InScreen(Vector2 coord) =>  new Rectangle(Point.Zero,Resolution).Contains(coord);
-
-        public Texture2D FullDrougt { get; set; }
-
-        public Texture2D EmptyDrougt { get; set; }
-
-        public Texture2D EatHunger { get; set; }
         public SpriteFont Font3 { get; set; }
 
-        public Texture2D BloodBody { get; set; }
-
-        public Texture2D[] BloodTexture = new Texture2D[4];
-
-        public Texture2D Hand { get; set; }
-
-        public Texture2D WolfSkin { get; set; }
-
         public Effect PostEffect { get; set; }
-        public Texture2D StoneTile { get; set; }
-        public Texture2D Dialogtex { get; set; }
         #endregion
         #region методы
         public Game1()
@@ -193,6 +155,7 @@ namespace TwoSides
             _log.HasData = true;
             Window.AllowAltF4 = true;
             _render = new Render();
+            ResourceManager.SetConentManager(Content);
         }
 
         /// <summary>
@@ -201,8 +164,8 @@ namespace TwoSides
         /// <param name="scale">Маштаб</param>
         public void PlayerRender(float scale = 1.0f)
         {
-            Player.RenderLeftPart(Hand, _render, scale);
-            Player.Render(_eye, _head, _body, _legs, _render,scale);
+            Player.RenderLeftPart("Hand", _render, scale);
+            Player.Render("_eye", "_head", "_body", "_legs", _render,scale);
         }
 
         /// <summary>
@@ -210,12 +173,14 @@ namespace TwoSides
         /// </summary>
         /// <param name="texture">Текстура</param>
         /// <param name="scale">Маштаб</param>
-        public void PlayerRenderTexture(Texture2D texture,float scale = 1.0f)
+        public void PlayerRenderTexture(string texture,float scale = 1.0f)
         {
+            Texture2D _body = ResourceManager.GetTexture2D("_body");
+            Texture2D _head = ResourceManager.GetTexture2D("_head");
             _render.Draw(texture, new Rectangle((int)(
                 Player.Position.X + (Player.Width - _head.Width) - 0), (int)(Player.Position.Y - 0),
-                (int)(_body.Width*scale), (int)(_body.Height*scale)), new Rectangle(0, 0, _body.Width, _body.Height),
-                Color.Red);
+                (int)(_body.Width*scale), (int)(ResourceManager.GetTexture2D("_body").Height*scale)), new Rectangle(0, 0, _body.Width, _body.Height),
+                ColorScheme.BloodColor);
         }
         //Базовые методы игрового цикла
         protected override void Initialize()
@@ -244,7 +209,7 @@ namespace TwoSides
             CreateConsole();
             Recipe.LoadRecipe();
             //music = Content.Load<Song>("music");
-            _fog = Content.Load<Texture2D>(IMAGE_FOLDER + "fog");
+            ResourceManager.PutInResourceManager("_fog",IMAGE_FOLDER + "fog");
             //  postEffect = base.Content.Load<Effect>(EffectFolder + "NewSpriteEffect");
             Dimension[0] = new NormalWorld();
             Dimension[1] = new Hell();
@@ -257,21 +222,21 @@ namespace TwoSides
             // Allows the game to exit
             if (Keyboard.GetState().IsKeyDown(Keys.Escape) && !KeyState.IsKeyDown(Keys.Escape))
                 _controlScene.TryExit();
-            MouseState = Mouse.GetState();
             KeyState = Keyboard.GetState();
-            GameInput.UpdateMouse(MouseState);
+            GameInput.UpdateMouse();
             _controlScene.Update(gameTime);
             foreach (XnaLayout mygui in Guis)
                 mygui.Update();
-            foreach (FlashText fl in Flash)
+            IEnumerable<FlashText> invisibleFlashText = Flash.Where(fl =>
             {
-                if (fl.IsInvisible())
-                {
-                    Flash.Remove(fl);
-                    break;
-                }
+                if (fl.IsInvisible()) return true;
+
                 fl.Update();
-            }
+                return false;
+            }).ToArray();
+            foreach (FlashText fl in invisibleFlashText) 
+                Flash.Remove(fl);
+            
             Guis.Remove(_guiRemove);
             base.Update(gameTime);
         }
@@ -317,7 +282,7 @@ namespace TwoSides
                 mygui.Draw(_render);
 
             _render.Start();
-            _render.Draw(_cursor, new Vector2(MouseState.X, MouseState.Y), Color.Blue);
+            _render.Draw(_cursor, GameInput.GetMousePos(), ColorScheme.InterfaceColor);
             _render.End();
             base.Draw(gameTime);
         }
@@ -406,18 +371,11 @@ namespace TwoSides
             Program.StartSw();
             xDoc = new XmlDocument();
             xDoc.Load(CONFIG_FOLDER + @"/Sound.xml");
-            // получим корневой элемент
-
             xRoot = xDoc.DocumentElement;
             Debug.Assert(xRoot != null , nameof( xRoot ) + " != null");
-            foreach (XmlNode xnode in xRoot)
-            {
-                // если узел - company
-                // если узел - company
-                if ( xnode.Name != "Mutted" ) continue;
-
-                xnode.InnerText = MediaPlayer.IsMuted ? "1" : "0";
-            }
+            XmlNodeList node = xRoot.GetElementsByTagName("Mutted");
+            if (node.Count > 0 && node[0] != null)
+                node[0].InnerText = MediaPlayer.IsMuted ? "1" : "0";
 
             File.Delete(CONFIG_FOLDER + @"/Sound.xml");
             xDoc.Save(CONFIG_FOLDER + @"/Sound.xml");
@@ -495,23 +453,23 @@ namespace TwoSides
         void LoadedGui()
         {
             Program.StartSw();
-            Button = Content.Load<Texture2D>(IMAGE_FOLDER + "button");
-            Carma = Content.Load<Texture2D>(IMAGE_FOLDER + "carma");
-            Achivement = Content.Load<Texture2D>(IMAGE_FOLDER + "achivement");
-            _cursor = Content.Load<Texture2D>(IMAGE_FOLDER + "cursor");
-            Inv = Content.Load<Texture2D>(IMAGE_FOLDER + "invsphere");
-            Galka = Content.Load<Texture2D>(IMAGE_FOLDER + "galka");
-            Ramka = Content.Load<Texture2D>(IMAGE_FOLDER + "ramka");
-            EmptyDrougt = Content.Load<Texture2D>(IMAGE_FOLDER + @"hud\emptyDrougt");
-            FullDrougt = Content.Load<Texture2D>(IMAGE_FOLDER + @"hud/fullDrougt");
-            WolfSkin = Content.Load<Texture2D>(IMAGE_FOLDER + @"NPC/wolf");
-            _pigSkin = Content.Load<Texture2D>(IMAGE_FOLDER + @"NPC/pig");
-            EatHunger = Content.Load<Texture2D>(IMAGE_FOLDER + @"hud/hunger");
-            _explosion = Content.Load<Texture2D>(IMAGE_FOLDER + @"explosion");
+            ResourceManager.PutInResourceManager("Button", IMAGE_FOLDER + "button");
+            ResourceManager.PutInResourceManager("Carma", IMAGE_FOLDER + "carma");
+            ResourceManager.PutInResourceManager("Achivement", IMAGE_FOLDER + "achivement");
+            ResourceManager.PutInResourceManager("_cursor", IMAGE_FOLDER + "cursor");
+            ResourceManager.PutInResourceManager("Inv", IMAGE_FOLDER + "invsphere");
+            ResourceManager.PutInResourceManager("Galka",IMAGE_FOLDER + "galka");
+            ResourceManager.PutInResourceManager("Ramka",IMAGE_FOLDER + "ramka");
+            ResourceManager.PutInResourceManager("EmptyDrougt",IMAGE_FOLDER + @"hud\emptyDrougt");
+            ResourceManager.PutInResourceManager("FullDrougt",IMAGE_FOLDER + @"hud/fullDrougt");
+            ResourceManager.PutInResourceManager("WolfSkin",IMAGE_FOLDER + @"NPC/wolf");
+            ResourceManager.PutInResourceManager("_pigSkin",IMAGE_FOLDER + @"NPC/pig");
+            ResourceManager.PutInResourceManager("EatHunger",IMAGE_FOLDER + @"hud/hunger");
+            ResourceManager.PutInResourceManager("_explosion",IMAGE_FOLDER + @"explosion");
+            ResourceManager.PutInResourceManager("_snowTexture",IMAGE_FOLDER + "snow");
+            ResourceManager.PutInResourceManager("BloodBody",IMAGE_FOLDER + @"skelet /body");
             _music = Content.Load<Song>("DestinationUnknown");
-            _snowTexture = Content.Load<Texture2D>(IMAGE_FOLDER + "snow");
-            BloodBody = Content.Load<Texture2D>(IMAGE_FOLDER + @"skelet/body");
-            for(var i = 0;i<4;i++)
+            for (var i = 0;i<4;i++)
             BloodTexture[i] = Content.Load<Texture2D>(IMAGE_FOLDER + @"skelet/"+i);
             Dialogtex = Carma;
             Program.StopSw("Loaded Image Gui (50 milisecond First load Content)");
@@ -652,7 +610,7 @@ namespace TwoSides
             _render.Start(SamplerState.LinearWrap);
             Rectangle dest2 = new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
             Rectangle src2 = new Rectangle((int)Camera.GetLeftUpper.X, (int)Camera.GetLeftUpper.Y, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
-            _render.Draw(StoneTile, dest2, src2, Color.White);
+            _render.Draw(StoneTile, dest2, src2);
             //  spriteBatch.Draw(background[1], new Vector2(0, 0), new Rectangle((int)(ScreenPosX * 0.5f),Genworld.rocklayer-background[1].Height, background[1].Width, graphics.PreferredBackBufferHeight), Color.White);
             //   spriteBatch.Draw(background[2], new Vector2(0, 0), new Rectangle((int)(ScreenPosX * 0.8f), Genworld.rocklayer, background[2].Width, graphics.PreferredBackBufferHeight), Color.White);
             //spriteBatch.Draw(background, new Rectangle(0, 0, background.Width, background.Height), Color.White);
@@ -664,7 +622,7 @@ namespace TwoSides
             Rectangle dest = new Rectangle(0, (int)-Camera.Pos.Y + SizeGeneratior.WorldHeight / 3 * Tile.TILE_MAX_SIZE + 600 * Tile.TILE_MAX_SIZE,
                 _graphics.PreferredBackBufferWidth, (SizeGeneratior.WorldHeight - SizeGeneratior.WorldHeight / 3 - SizeGeneratior.WorldHeight / 3 - 600) * Tile.TILE_MAX_SIZE);
             Rectangle src = new Rectangle(0, 0, 48, 1300);
-            _render.Draw(_background[CurrentDimension], dest, src, Color.White);
+            _render.Draw(_background[CurrentDimension], dest, src);
             //  spriteBatch.Draw(background[1], new Vector2(0, 0), new Rectangle((int)(ScreenPosX * 0.5f),Genworld.rocklayer-background[1].Height, background[1].Width, graphics.PreferredBackBufferHeight), Color.White);
             //   spriteBatch.Draw(background[2], new Vector2(0, 0), new Rectangle((int)(ScreenPosX * 0.8f), Genworld.rocklayer, background[2].Width, graphics.PreferredBackBufferHeight), Color.White);
             //spriteBatch.Draw(background, new Rectangle(0, 0, background.Width, background.Height), Color.White);
@@ -726,7 +684,7 @@ namespace TwoSides
                 Rectangle snowParticle = new Rectangle(
                     snowPnt.X, snowPnt.Y, _snowTexture.Width, _snowTexture.Height);
 
-                _render.Draw(_snowTexture, snowParticle, Color.White);
+                _render.Draw(_snowTexture, snowParticle);
 
                 _snow[i].Y += _random.Next(0, 5);
 
@@ -748,7 +706,7 @@ namespace TwoSides
             Rectangle dest = new Rectangle(-src.Width, Dimension[CurrentDimension].MapBiomes[(int)Player.Position.X/Tile.TILE_MAX_SIZE].MaxHeight * Tile.TILE_MAX_SIZE - (int)(src.Height * zoom), src.Width, src.Height);
             src.Width *= 2;
             dest.Width = src.Width;
-            _render.Draw(_background[2], dest, src, Color.White);
+            _render.Draw(_background[2], dest, src);
             _render.End();
         }
         //Сообственные методы
@@ -806,7 +764,9 @@ namespace TwoSides
                     Dimension[CurrentDimension].MapTile[i, j].SetLight(i, j, (short)Dimension[CurrentDimension].Globallighting,SizeGeneratior.RockLayer);
                     Dimension[CurrentDimension].MapTile[i, j].UpdateLight(i, j);
                     var lighting = 255 - Dimension[CurrentDimension].MapTile[i, j].Light * 5;
-                    _render.Draw(Black, new Vector2(Tile.TILE_MAX_SIZE * i, Tile.TILE_MAX_SIZE * j), new Color(0, 0, 0, lighting));
+                    
+                    _render.Draw(Black, new Vector2(Tile.TILE_MAX_SIZE * i, Tile.TILE_MAX_SIZE * j), 
+                        ColorScheme.GenColorGradient(lighting/255.0f));
                 }
             }
         }
@@ -818,7 +778,7 @@ namespace TwoSides
                 DrawSlotItem(Player.CurrentMaxSlot);
                 for (var i = Player.SLOTMAX; i < Player.SLOTMAX + 3; i++)
                 {
-                    _render.Draw(Inv, new Rectangle((i - Player.SLOTMAX) * 32, _graphics.PreferredBackBufferHeight - 32, 32, 32), Color.White);
+                    _render.Draw(Inv, new Rectangle((i - Player.SLOTMAX) * 32, _graphics.PreferredBackBufferHeight - 32, 32, 32));
                     if (!Player.Slot[i].IsEmpty)
                         Player.Slot[i].Render(_render, (i - Player.SLOTMAX) * 32 + 8, _graphics.PreferredBackBufferHeight - 32 + 8);
                 }
@@ -828,11 +788,11 @@ namespace TwoSides
                 {
                     if ( !Player.GetValidRecipes(i) ) continue;
 
-                    _render.Draw(Inv, new Rectangle(a * 32, 32 + -32, 32, 32), Color.Black);
+                    _render.Draw(Inv, new Rectangle(a * 32, 32 + -32, 32, 32), ColorScheme.NotActiveRecipe);
                     Recipe.Recipes[i].Slot.Render(_render, a * 32 + 16 - 8, 35 + (16 - 8) + -32);
                     for (var j = 0; j < Recipe.Recipes[i].GetSize(); j++)
                     {
-                        _render.Draw(Inv, new Rectangle(a * 32, (j + 2) * 35 + -32, 32, 32), Color.Green);
+                        _render.Draw(Inv, new Rectangle(a * 32, (j + 2) * 35 + -32, 32, 32), ColorScheme.ActiveRecipe);
                         Item.Render(_render, Recipe.Recipes[i].GetIngrident(j), a * 32 + 16 - 8, (j + 2) * 35 + (16 - 8) + -32);
                         _render.DrawString(Font1, Recipe.Recipes[i].GetSize(j).ToString(CultureInfo.CurrentCulture), new Vector2((a + 1) * 32 - 10, (j + 2) * 35 + (16 - 8) + -32));
                     }
@@ -847,18 +807,21 @@ namespace TwoSides
             } var wcarma = (int)(10 + SIZE_CARMA_WIDTH * (0.01 * Player.Carma));
             var hptext = (int)(Player.Width * (Player.Blood/5000));
             var color = (int)(200 * (0.01 * Player.Carma));
-            if (!Player.MouseItem.IsEmpty) Player.MouseItem.Render(_render, MouseState.X + 16, MouseState.Y + 5);
-            _render.Draw(Carma, new Rectangle(_graphics.PreferredBackBufferWidth - wcarma, _graphics.PreferredBackBufferHeight - SIZE_CARMA_HEIGHT, wcarma, SIZE_CARMA_HEIGHT), new Color(color * (color / 255), color * (color / 255), color, color));
+            Point pos = GameInput.GetMousePos().ToPoint();
+            if (!Player.MouseItem.IsEmpty) Player.MouseItem.Render(_render, pos.X + 16, pos.Y + 5);
+            _render.Draw(Carma, new Rectangle(_graphics.PreferredBackBufferWidth - wcarma, _graphics.PreferredBackBufferHeight - SIZE_CARMA_HEIGHT, wcarma, SIZE_CARMA_HEIGHT), 
+               ColorScheme.GenColorGradient(color/255.0f));
             _render.DrawString(Font3, "Karma", new Vector2(_graphics.PreferredBackBufferWidth - wcarma, _graphics.PreferredBackBufferHeight - Font3.MeasureString("Karma").Y ), Color.White);
 
-            _render.Draw(Carma, new Rectangle((int)Player.Position.X+Player.Width/2-hptext/2, (int)Player.Position.Y-SIZE_CARMA_HEIGHT/2, hptext, SIZE_CARMA_HEIGHT/2), Color.Red);
+            _render.Draw(Carma, new Rectangle((int)Player.Position.X+Player.Width/2-hptext/2, (int)Player.Position.Y-SIZE_CARMA_HEIGHT/2, hptext, SIZE_CARMA_HEIGHT/2),
+                ColorScheme.BloodColor);
             // spriteBatch.DrawString(Font1, "Blood", new Vector2(graphics.PreferredBackBufferWidth / 2 - hptext / 2, Font1.MeasureString("Blood").Y/2), Color.White);
 
             //spriteBatch.Draw(carma, new Rectangle(graphics.PreferredBackBufferWidth - 16, 16, 16, 16 + (int)player.drought), Color.Blue);
-            _render.Draw(FullDrougt, new Rectangle(_graphics.PreferredBackBufferWidth - 16, _graphics.PreferredBackBufferHeight-SIZE_CARMA_HEIGHT-16, 16, 16),new Rectangle(0,0,FullDrougt.Width,(int)(Player.Drought/100*FullDrougt.Height)), Color.White);
-            _render.Draw(EmptyDrougt, new Rectangle(_graphics.PreferredBackBufferWidth - 16, _graphics.PreferredBackBufferHeight - SIZE_CARMA_HEIGHT - 16, 16, 16), Color.White);
+            _render.Draw(FullDrougt, new Rectangle(_graphics.PreferredBackBufferWidth - 16, _graphics.PreferredBackBufferHeight-SIZE_CARMA_HEIGHT-16, 16, 16),new Rectangle(0,0,FullDrougt.Width,(int)(Player.Drought/100*FullDrougt.Height)));
+            _render.Draw(EmptyDrougt, new Rectangle(_graphics.PreferredBackBufferWidth - 16, _graphics.PreferredBackBufferHeight - SIZE_CARMA_HEIGHT - 16, 16, 16));
             Vector2 sizeHunger = new Vector2(EatHunger.Width * (Player.Hunger / 100.0f), EatHunger.Height);
-            _render.Draw(EatHunger, new Vector2(_graphics.PreferredBackBufferWidth - wcarma-sizeHunger.X, _graphics.PreferredBackBufferHeight - SIZE_CARMA_HEIGHT),new Rectangle(EatHunger.Width-(int)sizeHunger.X,0,(int)sizeHunger.X,(int)sizeHunger.Y), Color.White);
+            _render.Draw(EatHunger, new Vector2(_graphics.PreferredBackBufferWidth - wcarma-sizeHunger.X, _graphics.PreferredBackBufferHeight - SIZE_CARMA_HEIGHT),new Rectangle(EatHunger.Width-(int)sizeHunger.X,0,(int)sizeHunger.X,(int)sizeHunger.Y));
 
             foreach (Civilian npc in Dimension[CurrentDimension].Civil)
                 npc.RenderDialog(_render);
@@ -881,9 +844,9 @@ namespace TwoSides
 
         void DrawBloodBody(int xBody, int yBody)
         {
-            _render.Draw(BloodBody, new Vector2(xBody, yBody), Color.White);
+            _render.Draw(BloodBody, new Vector2(xBody, yBody));
             for (var i = 0; i < 4; i++)
-                if (Player.Bloods[i]) _render.Draw(BloodTexture[i], new Vector2(xBody, yBody), Color.Red);
+                if (Player.Bloods[i]) _render.Draw(BloodTexture[i], new Vector2(xBody, yBody), ColorScheme.BloodColor);
         }
 
         void DrawSlotItem(int maxSlot)
@@ -896,15 +859,15 @@ namespace TwoSides
                 if (i % 9 == 0) r++;
                 var xslot = i % 9 * 32;
                 var yslot = 32 * r;
-                Color cl = Color.White;
-                if (i == Player.SelectedItem) cl = Color.Black;
-                _render.Draw(Inv, new Rectangle(centerSlot+xslot,yslot , 32, 32), cl);
+                ColorScheme cl = ColorScheme.BaseColor;
+                if (i == Player.SelectedItem) cl = ColorScheme.NotActiveRecipe;
+                _render.Draw(Inv, new Rectangle(centerSlot+xslot,yslot , 32, 32),cl);
                 if ( Player.Slot[i].IsEmpty ) continue;
 
                 Player.Slot[i]. Render(_render,centerSlot+xslot + 16/2, 16/2 + yslot);
                 _render.DrawString(Font3, Player.Slot[i].Ammount.ToString(CultureInfo.CurrentCulture), new Vector2(centerSlot+(32 * (i % 9 + 1) - 5 - Font3.MeasureString(Player.Slot[i].Ammount.ToString(CultureInfo.CurrentCulture)).X), 32 - Font3.MeasureString(Player.Slot[i].Ammount.ToString(CultureInfo.CurrentCulture)).Y + yslot), Color.Black);
 
-                if (new Rectangle(centerSlot+xslot, yslot, 32, 32).Contains(new Point(MouseState.X, MouseState.Y)))
+                if (new Rectangle(centerSlot+xslot, yslot, 32, 32).Contains(GameInput.GetMousePos().ToPoint()))
                     slotHover = i;
             }//одежда
             if (slotHover >= 1)
@@ -913,18 +876,19 @@ namespace TwoSides
 
         void DrawItemHelp(int i)
         {
-            _render.DrawString(Font2, Player.Slot[i].GetName(), new Vector2(MouseState.X + 16,
-                MouseState.Y + 5),
+            Vector2 pos = GameInput.GetMousePos();
+            _render.DrawString(Font2, Player.Slot[i].GetName(), new Vector2(pos.X + 16,
+                pos.Y + 5),
                 Player.Slot[i].GetColor());
             _render.DrawString(Font2, "DPS:" + Player.Slot[i].GetDamage() +
                 "(" + Player.Slot[i].GetDamage() *
                 (Player.Slot[i].Hp / 100) + ")",
-                new Vector2(MouseState.X + 16, MouseState.Y + 15),
+                new Vector2(pos.X + 16, pos.Y + 15),
                 Player.Slot[i].GetColor());
             _render.DrawString(Font2, "Power:" + Player.Slot[i].GetPower() +
                 "(" + Player.Slot[i].GetPower() *
                (Player.Slot[i].Hp / 100) + ")",
-                new Vector2(MouseState.X + 16, MouseState.Y + 25),
+                new Vector2(pos.X + 16, pos.Y + 25),
                 Player.Slot[i].GetColor());
         }
 

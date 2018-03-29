@@ -16,7 +16,7 @@ namespace TwoSides.GameContent.Tiles
         }
         public override bool IsSolid() => false;
 
-        public override void Render(ITileDatecs tileDate, Render render, Texture2D texture, BaseDimension dimension, Vector2 pos, int x, int y, int frame, int subTexture, Color color)
+        public override void Render(ITileDatecs tileDate, Render render, Texture2D texture, BaseDimension dimension, Vector2 pos, int x, int y, int frame, int subTexture, ColorScheme color)
         {
             TreeDate treeDate = (TreeDate)tileDate;
             if (dimension.MapTile[x,y].IdTexture == 16)
