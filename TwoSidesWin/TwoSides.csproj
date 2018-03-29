@@ -104,6 +104,7 @@
     <Compile Include="GameContent\Tiles\DoorDate.cs" />
     <Compile Include="GlobalSuppressions2.cs" />
     <Compile Include="Render.cs" />
+    <Compile Include="ResourceManager.cs" />
     <Compile Include="World\Tile\ITileDatecs.cs" />
     <Compile Include="GameContent\Tiles\ITileList.cs" />
     <Compile Include="GameContent\Tiles\OpenDoor.cs" />

@@ -36,6 +36,12 @@ namespace TwoSides
             result.B = (byte)((1 - t) * result.B + t * lightColor.B);
             return new ColorScheme(result);
         }
+        public static ColorScheme GenAlphaGradient(float t)
+        {
+            Color result = DarkColor;
+            result.A = (byte) (t*255);
+            return new ColorScheme(result);
+        }
     }
     public class Render
     {
@@ -55,48 +61,47 @@ namespace TwoSides
             _batch.Begin(samplerState: sampler,transformMatrix:camera.GetViewTran(device));
 
 
+        public void Draw(Texture2D nameTexture, Vector2 pos) =>
+            _batch.Draw(nameTexture, pos, ColorScheme.BaseColor.Color);
 
-        public void Draw(string nameTexture, Vector2 pos) =>
-            _batch.Draw(ResourceManager.GetTexture2D(nameTexture), pos, ColorScheme.BaseColor.Color);
+        public void Draw(Texture2D nameTexture, Rectangle rect) =>
+            _batch.Draw(nameTexture, rect, ColorScheme.BaseColor.Color);
 
-        public void Draw(string nameTexture, Rectangle rect) => 
-            _batch.Draw(ResourceManager.GetTexture2D(nameTexture), rect, ColorScheme.BaseColor.Color);
+        public void Draw(Texture2D nameTexture, Vector2 destRect, Rectangle srcRect) =>
+            _batch.Draw(nameTexture, destRect, srcRect, ColorScheme.BaseColor.Color, 0, Vector2.Zero, 0, SpriteEffects.None, 0);
 
-        public void Draw(string nameTexture, Vector2 destRect, Rectangle srcRect) => 
-            _batch.Draw(ResourceManager.GetTexture2D(nameTexture), destRect, srcRect, ColorScheme.BaseColor.Color, 0, Vector2.Zero, 0, SpriteEffects.None, 0);
+        public void Draw(Texture2D nameTexture, Rectangle destRect, Rectangle srcRect) =>
+            _batch.Draw(nameTexture, destRect, srcRect, ColorScheme.BaseColor.Color, 0.0f, Vector2.Zero, SpriteEffects.None, 0);
 
-        public void Draw(string nameTexture, Rectangle destRect, Rectangle srcRect) => 
-            _batch.Draw(ResourceManager.GetTexture2D(nameTexture), destRect, srcRect, ColorScheme.BaseColor.Color, 0.0f, Vector2.Zero, SpriteEffects.None, 0);
+        public void Draw(Texture2D nameTexture, Rectangle destRect, Rectangle srcRect, SpriteEffects effect) =>
+            _batch.Draw(nameTexture, destRect, srcRect, ColorScheme.BaseColor.Color, 0.0f, Vector2.Zero, effect, 0);
 
-        public void Draw(string nameTexture, Rectangle destRect, Rectangle srcRect, SpriteEffects effect) => 
-            _batch.Draw(ResourceManager.GetTexture2D(nameTexture), destRect, srcRect, ColorScheme.BaseColor.Color, 0.0f, Vector2.Zero, effect, 0);
-
-        public void Draw(string nameTexture, Rectangle desc, SpriteEffects effect, float angle, Vector2 center) {
-           Texture2D texture2D = ResourceManager.GetTexture2D(nameTexture);
-            _batch.Draw(texture2D, desc, new Rectangle(0, 0, texture2D.Width, texture2D.Height),
-                ColorScheme.BaseColor.Color, angle, center, effect, 0);
+        public void Draw(Texture2D nameTexture, Rectangle desc, SpriteEffects effect, float angle, Vector2 center)
+        {
+            Texture2D texture2D = nameTexture;
+            _batch.Draw(texture2D, desc, new Rectangle(0, 0, texture2D.Width, texture2D.Height), ColorScheme.BaseColor.Color, angle, center, effect, 0);
         }
 
 
 
-        public void Draw(string nameTexture, Vector2 pos,ColorScheme color) =>
-            _batch.Draw(ResourceManager.GetTexture2D(nameTexture), pos, color.Color);
+        public void Draw(Texture2D nameTexture, Vector2 pos,ColorScheme color) =>
+            _batch.Draw(nameTexture, pos, color.Color);
 
-        public void Draw(string nameTexture, Rectangle rect, ColorScheme color) =>
-            _batch.Draw(ResourceManager.GetTexture2D(nameTexture), rect, color.Color);
+        public void Draw(Texture2D nameTexture, Rectangle rect, ColorScheme color) =>
+            _batch.Draw(nameTexture, rect, color.Color);
 
-        public void Draw(string nameTexture, Vector2 destRect, Rectangle srcRect, ColorScheme color) =>
-            _batch.Draw(ResourceManager.GetTexture2D(nameTexture), destRect, srcRect, color.Color, 0, Vector2.Zero, 0, SpriteEffects.None, 0);
+        public void Draw(Texture2D nameTexture, Vector2 destRect, Rectangle srcRect, ColorScheme color) =>
+            _batch.Draw(nameTexture, destRect, srcRect, color.Color, 0, Vector2.Zero, 0, SpriteEffects.None, 0);
 
-        public void Draw(string nameTexture, Rectangle destRect, Rectangle srcRect, ColorScheme color) =>
-            _batch.Draw(ResourceManager.GetTexture2D(nameTexture), destRect, srcRect, color.Color, 0.0f, Vector2.Zero, SpriteEffects.None, 0);
+        public void Draw(Texture2D nameTexture, Rectangle destRect, Rectangle srcRect, ColorScheme color) =>
+            _batch.Draw(nameTexture, destRect, srcRect, color.Color, 0.0f, Vector2.Zero, SpriteEffects.None, 0);
 
-        public void Draw(string nameTexture, Rectangle destRect, Rectangle srcRect, SpriteEffects effect, ColorScheme color) =>
-            _batch.Draw(ResourceManager.GetTexture2D(nameTexture), destRect, srcRect, color.Color, 0.0f, Vector2.Zero, effect, 0);
+        public void Draw(Texture2D nameTexture, Rectangle destRect, Rectangle srcRect, SpriteEffects effect, ColorScheme color) =>
+            _batch.Draw(nameTexture, destRect, srcRect, color.Color, 0.0f, Vector2.Zero, effect, 0);
 
-        public void Draw(string nameTexture, Rectangle desc, SpriteEffects effect, float angle, Vector2 center, ColorScheme color)
+        public void Draw(Texture2D nameTexture, Rectangle desc, SpriteEffects effect, float angle, Vector2 center, ColorScheme color)
         {
-            Texture2D texture2D = ResourceManager.GetTexture2D(nameTexture);
+            Texture2D texture2D = nameTexture;
             _batch.Draw(texture2D, desc, new Rectangle(0, 0, texture2D.Width, texture2D.Height),color.Color, angle, center, effect, 0);
         }
 
